@@ -1,5 +1,6 @@
 <template>
-  <TableConfig :tableRef="dataTable" :tableCols="localColums" @change-show="changeColShow"></TableConfig>
+  <TableConfig :tableRef="dataTable" :tableCols="localColums" @change-show="changeColShow"
+    @change-sequence="changeSequence"></TableConfig>
   <NDataTable v-bind="$attrs" :columns="TableColumns" :data="tableData" ref="dataTable" />
   <div @click="showCol">对对对</div>
   <!-- 分页 -->
@@ -10,20 +11,21 @@
 </template>
  
 <script setup lang="ts">
-import type { ColumnProps,columnSetting, paginationType, resType } from "@/interface";
+import type { ColumnProps, columnSetting, paginationType, resType } from "@/interface";
 import Sortable from "sortablejs";
 import { NDataTable } from 'naive-ui'
 import type { DataTableProps } from 'naive-ui'
 import TableConfig from './TableConfig.vue'
 import { ref, reactive, getCurrentInstance, type PropType, type Ref, onMounted, watch, computed } from 'vue'
-
+import { setStore, getStore, delStore } from "@/utils/store";
 type requestFnType = (params: any) => Promise<resType>
 interface tablePropType extends Omit<DataTableProps, 'columns'> {
   data?: Array<any>,
   request?: requestFnType,
   columns: ColumnProps[],
   immediateRequest?: boolean,
-  needInfinite?: boolean
+  needInfinite?: boolean,
+  storeName?: string
 }
 const props = withDefaults(defineProps<tablePropType>(), {
   immediateRequest: false,
@@ -92,61 +94,75 @@ function loadData(pagination?: paginationType) {
 }
 // 追踪传过来原本的prop并加以改造
 const localColums = ref<columnSetting[]>([])
-watch(props.columns,(newVal)=>{
-  localColums.value = newVal.map(col=>{
-    const newCol:columnSetting = {
+watch(() => props.columns, (newVal) => {
+  let columsResult = newVal.map(col => {
+    let newCol: columnSetting = {
       ...col,
-      isShow:col.isShow === undefined ? true : col.isShow
+      isShow: col.isShow === undefined ? true : col.isShow,
+      resizable: col.resizable === undefined ? true : col.resizable,
     }
     return newCol
   })
-},{
-  immediate:true
+  let setting = props.storeName && getStore(props.storeName)
+  columsResult = setting ? ExtractConfiguration(columsResult, setting) : columsResult
+  localColums.value = columsResult
+}, {
+  immediate: true
 })
-const TableColumns = computed(()=>{
-  const arr:columnSetting[] = localColums.value.filter(
+const TableColumns = computed(() => {
+  const arr: columnSetting[] = localColums.value.filter(
     col => col.isShow
   )
   return arr
-}) 
+})
+function ExtractConfiguration(colums: columnSetting[], columsConfig: columnSetting[]) {
+  let columsContent: columnSetting[] | undefined[] = [...colums]
+  let columsResult: columnSetting[] = []
+  columsConfig.forEach(record => {
+    let curColIndex = columsContent.findIndex(col => col?.key === record.key)
+    if (curColIndex > -1) {
+      const conf = {
+        isShow: record.isShow,
+        width: record.width,
+        fixed: record.fixed,
+      }
+      columsResult.push(Object.assign({}, columsContent[curColIndex], conf))
+      columsContent[curColIndex] = undefined
+    }
+  });
+  console.log(columsContent[0]);
+
+  columsContent.forEach(col => {
+    if (col) columsResult.push(col)
+  })
+  return columsResult
+}
+
+
 const dataTable = ref<InstanceType<typeof NDataTable> | null>(null)
 function loadDataDirect() {
   tableData.value = props.data
 }
-
-onMounted(() => {
-  columnDrop()
-})
-function showCol(){
-  console.log(TableColumns);
+function showCol() {
+  props.storeName && setStore(props.storeName, localColums.value)
 }
-function columnDrop() {
-  const el = dataTable?.value?.$el
-  const wrapperTr = el.querySelector(".n-data-table-tr");
-  console.log(wrapperTr);
-  Sortable.create(wrapperTr, {
-    animation: 180,
-    delay: 0,
-    filter: ".drag-filtered",
-    onEnd: (evt) => {
-      const oldIndex = evt.oldIndex;
-      const newIndex = evt.newIndex;
-      if(!oldIndex || !newIndex) return
-      let temp = localColums.value[oldIndex];
-      localColums.value[oldIndex] = localColums.value[newIndex];
-      localColums.value[newIndex] = temp;
-    }
-  });
+function setConf() {
+  props.storeName && setStore(props.storeName, localColums.value)
 }
-function changeColShow(col:columnSetting){
-  const index = localColums.value.findIndex(item=>{
+function changeColShow(col: columnSetting) {
+  const index = localColums.value.findIndex(item => {
     return item.key === col.key
   })
-  if(index>-1){
-    // TableColumns.value[index] = col
-    const isShow = col.isShow === undefined ? true : col.isShow
+  if (index > -1) {
     localColums.value[index] = col
   }
+  setConf()
+}
+function changeSequence(oldIndex: number, newIndex: number) {
+  let temp = localColums.value[oldIndex];
+  localColums.value[oldIndex] = localColums.value[newIndex];
+  localColums.value[newIndex] = temp;
+  setConf()
 }
 </script>
  

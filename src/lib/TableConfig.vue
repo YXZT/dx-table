@@ -10,23 +10,25 @@
     <n-drawer v-model:show="active" :width="500" placement="right" :trap-focus="false" :block-scroll="false"
       :to="tableEl">
       <n-drawer-content title="表格列设置">
-        <n-data-table :bordered="false" :single-line="false" :columns="columnsSetting" :data="dataSetting" />
+        <n-data-table ref="dataTable" :bordered="false" :single-line="false" :columns="columnsSetting"
+          :data="dataSetting" />
       </n-drawer-content>
     </n-drawer>
   </div>
 </template>
 <script setup lang="ts">
 import { ArchiveSettings16Regular } from '@vicons/fluent'
-import { ref, computed, h } from 'vue'
+import { ref, computed, h, onMounted, nextTick } from 'vue'
 import { NDataTable, NDrawer, NDrawerContent, NButton, NIcon, NSwitch } from "naive-ui";
 import type { columnSetting } from "@/interface";
+import Sortable from "sortablejs";
 
 interface propsType {
   tableRef: InstanceType<typeof NDataTable> | null,
   tableCols: columnSetting[],
 }
 const props = defineProps<propsType>()
-const emits = defineEmits(['change-show'])
+const emits = defineEmits(['change-show', 'change-sequence'])
 const dataSetting = ref<columnSetting[]>([])
 const columnsSetting = ref([{
   title: '列名',
@@ -46,6 +48,10 @@ const active = ref(false)
 const activate = () => {
   dataSetting.value = props.tableCols
   active.value = true
+  dataTable.value || nextTick(() => {
+    columnDrop()
+  })
+
 }
 const tableEl = computed(() => {
   console.log(props.tableRef);
@@ -53,9 +59,32 @@ const tableEl = computed(() => {
 })
 // todo完善类型
 function changeColShow(e: any, col: any) {
-  const newCol = {...col}
+  const newCol = { ...col }
   newCol.isShow = e
   emits('change-show', newCol)
 }
+const dataTable = ref<InstanceType<typeof NDataTable> | null>(null)
+function columnDrop() {
+  const el = dataTable?.value?.$el
+
+  const wrapperTr = el.querySelector(".n-data-table-tbody");
+  Sortable.create(wrapperTr, {
+    animation: 180,
+    delay: 0,
+    filter: ".drag-filtered",
+    onChoose: (evt) => {
+      console.log(evt);
+    },
+    onEnd: (evt) => {
+      const oldIndex = evt.oldIndex;
+      const newIndex = evt.newIndex;
+      if (oldIndex === undefined || newIndex === undefined) return
+      emits('change-sequence', oldIndex, newIndex)
+    }
+  });
+}
+onMounted(() => {
+  // columnDrop()
+})
 </script>
 <style ></style>

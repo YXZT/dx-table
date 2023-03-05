@@ -1,16 +1,16 @@
 <template>
   <div>
-    <NDataTable :columns="columns" :data="data" virtual-scroll :style="{ height: `400px` }"
-      flex-height />
-    <dx-table :columns="columns" :data="data" virtual-scroll :style="{ height: `400px` }" flex-height />
+    <NDataTable :columns="columns" :data="data" virtual-scroll :style="{ height: `400px` }" flex-height
+      :scroll-x="1200" :single-line="false"/>
+    <dx-table :columns="columns" :data="data" virtual-scroll :style="{ height: `400px` }" flex-height :scroll-x="1200" :single-line="false" storeName="test_table"/>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { ref, h } from 'vue';
 import DxTable from "../lib/DxTable.vue";
-import { NDataTable } from 'naive-ui'
-let msg = ref('hello')
+import { NDataTable, NTag, type DataTableColumn } from 'naive-ui'
+import type { ColumnProps, columnSetting, paginationType, resType } from "@/interface";
 
 // const generateColumns = (length = 10, prefix = 'column-', props?: any) =>
 //   Array.from({ length }).map((_, columnIndex) => ({
@@ -40,22 +40,53 @@ let msg = ref('hello')
 //   })
 
 // const columns = generateColumns(10)
-// const data = generateData(columns, 1000)
+// const data = ref(generateData(columns, 1000))
 
-const columns = ref([{
+
+const columns = ref<ColumnProps[]>([
+  {
+    type: 'selection',
+    fixed: 'left',
+    key: 'selection',
+    resizable: true
+  },
+{
   title: 'Name',
-  key: 'name'
+  key: 'name',
 },
 {
   title: 'Age',
   key: 'age',
-  isShow:true,
+  isShow: true,
 },
 {
   title: 'Address',
   key: 'address',
-  isShow:false,
-}])
+  isShow: true,
+},
+{
+  title: 'Tags',
+  key: 'tags',
+  render(row: any) {
+    const tags = row.tags.map((tagKey: any) => {
+      return h(
+        NTag,
+        {
+          style: {
+            marginRight: '6px'
+          },
+          type: 'info',
+          bordered: false
+        },
+        {
+          default: () => tagKey
+        }
+      )
+    })
+    return tags
+  }
+},
+])
 const data = ref([{
   key: 0,
   name: 'John Brown',
@@ -77,7 +108,6 @@ const data = ref([{
   address: 'Sidney No. 1 Lake Park',
   tags: ['cool', 'teacher']
 }])
-
 </script>
 
 <style scoped></style>

@@ -1,13 +1,13 @@
 import type { DataTableColumn } from "naive-ui";
 
 
-export type ColumnProps = DataTableColumn & {
+export type ColumnProps = DataTableColumn<any> & {
   isShow?: Boolean,
   key: string | number
 }
-export type columnSetting = DataTableColumn & {
+export type columnSetting = DataTableColumn<any> & {
   isShow: Boolean,
-  key: string | number
+  key: string | number,
 }
 // export type columnSetting = Omit<ColumnProps,'isShow'>  & {
 //   isShow: Boolean,
