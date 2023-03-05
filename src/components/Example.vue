@@ -1,8 +1,9 @@
 <template>
   <div>
-    <NDataTable :columns="columns" :data="data" virtual-scroll :style="{ height: `400px` }" flex-height
-      :scroll-x="1200" :single-line="false"/>
-    <dx-table :columns="columns" :data="data" virtual-scroll :style="{ height: `400px` }" flex-height :scroll-x="1200" :single-line="false" storeName="test_table"/>
+    <NDataTable :columns="columns" :data="data" virtual-scroll :style="{ height: `400px` }" flex-height :scroll-x="1200"
+      :single-line="false" />
+    <dx-table :columns="columns" :data="data" virtual-scroll :style="{ height: `400px` }" flex-height :scroll-x="1200"
+      :single-line="false" storeName="test_table" />
   </div>
 </template>
 
@@ -11,7 +12,7 @@ import { ref, h } from 'vue';
 import DxTable from "../lib/DxTable.vue";
 import { NDataTable, NTag, type DataTableColumn } from 'naive-ui'
 import type { ColumnProps, columnSetting, paginationType, resType } from "@/interface";
-
+import axios from "axios";
 // const generateColumns = (length = 10, prefix = 'column-', props?: any) =>
 //   Array.from({ length }).map((_, columnIndex) => ({
 //     ...props,
@@ -50,42 +51,42 @@ const columns = ref<ColumnProps[]>([
     key: 'selection',
     resizable: true
   },
-{
-  title: 'Name',
-  key: 'name',
-},
-{
-  title: 'Age',
-  key: 'age',
-  isShow: true,
-},
-{
-  title: 'Address',
-  key: 'address',
-  isShow: true,
-},
-{
-  title: 'Tags',
-  key: 'tags',
-  render(row: any) {
-    const tags = row.tags.map((tagKey: any) => {
-      return h(
-        NTag,
-        {
-          style: {
-            marginRight: '6px'
+  {
+    title: 'Name',
+    key: 'name',
+  },
+  {
+    title: 'Age',
+    key: 'age',
+    isShow: true,
+  },
+  {
+    title: 'Address',
+    key: 'address',
+    isShow: true,
+  },
+  {
+    title: 'Tags',
+    key: 'tags',
+    render(row: any) {
+      const tags = row.tags.map((tagKey: any) => {
+        return h(
+          NTag,
+          {
+            style: {
+              marginRight: '6px'
+            },
+            type: 'info',
+            bordered: false
           },
-          type: 'info',
-          bordered: false
-        },
-        {
-          default: () => tagKey
-        }
-      )
-    })
-    return tags
-  }
-},
+          {
+            default: () => tagKey
+          }
+        )
+      })
+      return tags
+    }
+  },
 ])
 const data = ref([{
   key: 0,
@@ -108,6 +109,21 @@ const data = ref([{
   address: 'Sidney No. 1 Lake Park',
   tags: ['cool', 'teacher']
 }])
+
+// 获取课程信息
+async function getSubjects() {
+  let { data } = await axios.get("http://www.bingjs.com:81/Subject/GetAll");
+  const Subjects = data;
+  console.log(Subjects);
+}
+getSubjects()
+// 获取年级信息
+async function getGrades() {
+  let { data } = await axios.get("http://www.bingjs.com:81/Grade/GetAll");
+  const Grades = data;
+  console.log(Grades);
+}
+  getGrades()
 </script>
 
 <style scoped></style>
