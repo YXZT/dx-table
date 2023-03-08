@@ -1,5 +1,13 @@
 <template>
   <div>
+    <n-tabs type="segment" v-model:value="type">
+      <n-tab :name="1">简单数据
+      </n-tab>
+      <n-tab :name="2">长列表
+      </n-tab>
+      <n-tab :name="3">异步获取
+      </n-tab>
+    </n-tabs>
     <NDataTable :columns="columns" :data="data" virtual-scroll :style="{ height: `400px` }" flex-height :scroll-x="1200"
       :single-line="false" />
     <dx-table :columns="columns" :data="data" virtual-scroll :style="{ height: `400px` }" flex-height :scroll-x="1200"
@@ -8,43 +16,19 @@
 </template>
 
 <script setup lang="ts">
-import { ref, h } from 'vue';
+import { ref, h, watch } from 'vue';
 import DxTable from "../lib/DxTable.vue";
-import { NDataTable, NTag, type DataTableColumn } from 'naive-ui'
+import { NDataTable, NTag, type DataTableColumn, NTabs, NTab } from 'naive-ui'
 import type { ColumnProps, columnSetting, paginationType, resType } from "@/interface";
+import {
+  mockColumns,
+  mockData,
+  mockRequest
+} from "./request";
 import axios from "axios";
-// const generateColumns = (length = 10, prefix = 'column-', props?: any) =>
-//   Array.from({ length }).map((_, columnIndex) => ({
-//     ...props,
-//     key: `${prefix}${columnIndex}`,
-//     dataKey: `${prefix}${columnIndex}`,
-//     title: `Column ${columnIndex}`,
-//     width: 150,
-//   }))
-
-// const generateData = (
-//   columns: ReturnType<typeof generateColumns>,
-//   length = 200,
-//   prefix = 'row-'
-// ) =>
-//   Array.from({ length }).map((_, rowIndex) => {
-//     return columns.reduce(
-//       (rowData, column, columnIndex) => {
-//         rowData[column.dataKey] = `Row ${rowIndex} - Col ${columnIndex}`
-//         return rowData
-//       },
-//       {
-//         id: `${prefix}${rowIndex}`,
-//         parentId: null,
-//       }
-//     )
-//   })
-
-// const columns = generateColumns(10)
-// const data = ref(generateData(columns, 1000))
 
 
-const columns = ref<ColumnProps[]>([
+const simpleColumns = [
   {
     type: 'selection',
     fixed: 'left',
@@ -69,7 +53,9 @@ const columns = ref<ColumnProps[]>([
     title: 'Tags',
     key: 'tags',
     render(row: any) {
-      const tags = row.tags.map((tagKey: any) => {
+      console.log(row.tags);
+      
+      const tags = row.tags&&row.tags.map((tagKey: any) => {
         return h(
           NTag,
           {
@@ -87,8 +73,8 @@ const columns = ref<ColumnProps[]>([
       return tags
     }
   },
-])
-const data = ref([{
+]
+const simpleData = [{
   key: 0,
   name: 'John Brown',
   age: 32,
@@ -108,22 +94,22 @@ const data = ref([{
   age: 32,
   address: 'Sidney No. 1 Lake Park',
   tags: ['cool', 'teacher']
-}])
-
-// 获取课程信息
-async function getSubjects() {
-  let { data } = await axios.get("http://www.bingjs.com:81/Subject/GetAll");
-  const Subjects = data;
-  console.log(Subjects);
-}
-getSubjects()
-// 获取年级信息
-async function getGrades() {
-  let { data } = await axios.get("http://www.bingjs.com:81/Grade/GetAll");
-  const Grades = data;
-  console.log(Grades);
-}
-  getGrades()
+}]
+const data = ref<any[] | undefined>(undefined)
+const columns = ref(mockColumns)
+let type = ref(1)
+watch(type, (val) => {
+  if (val === 1) {
+    data.value = mockData
+    columns.value = mockColumns
+  }
+  else if (val === 2) {
+    data.value = simpleData
+    columns.value = simpleColumns
+  }
+}, {
+  immediate: true
+})
 </script>
 
 <style scoped></style>

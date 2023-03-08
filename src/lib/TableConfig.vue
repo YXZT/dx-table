@@ -54,7 +54,6 @@ const activate = () => {
 
 }
 const tableEl = computed(() => {
-  console.log(props.tableRef);
   return props.tableRef && props.tableRef.$el
 })
 // todo完善类型
@@ -72,9 +71,6 @@ function columnDrop() {
     animation: 180,
     delay: 0,
     filter: ".drag-filtered",
-    onChoose: (evt) => {
-      console.log(evt);
-    },
     onEnd: (evt) => {
       const oldIndex = evt.oldIndex;
       const newIndex = evt.newIndex;

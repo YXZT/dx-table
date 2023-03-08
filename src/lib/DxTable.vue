@@ -63,6 +63,9 @@ const proxy = cur && cur.proxy
 // 是否开始加载
 const loadFlag = ref(false)
 let tableData = ref<any>([])
+watch(()=>props.data,()=>{
+  loadData()
+})
 loadData()
 let localPagination = reactive(Object.assign({ total: 0, pageSize: 20, pageNum: 1 }, props.pagination))
 function loadData(pagination?: paginationType) {
@@ -113,6 +116,8 @@ const TableColumns = computed(() => {
   const arr: columnSetting[] = localColums.value.filter(
     col => col.isShow
   )
+  console.log(arr);
+  
   return arr
 })
 function ExtractConfiguration(colums: columnSetting[], columsConfig: columnSetting[]) {
@@ -130,7 +135,6 @@ function ExtractConfiguration(colums: columnSetting[], columsConfig: columnSetti
       columsContent[curColIndex] = undefined
     }
   });
-  console.log(columsContent[0]);
 
   columsContent.forEach(col => {
     if (col) columsResult.push(col)
