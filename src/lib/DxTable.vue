@@ -25,7 +25,7 @@ interface tablePropType extends Omit<DataTableProps, 'columns'> {
   columns: ColumnProps[],
   immediateRequest?: boolean,
   needInfinite?: boolean,
-  storeName?: string
+  storeName?: string,
 }
 const props = withDefaults(defineProps<tablePropType>(), {
   immediateRequest: false,
@@ -63,11 +63,13 @@ const proxy = cur && cur.proxy
 // 是否开始加载
 const loadFlag = ref(false)
 let tableData = ref<any>([])
-watch(()=>props.data,()=>{
+watch([()=>props.data,()=>props.request],()=>{
   loadData()
+  
 })
 loadData()
-let localPagination = reactive(Object.assign({ total: 0, pageSize: 20, pageNum: 1 }, props.pagination))
+// let localPagination = reactive(Object.assign({ total: 0, pageSize: 20, pageNum: 1 }, props.pagination))
+let localPagination = reactive({ total: 0, pageSize: 20, pageNum: 1 })
 function loadData(pagination?: paginationType) {
   if (Array.isArray(props.data)) {
     loadDataDirect()

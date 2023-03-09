@@ -1,24 +1,33 @@
 <template>
   <div>
-    <n-tabs type="segment" v-model:value="type">
-      <n-tab :name="1">简单数据
-      </n-tab>
-      <n-tab :name="2">长列表
-      </n-tab>
-      <n-tab :name="3">异步获取
-      </n-tab>
+    <n-tabs v-model:value="type">
+      <n-tab-pane :name="1" tab="简单数据">
+        <NDataTable :columns="columns" :data="data" virtual-scroll :style="{ height: `400px` }" flex-height
+          :scroll-x="1200" :single-line="false" />
+        <dx-table :columns="columns" :data="data" virtual-scroll :style="{ height: `400px` }" flex-height :scroll-x="1200"
+          :single-line="false" storeName="test_table" />
+      </n-tab-pane>
+      <n-tab-pane :name="2" tab="长列表">
+        <NDataTable :columns="columns" :data="data" virtual-scroll :style="{ height: `400px` }" flex-height
+          :scroll-x="1200" :single-line="false" />
+        <dx-table :columns="columns" :data="data" virtual-scroll :style="{ height: `400px` }" flex-height :scroll-x="1200"
+          :single-line="false" storeName="test_table" />
+      </n-tab-pane>
+      <n-tab-pane :name="3" tab="异步获取">
+        <NDataTable :columns="columns" :data="data" virtual-scroll :style="{ height: `400px` }" flex-height
+          :scroll-x="1200" :single-line="false" />
+        <dx-table :columns="columns" virtual-scroll :style="{ height: `400px` }" flex-height :scroll-x="1200"
+          :single-line="false" storeName="test_table" :request="request" needInfinite />
+      </n-tab-pane>
     </n-tabs>
-    <NDataTable :columns="columns" :data="data" virtual-scroll :style="{ height: `400px` }" flex-height :scroll-x="1200"
-      :single-line="false" />
-    <dx-table :columns="columns" :data="data" virtual-scroll :style="{ height: `400px` }" flex-height :scroll-x="1200"
-      :single-line="false" storeName="test_table" />
+
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, h, watch } from 'vue';
 import DxTable from "../lib/DxTable.vue";
-import { NDataTable, NTag, type DataTableColumn, NTabs, NTab } from 'naive-ui'
+import { NDataTable, NTag, type DataTableColumn, NTabs, NTabPane } from 'naive-ui'
 import type { ColumnProps, columnSetting, paginationType, resType } from "@/interface";
 import {
   mockColumns,
@@ -54,8 +63,8 @@ const simpleColumns = [
     key: 'tags',
     render(row: any) {
       console.log(row.tags);
-      
-      const tags = row.tags&&row.tags.map((tagKey: any) => {
+
+      const tags = row.tags && row.tags.map((tagKey: any) => {
         return h(
           NTag,
           {
@@ -97,19 +106,32 @@ const simpleData = [{
 }]
 const data = ref<any[] | undefined>(undefined)
 const columns = ref(mockColumns)
+type requestFnType = (params: any) => Promise<resType>
+const request = ref<requestFnType | undefined>(undefined)
 let type = ref(1)
+let needInfinite = ref(true)
 watch(type, (val) => {
   if (val === 1) {
     data.value = mockData
+    request.value = undefined
     columns.value = mockColumns
+    needInfinite.value = false
   }
   else if (val === 2) {
     data.value = simpleData
+    request.value = undefined
     columns.value = simpleColumns
+    needInfinite.value = false
+  } else if (val === 3) {
+    data.value = undefined
+    request.value = mockRequest
+    columns.value = mockColumns
+    needInfinite.value = true
   }
 }, {
   immediate: true
 })
+
 </script>
 
 <style scoped></style>
