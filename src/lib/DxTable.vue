@@ -4,11 +4,6 @@
   <NDataTable v-bind="$attrs" :columns="TableColumns" :data="tableData" ref="dataTable" :loading="loadFlag" @scroll="scroll" :pagination="pagination" remote 
     @update:page-size="handleSizeChange"
     @update:page="handlePageChange"/>
-  <!-- 分页 -->
-  <!-- <slot name="pagination">
-    <el-pagination v-if="isPagination" :layout="props.layout" :v-model:page-sizee="localPagination.pageSize" v-model:current-page="localPagination.pageNum"
-      :total="localPagination.total" @current-change="handleCurrentChange" @size-change="handleSizeChange" />
-  </slot> -->
 </template>
  
 <script setup lang="ts">
@@ -34,32 +29,6 @@ const props = withDefaults(defineProps<tablePropType>(), {
   needInfinite: false,
   isPagination: false,
 })
-// const props = defineProps({
-//   ...tableV2Props,
-//   layout: { type: String, default: 'prev, pager, next, jumper, ->, total' },
-//   request: {
-//     type: Object as requestFnType,
-//     required: false
-//   },
-//   immediateRequest: {
-//     type: Boolean,
-//     required: false
-//   },
-
-//   pagination: {
-//     type: Object as PropType<Omit<paginationType, 'total'>>,
-//     required: false,
-//     default: () => ({ pageSize: 20, pageNum: 1 })
-//   },
-//   isPagination: {
-//     type: Boolean,
-//     default: true,
-//   },
-//   needInfinite: {
-//     type: Boolean,
-//     default: true,
-//   },
-// })
 const emits = defineEmits(['refreshed'])
 const cur = getCurrentInstance();
 const proxy = cur && cur.proxy
@@ -70,39 +39,39 @@ watch([()=>props.data,()=>props.request],()=>{
   loadData()
   
 })
-// let localPagination = reactive(Object.assign({ total: 0, pageSize: 20, pageNum: 1 }, props.pagination))
-let localPagination = reactive({ total: 0, pageSize: 20, pageNum: 1 })
+// let localPagination.value = reactive(Object.assign({ total: 0, pageSize: 20, pageNum: 1 }, props.pagination))
+let localPagination = ref({ total: 0, pageSize: 20, pageNum: 1 })
 let pagination = computed(()=>{
   if(props.needInfinite) return undefined
   if(!props.isPagination) return undefined
   return {
-      page: localPagination.pageNum,
-      pageSize: localPagination.pageSize,
-      itemCount:localPagination.total,
+      page: localPagination.value.pageNum,
+      pageSize: localPagination.value.pageSize,
+      itemCount:localPagination.value.total,
       showSizePicker: true,
       pageSizes: [10, 20, 50],
     }
 })  
 // const paginationReactive = reactive({
-//   page: localPagination.pageNum,
-//   pageSize: localPagination.pageSize,
-//   itemCount:localPagination.total,
+//   page: localPagination.value.pageNum,
+//   pageSize: localPagination.value.pageSize,
+//   itemCount:localPagination.value.total,
 //   showSizePicker: true,
 //   pageSizes: [3, 5, 7],
 // })
 function handlePageChange(val:number){
   if(loadFlag.value) return
-  localPagination.pageNum = val;
+  localPagination.value.pageNum = val;
   loadData();
 }
 function handleSizeChange(val:number){
   if(loadFlag.value) return
-  localPagination.pageSize = val;
+  localPagination.value.pageSize = val;
   // 获取最大页数
-  const pageMax = Math.ceil(localPagination.total / val);
+  const pageMax = Math.ceil(localPagination.value.total / val);
   // 判断跳转页数是否大于最大页数，如果大于，跳转页数就等于最大页数
-  if (localPagination.pageNum > pageMax) {
-    localPagination.pageNum = pageMax;
+  if (localPagination.value.pageNum > pageMax) {
+    localPagination.value.pageNum = pageMax;
   }
   loadData();
 }
@@ -111,16 +80,16 @@ function loadTbData(request:requestFnType,isAppend:Boolean,pagination?: paginati
   loadFlag.value = true
   const parameter = {
     pageNum:
-      (pagination && pagination.pageNum) || localPagination.pageNum,
+      (pagination && pagination.pageNum) || localPagination.value.pageNum,
     pageSize:
-      (pagination && pagination.pageSize) || localPagination.pageSize
+      (pagination && pagination.pageSize) || localPagination.value.pageSize
   }
   const result = request(parameter)
   result.then(res => {
     loadFlag.value = false
     if (props.isPagination || props.needInfinite) {
-      localPagination =
-        Object.assign({}, localPagination, {
+      localPagination.value =
+        Object.assign({}, localPagination.value, {
           pageNum: res?.data?.pageNum, // 返回结果中的当前分页数
           pageSize: res?.data?.pageSize,
           total: res?.data?.total || 0 // 返回结果中的总记录数
@@ -194,9 +163,6 @@ const dataTable = ref<InstanceType<typeof NDataTable> | null>(null)
 function loadDataDirect() {
   tableData.value = props.data
 }
-function showCol() {
-  props.storeName && setStore(props.storeName, localColums.value)
-}
 function setConf() {
   props.storeName && setStore(props.storeName, localColums.value)
 }
@@ -217,18 +183,19 @@ function changeSequence(oldIndex: number, newIndex: number) {
 }
 const scroll:DataTableProps['onScroll'] =  (event)=>{
   if (!props.needInfinite||!props.request) return;
+  if(loadFlag.value) return
       const dom = event.target as HTMLDivElement;
       const clientHeight = dom.clientHeight;
       const scrollTop = dom.scrollTop;
       const scrollHeight = dom.scrollHeight;
       if (clientHeight + scrollTop === scrollHeight) {
         const num = Math.ceil(
-          localPagination.total / localPagination.pageSize
+          localPagination.value.total / localPagination.value.pageSize
         );
-        if (localPagination.pageNum + 1 > num) {
+        if (localPagination.value.pageNum + 1 > num) {
           return;
         }
-        localPagination.pageNum += 1
+        localPagination.value.pageNum += 1
         loadTbData(props.request,true)
       }
 }
