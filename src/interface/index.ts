@@ -3,11 +3,12 @@ import type { DataTableColumn } from "naive-ui";
 
 export type ColumnProps = DataTableColumn<any> & {
   isShow?: Boolean,
-  key: string | number
+  key: string | number,
 }
-export type columnSetting = DataTableColumn<any> & {
+export type columnSetting = Omit<DataTableColumn<any>,'fixed'> & {
   isShow: Boolean,
   key: string | number,
+  fixed : "left" | "right" | "none"
 }
 // export type columnSetting = Omit<ColumnProps,'isShow'>  & {
 //   isShow: Boolean,

@@ -61,22 +61,18 @@ const generateData = (
       key: 'selection',
       resizable: true,
       isShow: true,
-      minWidth: 100,
     },
     {
       title: 'Name',
       key: 'name',
-      minWidth: 100,
     },
     {
       title: 'Age',
       key: 'age',
-      minWidth: 100,
     },
     {
       title: 'Address',
       key: 'address',
-      minWidth: 100,
     },
     {
       title: 'Tags',
@@ -99,7 +95,6 @@ const generateData = (
         })
         return tags
       },
-      minWidth: 100,
     },
   ]
   const simpleData = Mock.mock({

@@ -1,6 +1,6 @@
 <template>
-  <TableConfig :tableRef="dataTable" :tableCols="localColums" @change-show="changeColShow"
-    @change-sequence="changeSequence"></TableConfig>
+  <TableConfig :tableRef="dataTable" :tableCols="localColums" @change-show="changeCol"
+    @change-sequence="changeSequence" @change-fixed="changeCol"></TableConfig>
   <NDataTable v-bind="$attrs" :columns="TableColumns" :data="tableData" ref="dataTable" :loading="loadFlag" @scroll="scroll" :pagination="pagination" remote 
     @update:page-size="handleSizeChange"
     @update:page="handlePageChange"/>
@@ -10,7 +10,7 @@
 import type { ColumnProps, columnSetting, paginationType, resType } from "@/interface";
 import Sortable from "sortablejs";
 import { NDataTable } from 'naive-ui'
-import type { DataTableProps } from 'naive-ui'
+import type { DataTableProps,DataTableColumn } from 'naive-ui'
 import TableConfig from './TableConfig.vue'
 import { ref, reactive, getCurrentInstance, type PropType, type Ref, onMounted, watch, computed } from 'vue'
 import { setStore, getStore, delStore } from "@/utils/store";
@@ -95,8 +95,6 @@ function loadTbData(request:requestFnType,isAppend:Boolean,pagination?: paginati
           total: res?.data?.total || 0 // 返回结果中的总记录数
         })
     }
-    console.log(res.data?.records);
-    
     const records = (res.data?.records) as Array<any>
     if(isAppend){
       tableData.value.push(...records)
@@ -120,20 +118,26 @@ watch(() => props.columns, (newVal) => {
     let newCol: columnSetting = {
       ...col,
       isShow: col.isShow === undefined ? true : col.isShow,
+      fixed: col.fixed === undefined ? 'none' : col.fixed,
       resizable: col.resizable === undefined ? true : col.resizable,
     }
     return newCol
   })
-  let setting = props.storeName && getStore(props.storeName)
+  // let setting = props.storeName && getStore(props.storeName)
+  let setting = undefined
   columsResult = setting ? ExtractConfiguration(columsResult, setting) : columsResult
   localColums.value = columsResult
 }, {
   immediate: true
 })
 const TableColumns = computed(() => {
-  const arr: columnSetting[] = localColums.value.filter(
-    col => col.isShow
-  )
+  const arr: DataTableColumn<any>[] = localColums.value.filter(
+    col => col.isShow,
+  ).map(col=>{
+    const _col:any = {...col}
+    if(_col.fixed === 'none') _col.fixed = undefined
+    return _col
+  })
   return arr
 })
 function ExtractConfiguration(colums: columnSetting[], columsConfig: columnSetting[]) {
@@ -166,7 +170,7 @@ function loadDataDirect() {
 function setConf() {
   props.storeName && setStore(props.storeName, localColums.value)
 }
-function changeColShow(col: columnSetting) {
+function changeCol(col: columnSetting) {
   const index = localColums.value.findIndex(item => {
     return item.key === col.key
   })
