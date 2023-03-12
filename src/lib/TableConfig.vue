@@ -19,7 +19,7 @@
 <script setup lang="ts">
 import { ArchiveSettings16Regular } from '@vicons/fluent'
 import { ref, computed, h, onMounted, nextTick } from 'vue'
-import { NDataTable, NDrawer, NDrawerContent, NButton, NIcon, NSwitch,NRadioGroup,NRadioButton } from "naive-ui";
+import { NDataTable, NDrawer, NDrawerContent, NButton, NIcon, NSwitch, NRadioGroup, NRadioButton } from "naive-ui";
 import type { columnSetting } from "@/interface";
 import Sortable from "sortablejs";
 
@@ -28,7 +28,7 @@ interface propsType {
   tableCols: columnSetting<any>[],
 }
 const props = defineProps<propsType>()
-const emits = defineEmits(['change-show', 'change-sequence','change-fixed'])
+const emits = defineEmits(['change-show', 'change-sequence', 'change-fixed'])
 const dataSetting = ref<columnSetting<any>[]>([])
 const columnsSetting = ref([{
   title: '列名',
@@ -43,14 +43,14 @@ const columnsSetting = ref([{
 }, {
   title: '固定',
   key: 'fixed',
-  render: (row: { isShow: boolean,fixed:any }) => {
+  render: (row: { isShow: boolean, fixed: any }) => {
     const fixed = row.fixed || 'none'
-    const buttons = ()=>[
-      h(NRadioButton,{value:'left',label:'左'}),
-      h(NRadioButton,{value:'none',label:'无'}),
-      h(NRadioButton,{value:'right',label:'右'}),
+    const buttons = () => [
+      h(NRadioButton, { value: 'left', label: '左' }),
+      h(NRadioButton, { value: 'none', label: '无' }),
+      h(NRadioButton, { value: 'right', label: '右' }),
     ]
-    return h(NRadioGroup, { value: fixed, 'onUpdateValue': (e: any) => changeColFixed(e, row) },buttons)
+    return h(NRadioGroup, { value: fixed, 'onUpdateValue': (e: any) => changeColFixed(e, row) }, buttons)
   }
 }])
 const active = ref(false)
@@ -71,7 +71,7 @@ function changeColShow(e: any, col: any) {
   newCol.isShow = e
   emits('change-show', newCol)
 }
-function changeColFixed(e: 'left'|'none'|'right', col: any) {
+function changeColFixed(e: 'left' | 'none' | 'right', col: any) {
   const newCol = { ...col }
   newCol.fixed = e
   emits('change-fixed', newCol)

@@ -1,19 +1,18 @@
 <template>
-  <TableConfig :tableRef="dataTable" :tableCols="localColums" @change-show="changeCol"
-    @change-sequence="changeSequence" @change-fixed="changeCol"></TableConfig>
-  <NDataTable v-bind="$attrs" :columns="TableColumns" :data="tableData" ref="dataTable" :loading="loadFlag" @scroll="scroll" :pagination="pagination" remote 
-    @update:page-size="handleSizeChange"
-    @update:page="handlePageChange"/>
+  <TableConfig :tableRef="dataTable" :tableCols="localColums" @change-show="changeCol" @change-sequence="changeSequence"
+    @change-fixed="changeCol"></TableConfig>
+  <NDataTable v-bind="$attrs" :columns="TableColumns" :data="tableData" ref="dataTable" :loading="loadFlag"
+    @scroll="scroll" :pagination="pagination" remote @update:page-size="handleSizeChange"
+    @update:page="handlePageChange" />
 </template>
  
 <script setup lang="ts">
-import type { ColumnProps, columnSetting, paginationType, resType,requestFnType } from "@/interface";
-import Sortable from "sortablejs";
+import type { ColumnProps, columnSetting, paginationType, requestFnType } from "@/interface";
 import { NDataTable } from 'naive-ui'
-import type { DataTableProps,DataTableColumn } from 'naive-ui'
+import type { DataTableProps, DataTableColumn } from 'naive-ui'
 import TableConfig from './TableConfig.vue'
-import { ref, reactive, getCurrentInstance, type PropType, type Ref, onMounted, watch, computed } from 'vue'
-import { setStore, getStore, delStore } from "@/utils/store";
+import { ref, watch, computed } from 'vue'
+import { setStore } from "@/utils/store";
 
 interface tablePropType extends Omit<DataTableProps, 'columns'> {
   data?: Array<any>,
@@ -22,7 +21,7 @@ interface tablePropType extends Omit<DataTableProps, 'columns'> {
   immediateRequest?: boolean,
   needInfinite?: boolean,
   storeName?: string,
-  isPagination?:boolean,
+  isPagination?: boolean,
 }
 const props = withDefaults(defineProps<tablePropType>(), {
   immediateRequest: false,
@@ -30,41 +29,33 @@ const props = withDefaults(defineProps<tablePropType>(), {
   isPagination: false,
 })
 const emits = defineEmits(['refreshed'])
-const cur = getCurrentInstance();
-const proxy = cur && cur.proxy
 // 是否开始加载
 const loadFlag = ref(false)
 let tableData = ref<any>([])
-watch([()=>props.data,()=>props.request],()=>{
+watch([() => props.data, () => props.request], () => {
   refresh(true)
 })
 // let localPagination.value = reactive(Object.assign({ total: 0, pageSize: 20, pageNum: 1 }, props.pagination))
 let localPagination = ref({ total: 0, pageSize: 20, pageNum: 1 })
-let pagination = computed(()=>{
-  if(props.needInfinite) return undefined
-  if(!props.isPagination) return undefined
+let pagination = computed(() => {
+  if (props.needInfinite) return undefined
+  if (!props.isPagination) return undefined
   return {
-      page: localPagination.value.pageNum,
-      pageSize: localPagination.value.pageSize,
-      itemCount:localPagination.value.total,
-      showSizePicker: true,
-      pageSizes: [10, 20, 50],
-    }
-})  
-// const paginationReactive = reactive({
-//   page: localPagination.value.pageNum,
-//   pageSize: localPagination.value.pageSize,
-//   itemCount:localPagination.value.total,
-//   showSizePicker: true,
-//   pageSizes: [3, 5, 7],
-// })
-function handlePageChange(val:number){
-  if(loadFlag.value) return
+    page: localPagination.value.pageNum,
+    pageSize: localPagination.value.pageSize,
+    itemCount: localPagination.value.total,
+    showSizePicker: true,
+    pageSizes: [10, 20, 50],
+  }
+})
+function handlePageChange(val: number) {
+  if (loadFlag.value) return
   localPagination.value.pageNum = val;
   loadData();
+  emits('refreshed')
 }
-function handleSizeChange(val:number){
-  if(loadFlag.value) return
+function handleSizeChange(val: number) {
+  if (loadFlag.value) return
   localPagination.value.pageSize = val;
   // 获取最大页数
   const pageMax = Math.ceil(localPagination.value.total / val);
@@ -73,9 +64,10 @@ function handleSizeChange(val:number){
     localPagination.value.pageNum = pageMax;
   }
   loadData();
+  emits('refreshed')
 }
 loadData()
-function loadTbData(request:requestFnType,isAppend:Boolean,pagination?: paginationType){
+function loadTbData(request: requestFnType, isAppend: Boolean, pagination?: paginationType) {
   loadFlag.value = true
   const parameter = {
     pageNum:
@@ -95,9 +87,9 @@ function loadTbData(request:requestFnType,isAppend:Boolean,pagination?: paginati
         })
     }
     const records = (res.data?.records) as Array<any>
-    if(isAppend){
+    if (isAppend) {
       tableData.value.push(...records)
-    }else{
+    } else {
       tableData.value = records
     }
   })
@@ -108,7 +100,7 @@ function loadData(pagination?: paginationType) {
     return
   }
   if (!props.request) return
-  loadTbData(props.request,false,pagination)
+  loadTbData(props.request, false, pagination)
 }
 // 追踪传过来原本的prop并加以改造
 const localColums = ref<columnSetting<any>[]>([])
@@ -132,9 +124,9 @@ watch(() => props.columns, (newVal) => {
 const TableColumns = computed(() => {
   const arr: DataTableColumn<any>[] = localColums.value.filter(
     col => col.isShow,
-  ).map(col=>{
-    const _col:any = {...col}
-    if(_col.fixed === 'none') _col.fixed = undefined
+  ).map(col => {
+    const _col: any = { ...col }
+    if (_col.fixed === 'none') _col.fixed = undefined
     return _col
   })
   return arr
@@ -184,32 +176,32 @@ function changeSequence(oldIndex: number, newIndex: number) {
   localColums.value[newIndex] = temp;
   setConf()
 }
-const scroll:DataTableProps['onScroll'] =  (event)=>{
-  if (!props.needInfinite||!props.request) return;
-  if(loadFlag.value) return
-      const dom = event.target as HTMLDivElement;
-      const clientHeight = dom.clientHeight;
-      const scrollTop = dom.scrollTop;
-      const scrollHeight = dom.scrollHeight;
-      if (clientHeight + scrollTop === scrollHeight) {
-        const num = Math.ceil(
-          localPagination.value.total / localPagination.value.pageSize
-        );
-        if (localPagination.value.pageNum + 1 > num) {
-          return;
-        }
-        localPagination.value.pageNum += 1
-        loadTbData(props.request,true)
-      }
+const scroll: DataTableProps['onScroll'] = (event) => {
+  if (!props.needInfinite || !props.request) return;
+  if (loadFlag.value) return
+  const dom = event.target as HTMLDivElement;
+  const clientHeight = dom.clientHeight;
+  const scrollTop = dom.scrollTop;
+  const scrollHeight = dom.scrollHeight;
+  if (clientHeight + scrollTop === scrollHeight) {
+    const num = Math.ceil(
+      localPagination.value.total / localPagination.value.pageSize
+    );
+    if (localPagination.value.pageNum + 1 > num) {
+      return;
+    }
+    localPagination.value.pageNum += 1
+    loadTbData(props.request, true)
+  }
 }
-function refresh(reset?:boolean){
-  if(reset){
+function refresh(reset?: boolean) {
+  if (reset) {
     localPagination.value = { total: 0, pageSize: localPagination.value.pageSize, pageNum: 1 }
   }
   loadData();
 }
 defineExpose([
-refresh
+  refresh
 ])
 </script>
  
