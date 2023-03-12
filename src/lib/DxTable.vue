@@ -7,18 +7,18 @@
 </template>
  
 <script setup lang="ts">
-import type { ColumnProps, columnSetting, paginationType, resType } from "@/interface";
+import type { ColumnProps, columnSetting, paginationType, resType,requestFnType } from "@/interface";
 import Sortable from "sortablejs";
 import { NDataTable } from 'naive-ui'
 import type { DataTableProps,DataTableColumn } from 'naive-ui'
 import TableConfig from './TableConfig.vue'
 import { ref, reactive, getCurrentInstance, type PropType, type Ref, onMounted, watch, computed } from 'vue'
 import { setStore, getStore, delStore } from "@/utils/store";
-type requestFnType = (params: any) => Promise<resType>
+
 interface tablePropType extends Omit<DataTableProps, 'columns'> {
   data?: Array<any>,
   request?: requestFnType,
-  columns: ColumnProps[],
+  columns: ColumnProps<any>[],
   immediateRequest?: boolean,
   needInfinite?: boolean,
   storeName?: string,
@@ -36,8 +36,7 @@ const proxy = cur && cur.proxy
 const loadFlag = ref(false)
 let tableData = ref<any>([])
 watch([()=>props.data,()=>props.request],()=>{
-  loadData()
-  
+  refresh(true)
 })
 // let localPagination.value = reactive(Object.assign({ total: 0, pageSize: 20, pageNum: 1 }, props.pagination))
 let localPagination = ref({ total: 0, pageSize: 20, pageNum: 1 })
@@ -112,10 +111,10 @@ function loadData(pagination?: paginationType) {
   loadTbData(props.request,false,pagination)
 }
 // 追踪传过来原本的prop并加以改造
-const localColums = ref<columnSetting[]>([])
+const localColums = ref<columnSetting<any>[]>([])
 watch(() => props.columns, (newVal) => {
   let columsResult = newVal.map(col => {
-    let newCol: columnSetting = {
+    let newCol: columnSetting<any> = {
       ...col,
       isShow: col.isShow === undefined ? true : col.isShow,
       fixed: col.fixed === undefined ? 'none' : col.fixed,
@@ -140,9 +139,9 @@ const TableColumns = computed(() => {
   })
   return arr
 })
-function ExtractConfiguration(colums: columnSetting[], columsConfig: columnSetting[]) {
-  let columsContent: columnSetting[] | undefined[] = [...colums]
-  let columsResult: columnSetting[] = []
+function ExtractConfiguration(colums: columnSetting<any>[], columsConfig: columnSetting<any>[]) {
+  let columsContent: columnSetting<any>[] | undefined[] = [...colums]
+  let columsResult: columnSetting<any>[] = []
   columsConfig.forEach(record => {
     let curColIndex = columsContent.findIndex(col => col?.key === record.key)
     if (curColIndex > -1) {
@@ -170,7 +169,7 @@ function loadDataDirect() {
 function setConf() {
   props.storeName && setStore(props.storeName, localColums.value)
 }
-function changeCol(col: columnSetting) {
+function changeCol(col: columnSetting<any>) {
   const index = localColums.value.findIndex(item => {
     return item.key === col.key
   })
@@ -203,7 +202,15 @@ const scroll:DataTableProps['onScroll'] =  (event)=>{
         loadTbData(props.request,true)
       }
 }
-
+function refresh(reset?:boolean){
+  if(reset){
+    localPagination.value = { total: 0, pageSize: localPagination.value.pageSize, pageNum: 1 }
+  }
+  loadData();
+}
+defineExpose([
+refresh
+])
 </script>
  
 <style scoped></style>

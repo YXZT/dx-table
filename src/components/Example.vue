@@ -48,8 +48,8 @@
 <script setup lang="ts">
 import { ref, h, watch } from 'vue';
 import DxTable from "../lib/DxTable.vue";
-import { NDataTable, NTag, type DataTableColumn, NTabs, NTabPane,NCard } from 'naive-ui'
-import type { ColumnProps, columnSetting, paginationType, resType } from "@/interface";
+import { NDataTable, NTag, type DataTableColumn, NTabs, NTabPane,NCard,type DataTableColumns } from 'naive-ui'
+import type { requestFnType } from "@/interface";
 import {
   mockColumns,
   mockData,
@@ -59,11 +59,8 @@ import {
 } from "./request";
 import axios from "axios";
 
-
-
 const data = ref<any[] | undefined>(undefined)
 const columns = ref(mockColumns)
-type requestFnType = (params: any) => Promise<resType>
 const request = ref<requestFnType | undefined>(undefined)
 let type = ref(1)
 watch(type, (val) => {

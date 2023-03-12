@@ -53,8 +53,14 @@ const generateData = (
     return res
   }
 
-
-  const simpleColumns = [
+  type simpleDataType = {
+    key:number,
+    name:string,
+    age:number,
+    address:string,
+    tags:Array<string>
+  } 
+  const simpleColumns:ColumnProps<simpleDataType>[] = [
     {
       type: 'selection',
       fixed: 'left',
@@ -77,8 +83,8 @@ const generateData = (
     {
       title: 'Tags',
       key: 'tags',
-      render(row: any) {
-        const tags = row.tags && row.tags.map((tagKey: any) => {
+      render(row) {
+        const tags = row.tags.map((tagKey: any) => {
           return h(
             NTag,
             {
@@ -97,7 +103,7 @@ const generateData = (
       },
     },
   ]
-  const simpleData = Mock.mock({
+  const simpleData:simpleDataType[] = Mock.mock({
     'list|100': [{
       'key|+1': 1,
       'name':"@cname",

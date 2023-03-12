@@ -25,11 +25,11 @@ import Sortable from "sortablejs";
 
 interface propsType {
   tableRef: InstanceType<typeof NDataTable> | null,
-  tableCols: columnSetting[],
+  tableCols: columnSetting<any>[],
 }
 const props = defineProps<propsType>()
 const emits = defineEmits(['change-show', 'change-sequence','change-fixed'])
-const dataSetting = ref<columnSetting[]>([])
+const dataSetting = ref<columnSetting<any>[]>([])
 const columnsSetting = ref([{
   title: '列名',
   key: 'title'
