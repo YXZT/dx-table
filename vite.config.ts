@@ -3,6 +3,7 @@ import { fileURLToPath, URL } from 'node:url'
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import ElementPlus from 'unplugin-element-plus/vite'
+const path = require('path')
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -15,6 +16,7 @@ export default defineConfig({
     }
   },
   build:{
-    outDir:'docs'
+    outDir:'docs',
+    assetsDir:path.resolve(__dirname, './docs'),
   }
 })
