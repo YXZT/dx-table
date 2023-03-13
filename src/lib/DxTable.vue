@@ -35,7 +35,6 @@ let tableData = ref<any>([])
 watch([() => props.data, () => props.request], () => {
   refresh(true)
 })
-// let localPagination.value = reactive(Object.assign({ total: 0, pageSize: 20, pageNum: 1 }, props.pagination))
 let localPagination = ref({ total: 0, pageSize: 20, pageNum: 1 })
 let pagination = computed(() => {
   if (props.needInfinite) return undefined

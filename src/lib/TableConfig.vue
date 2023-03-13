@@ -18,7 +18,7 @@
 </template>
 <script setup lang="ts">
 import { ArchiveSettings16Regular } from '@vicons/fluent'
-import { ref, computed, h, onMounted, nextTick } from 'vue'
+import { ref, computed, h, nextTick } from 'vue'
 import { NDataTable, NDrawer, NDrawerContent, NButton, NIcon, NSwitch, NRadioGroup, NRadioButton } from "naive-ui";
 import type { columnSetting } from "@/interface";
 import Sortable from "sortablejs";
@@ -57,10 +57,9 @@ const active = ref(false)
 const activate = () => {
   dataSetting.value = props.tableCols
   active.value = true
-  dataTable.value || nextTick(() => {
+  dataTable.value && nextTick(() => {
     columnDrop()
   })
-
 }
 const tableEl = computed(() => {
   return props.tableRef && props.tableRef.$el
@@ -79,7 +78,6 @@ function changeColFixed(e: 'left' | 'none' | 'right', col: any) {
 const dataTable = ref<InstanceType<typeof NDataTable> | null>(null)
 function columnDrop() {
   const el = dataTable?.value?.$el
-
   const wrapperTr = el.querySelector(".n-data-table-tbody");
   Sortable.create(wrapperTr, {
     animation: 180,
@@ -93,8 +91,5 @@ function columnDrop() {
     }
   });
 }
-onMounted(() => {
-  // columnDrop()
-})
 </script>
-<style ></style>
+<style></style>
