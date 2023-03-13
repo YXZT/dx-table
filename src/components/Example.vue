@@ -7,14 +7,14 @@
         <n-card embedded :bordered="false">
           基于Naive UI的数据表格Data
           Table组件，使用属性透传保留了原本的有的功能，在此基础上做了一些功能扩展。增加了列顺序、列显隐、列固定的自定义配置，为了让程序正确识别，需要在colums中设置列的key，不能重复。
-          刷新网页后配置就丢失了怎么行！只要给每个表格一个独特的save-name就可以找到啦。
+          刷新网页后配置就丢失了怎么行！只要给每个表格一个独特的store-name就可以找到啦。
         </n-card>
       </n-tab-pane>
       <n-tab-pane :name="2" tab="长列表">
         <dx-table :columns="columns" :data="data" virtual-scroll :style="{ height: `400px` }" flex-height :scroll-x="1200"
           storeName="test_table2" />
         <n-card embedded :bordered="false">
-          只要添加virtual-scroll属性，就能让表格支持虚拟滚动，处理大量数据的卡顿问题,目前开源的组件库里我比较了下这个做的最好，所以我才选择用这个组件库封装的。
+          只要添加virtual-scroll属性，就能让表格支持虚拟滚动，处理大量数据的卡顿问题,目前开源的组件库里我比较了下这个做的最好，所以我才选择用这个组件库封装。
         </n-card>
       </n-tab-pane>
       <n-tab-pane :name="3" tab="异步获取">
@@ -31,8 +31,7 @@
           无限滚动也是常见的需求，添加needInfinite就可以自动监测滚动和发送的请求啦。或许可以把监测的时间提前，这样提前请求，加上去掉load动画，用户体验会更好点。
         </n-card>
       </n-tab-pane>
-    </n-tabs>
-
+    </n-tabs>   
   </div>
 </template>
 
