@@ -91,6 +91,10 @@ function loadTbData(request: requestFnType, isAppend: Boolean, pagination?: pagi
     } else {
       tableData.value = records
     }
+  }).catch(()=>{
+    loadFlag.value = false
+    tableData.value = []
+    localPagination.value = { total: 0, pageSize: 20, pageNum: 1 }
   })
 }
 function loadData(pagination?: paginationType) {
@@ -199,9 +203,9 @@ function refresh(reset?: boolean) {
   }
   loadData();
 }
-defineExpose([
+defineExpose({
   refresh
-])
+})
 </script>
  
 <style scoped></style>

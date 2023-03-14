@@ -31,7 +31,7 @@
           无限滚动也是常见的需求，添加needInfinite就可以自动监测滚动和发送的请求啦。或许可以把监测的时间提前，这样提前请求，加上去掉load动画，用户体验会更好点。
         </n-card>
       </n-tab-pane>
-    </n-tabs>   
+    </n-tabs>
   </div>
 </template>
 
@@ -62,7 +62,6 @@ watch(type, (val) => {
     data.value = mockData
     request.value = undefined
     columns.value = mockColumns
-
   } else if (val === 3) {
     data.value = undefined
     request.value = mockRequest
