@@ -2,13 +2,13 @@
   <TableConfig :tableRef="dataTable" :tableCols="localColums" @change-show="changeCol" @change-sequence="changeSequence"
     @change-fixed="changeCol"></TableConfig>
   <NDataTable v-bind="$attrs" :columns="TableColumns" :data="tableData" ref="dataTable" :loading="loadFlag"
-    @scroll="scroll" :pagination="pagination" remote @update:page-size="handleSizeChange"
+    @scroll="scroll" :pagination="pagination" remote @update:page-size="handleSizeChange" @update:checked-row-keys="handleCheck"
     @update:page="handlePageChange" />
 </template>
  
 <script setup lang="ts">
 import type { ColumnProps, columnSetting, paginationType, requestFnType } from "@/interface";
-import { NDataTable } from 'naive-ui'
+import { NDataTable, type DataTableRowKey } from 'naive-ui'
 import type { DataTableProps, DataTableColumn } from 'naive-ui'
 import TableConfig from './TableConfig.vue'
 import { ref, watch, computed } from 'vue'
@@ -22,13 +22,15 @@ interface tablePropType extends Omit<DataTableProps, 'columns'> {
   needInfinite?: boolean,
   storeName?: string,
   isPagination?: boolean,
+  checkedRowKeys?:  Array<any>,
+  checkedRows?:  Array<any>,
 }
 const props = withDefaults(defineProps<tablePropType>(), {
   immediateRequest: false,
   needInfinite: false,
   isPagination: false,
 })
-const emits = defineEmits(['refreshed'])
+const emits = defineEmits(['refreshed','update:checkedRowKeys','update:checkedRows'])
 // 是否开始加载
 const loadFlag = ref(false)
 let tableData = ref<any>([])
@@ -203,6 +205,11 @@ function refresh(reset?: boolean) {
   }
   loadData();
 }
+const handleCheck:DataTableProps['onUpdate:checkedRowKeys'] = (rowKeys,rows,meta) =>{
+  emits('update:checkedRowKeys',rowKeys)
+  emits('update:checkedRows',rows)
+}
+
 defineExpose({
   refresh
 })

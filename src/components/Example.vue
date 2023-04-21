@@ -3,7 +3,7 @@
     <n-tabs v-model:value="type">
       <n-tab-pane :name="1" tab="简单数据">
         <dx-table :columns="columns" :data="data" virtual-scroll :style="{ height: `400px` }" flex-height :scroll-x="1200"
-          storeName="test_table1" />
+          storeName="test_table1" v-model:checked-row-keys="checkedRowKeys" v-model:checkedRows="checkedRows"/>
         <n-card embedded :bordered="false">
           基于Naive UI的数据表格Data
           Table组件，使用属性透传保留了原本的有的功能，在此基础上做了一些功能扩展。增加了列顺序、列显隐、列固定的自定义配置，为了让程序正确识别，需要在colums中设置列的key，不能重复。
@@ -51,6 +51,9 @@ import {
 const data = ref<any[] | undefined>(undefined)
 const columns = ref(mockColumns)
 const request = ref<requestFnType | undefined>(undefined)
+const checkedRowKeys = ref<Array<string | number>>([])
+const checkedRows = ref<Array<string | number>>([])
+  
 let type = ref(1)
 watch(type, (val) => {
   if (val === 1) {
