@@ -27,11 +27,18 @@ const generateData = (
       {
         id: `${prefix}${rowIndex}`,
         parentId: null,
+        key: rowIndex,
       }
     )
   })
 
-const columns = generateColumns(10)
+const columns = [{
+  type: 'selection',
+  fixed: 'left',
+  key: 'selection',
+  resizable: true,
+  isShow: true,
+}, ...generateColumns(10)]
 const data = generateData(columns, 1000)
 type requestFnType = (params: any) => Promise<resType>
 const mockRequest: requestFnType = ({ pageNum, pageSize }) => {

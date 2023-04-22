@@ -1,9 +1,13 @@
 <template>
   <TableConfig :tableRef="dataTable" :tableCols="localColums" @change-show="changeCol" @change-sequence="changeSequence"
-    @change-fixed="changeCol"></TableConfig>
+    @change-fixed="changeCol">
+    <slot name="title">
+      <div v-show="props.checkedRowKeys?.length">已经选择：{{ props.checkedRowKeys?.length }} 条</div>
+    </slot>
+  </TableConfig>
   <NDataTable v-bind="$attrs" :columns="TableColumns" :data="tableData" ref="dataTable" :loading="loadFlag"
-    @scroll="scroll" :pagination="pagination" remote @update:page-size="handleSizeChange" @update:checked-row-keys="handleCheck"
-    @update:page="handlePageChange" />
+    @scroll="scroll" :pagination="pagination" remote @update:page-size="handleSizeChange" @update:page="handlePageChange"
+    :row-props="tableRowProps" :checkedRowKeys="props.checkedRowKeys" @update-checked-row-keys="updateRowKeys" />
 </template>
  
 <script setup lang="ts">
@@ -13,6 +17,7 @@ import type { DataTableProps, DataTableColumn } from 'naive-ui'
 import TableConfig from './TableConfig.vue'
 import { ref, watch, computed } from 'vue'
 import { setStore } from "@/utils/store";
+import { deepCopy } from "@/utils";
 
 interface tablePropType extends Omit<DataTableProps, 'columns'> {
   data?: Array<any>,
@@ -22,15 +27,16 @@ interface tablePropType extends Omit<DataTableProps, 'columns'> {
   needInfinite?: boolean,
   storeName?: string,
   isPagination?: boolean,
-  checkedRowKeys?:  Array<any>,
-  checkedRows?:  Array<any>,
+  checkedRowKeys?: DataTableProps['checkedRowKeys'],
+  checkedRows?: Array<any>,
+  rowProps?: DataTableProps['rowProps']
 }
 const props = withDefaults(defineProps<tablePropType>(), {
   immediateRequest: false,
   needInfinite: false,
   isPagination: false,
 })
-const emits = defineEmits(['refreshed','update:checkedRowKeys','update:checkedRows'])
+const emits = defineEmits(['refreshed', 'update:checkedRowKeys', 'update:checkedRows'])
 // 是否开始加载
 const loadFlag = ref(false)
 let tableData = ref<any>([])
@@ -93,7 +99,7 @@ function loadTbData(request: requestFnType, isAppend: Boolean, pagination?: pagi
     } else {
       tableData.value = records
     }
-  }).catch(()=>{
+  }).catch(() => {
     loadFlag.value = false
     tableData.value = []
     localPagination.value = { total: 0, pageSize: 20, pageNum: 1 }
@@ -205,11 +211,46 @@ function refresh(reset?: boolean) {
   }
   loadData();
 }
-const handleCheck:DataTableProps['onUpdate:checkedRowKeys'] = (rowKeys,rows,meta) =>{
-  emits('update:checkedRowKeys',rowKeys)
-  emits('update:checkedRows',rows)
+const updateRowKeys: DataTableProps['onUpdate:checkedRowKeys'] = (rowKeys, rows, meta) => {
+  if (loadFlag.value) return
+  if (meta.action === 'checkAll') {
+    const data = deepCopy<typeof tableData>(tableData.value)
+    const keys = data.map((dataRow: any) => dataRow.key)
+    changeRowKeys(keys, data)
+  } else if (meta.action === 'uncheckAll') {
+    changeRowKeys([], [])
+  }
 }
-
+const changeRowKeys = (rowKeys: DataTableRowKey[], checkedRows: any[]) => {
+  emits('update:checkedRowKeys', rowKeys)
+  emits('update:checkedRows', checkedRows)
+}
+let tableRowProps = (row: ColumnProps<any>) => {
+  return {
+    style: 'cursor: pointer;',
+    onClick: () => {
+      if (!props.checkedRowKeys) return
+      if (!props.checkedRows) return
+      if (loadFlag.value) return
+      const isInIndex = props.checkedRowKeys.findIndex(key => key === row.key)
+      const checkedRowKeys = deepCopy<typeof props.checkedRowKeys>(props.checkedRowKeys)
+      const checkedRows = deepCopy<typeof props.checkedRows>(props.checkedRows)
+      if (isInIndex > -1) {
+        checkedRowKeys.splice(isInIndex, 1)
+        checkedRows.splice(isInIndex, 1)
+      } else {
+        checkedRowKeys.push(row.key)
+        checkedRows.push(row)
+      }
+      changeRowKeys(checkedRowKeys, checkedRows)
+    }
+  }
+}
+props.checkedRowKeys && watch(() => props.checkedRowKeys, (val) => {
+  const data = deepCopy<typeof tableData>(tableData.value)
+  const newData = data.filter((row: any) => val?.includes(row.key))
+  emits('update:checkedRows', newData)
+})
 defineExpose({
   refresh
 })

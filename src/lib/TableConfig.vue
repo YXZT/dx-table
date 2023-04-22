@@ -1,13 +1,18 @@
 <template >
   <div>
-    <n-button @click="activate" circle>
-      <template #icon>
-        <n-icon>
-          <ArchiveSettings16Regular />
-        </n-icon>
-      </template>
-    </n-button>
-    <n-drawer v-model:show="active" :width="500" placement="right" :trap-focus="false" :block-scroll="false"
+    <div class="table-title">
+      <div class="table-info">
+        <slot></slot>
+      </div>
+      <n-button @click="activate" circle>
+        <template #icon>
+          <n-icon>
+            <ArchiveSettings16Regular />
+          </n-icon>
+        </template>
+      </n-button>
+    </div>
+    <n-drawer v-model:show="isActive" :width="500" placement="right" :trap-focus="false" :block-scroll="false"
       :to="tableEl">
       <n-drawer-content title="表格列设置">
         <n-data-table ref="dataTable" :bordered="false" :single-line="false" :columns="columnsSetting"
@@ -53,10 +58,10 @@ const columnsSetting = ref([{
     return h(NRadioGroup, { value: fixed, 'onUpdateValue': (e: any) => changeColFixed(e, row) }, buttons)
   }
 }])
-const active = ref(false)
+const isActive = ref(false)
 const activate = () => {
   dataSetting.value = props.tableCols
-  active.value = true
+  isActive.value = true
   dataTable.value && nextTick(() => {
     columnDrop()
   })
@@ -92,4 +97,15 @@ function columnDrop() {
   });
 }
 </script>
-<style></style>
+<style scoped>
+.table-title {
+  display: flex;
+  align-items: center;
+  background-color: rgba(250, 250, 252, 1);
+  padding: 0 12px;
+}
+
+.table-info {
+  width: 100%;
+}
+</style>

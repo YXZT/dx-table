@@ -3,7 +3,8 @@
     <n-tabs v-model:value="type">
       <n-tab-pane :name="1" tab="简单数据">
         <dx-table :columns="columns" :data="data" virtual-scroll :style="{ height: `400px` }" flex-height :scroll-x="1200"
-          storeName="test_table1" v-model:checked-row-keys="checkedRowKeys" v-model:checkedRows="checkedRows"/>
+          storeName="test_table1" :row-props="rowProps" />
+
         <n-card embedded :bordered="false">
           基于Naive UI的数据表格Data
           Table组件，使用属性透传保留了原本的有的功能，在此基础上做了一些功能扩展。增加了列顺序、列显隐、列固定的自定义配置，为了让程序正确识别，需要在colums中设置列的key，不能重复。
@@ -12,7 +13,10 @@
       </n-tab-pane>
       <n-tab-pane :name="2" tab="长列表">
         <dx-table :columns="columns" :data="data" virtual-scroll :style="{ height: `400px` }" flex-height :scroll-x="1200"
-          storeName="test_table2" />
+          storeName="test_table2" v-model:checked-row-keys="checkedRowKeys" v-model:checkedRows="checkedRows" />
+        <div>{{ checkedRowKeys }}</div>
+        <div>{{ checkedRows }}</div>
+        <n-button @click="setSelected">打钩</n-button>
         <n-card embedded :bordered="false">
           只要添加virtual-scroll属性，就能让表格支持虚拟滚动，处理大量数据的卡顿问题,目前开源的组件库里我比较了下这个做的最好，所以我才选择用这个组件库封装。
         </n-card>
@@ -38,7 +42,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
 import DxTable from "../lib/DxTable.vue";
-import { NTabs, NTabPane, NCard } from 'naive-ui'
+import { NTabs, NTabPane, NCard, NButton } from 'naive-ui'
 import type { requestFnType } from "@/interface";
 import {
   mockColumns,
@@ -52,8 +56,8 @@ const data = ref<any[] | undefined>(undefined)
 const columns = ref(mockColumns)
 const request = ref<requestFnType | undefined>(undefined)
 const checkedRowKeys = ref<Array<string | number>>([])
-const checkedRows = ref<Array<string | number>>([])
-  
+const checkedRows = ref<Array<any>>([])
+
 let type = ref(1)
 watch(type, (val) => {
   if (val === 1) {
@@ -77,7 +81,17 @@ watch(type, (val) => {
 }, {
   immediate: true
 })
-
+const rowProps = (row: simpleDataType) => {
+  return {
+    style: 'cursor: pointer;',
+    onClick: () => {
+      console.log(row.name)
+    }
+  }
+}
+function setSelected() {
+  checkedRowKeys.value = [1, 2]
+}
 </script>
 
 <style scoped></style>
