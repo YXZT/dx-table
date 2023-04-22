@@ -49,6 +49,7 @@ import {
   mockRequest,
   simpleColumns,
   simpleData,
+  type simpleDataType
 } from "./request";
 
 const data = ref<any[] | undefined>(undefined)

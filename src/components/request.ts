@@ -60,7 +60,7 @@ const mockRequest: requestFnType = ({ pageNum, pageSize }) => {
   return res
 }
 
-type simpleDataType = {
+export type simpleDataType = {
   key: number,
   name: string,
   age: number,
@@ -74,7 +74,7 @@ const simpleColumns: ColumnProps<simpleDataType>[] = [
     key: 'selection',
     resizable: true,
     isShow: true,
-    multiple: false,
+    // multiple: false,
   },
   {
     title: 'Name',

@@ -11,14 +11,13 @@
 </template>
  
 <script setup lang="ts">
-import type { ColumnProps, columnSetting, paginationType, requestFnType,tableCheckType } from "@/interface";
+import type { ColumnProps, columnSetting, paginationType, requestFnType, tableCheckType } from "@/interface";
 import { NDataTable, type DataTableRowKey } from 'naive-ui'
 import type { DataTableProps, DataTableColumn } from 'naive-ui'
 import TableConfig from './TableConfig.vue'
 import { ref, watch, computed } from 'vue'
 import { setStore } from "@/utils/store";
-import { deepCopy } from "@/utils";
-
+import { useTableSelect } from "@/hooks/useTableSelect";
 interface tablePropType extends Omit<DataTableProps, 'columns'> {
   data?: Array<any>,
   request?: requestFnType,
@@ -114,7 +113,7 @@ function loadData(pagination?: paginationType) {
   loadTbData(props.request, false, pagination)
 }
 
-let tableCheck = ref<tableCheckType>(null)
+
 // 追踪传过来原本的prop并加以改造
 const localColums = ref<columnSetting<any>[]>([])
 watch(() => props.columns, (newVal) => {
@@ -136,21 +135,7 @@ watch(() => props.columns, (newVal) => {
   immediate: true
 })
 
-watch(() => props.columns, (newVal) => {
-  let type:tableCheckType = null
-  const col = newVal.find(col=>col.type === 'selection')
-  if(col){
-    if((col as any).multiple===false){
-      type = 'radio'
-    }else{
-      type = 'checkBox'
-    }
-  }
-  tableCheck.value = type
-}, {
-  immediate: true,
-  deep:false,
-})
+
 
 const TableColumns = computed(() => {
   const arr: DataTableColumn<any>[] = localColums.value.filter(
@@ -231,46 +216,9 @@ function refresh(reset?: boolean) {
   }
   loadData();
 }
-const updateRowKeys: DataTableProps['onUpdate:checkedRowKeys'] = (rowKeys, rows, meta) => {
-  if (loadFlag.value) return
-  if (meta.action === 'checkAll') {
-    const data = deepCopy<typeof tableData>(tableData.value)
-    const keys = data.map((dataRow: any) => dataRow.key)
-    changeRowKeys(keys, data)
-  } else if (meta.action === 'uncheckAll') {
-    changeRowKeys([], [])
-  }
-}
-const changeRowKeys = (rowKeys: DataTableRowKey[], checkedRows: any[]) => {
-  emits('update:checkedRowKeys', rowKeys)
-  emits('update:checkedRows', checkedRows)
-}
-let tableRowProps = (row: ColumnProps<any>) => {
-  return {
-    style: 'cursor: pointer;',
-    onClick: () => {
-      if (!props.checkedRowKeys) return
-      if (!props.checkedRows) return
-      if (loadFlag.value) return
-      const isInIndex = props.checkedRowKeys.findIndex(key => key === row.key)
-      let checkedRowKeys = deepCopy<typeof props.checkedRowKeys>(props.checkedRowKeys)
-      let checkedRows = deepCopy<typeof props.checkedRows>(props.checkedRows)
-      if (isInIndex > -1) {
-        checkedRowKeys.splice(isInIndex, 1)
-        checkedRows.splice(isInIndex, 1)
-      } else {
-        if(tableCheck.value==='checkBox'){
-          checkedRowKeys.push(row.key)
-          checkedRows.push(row)
-        }else{
-          checkedRowKeys = [row.key]
-          checkedRows = [row]
-        }
-      }
-      changeRowKeys(checkedRowKeys, checkedRows)
-    }
-  }
-}
+const options = { checkedRowKeys: props.checkedRowKeys, checkedRows: props.checkedRows as any[], loadFlag: loadFlag.value, tableData: tableData.value, columns: props.columns ,emits}
+const { updateRowKeys,
+  tableRowProps } = useTableSelect(options)
 // props.checkedRowKeys && watch(() => props.checkedRowKeys, (val) => {
 //   const data = deepCopy<typeof tableData>(tableData.value)
 //   const newData = data.filter((row: any) => val?.includes(row.key))
