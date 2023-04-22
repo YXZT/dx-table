@@ -74,6 +74,7 @@ const simpleColumns: ColumnProps<simpleDataType>[] = [
     key: 'selection',
     resizable: true,
     isShow: true,
+    multiple: false,
   },
   {
     title: 'Name',

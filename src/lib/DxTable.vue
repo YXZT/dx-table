@@ -11,7 +11,7 @@
 </template>
  
 <script setup lang="ts">
-import type { ColumnProps, columnSetting, paginationType, requestFnType } from "@/interface";
+import type { ColumnProps, columnSetting, paginationType, requestFnType,tableCheckType } from "@/interface";
 import { NDataTable, type DataTableRowKey } from 'naive-ui'
 import type { DataTableProps, DataTableColumn } from 'naive-ui'
 import TableConfig from './TableConfig.vue'
@@ -113,6 +113,8 @@ function loadData(pagination?: paginationType) {
   if (!props.request) return
   loadTbData(props.request, false, pagination)
 }
+
+let tableCheck = ref<tableCheckType>(null)
 // 追踪传过来原本的prop并加以改造
 const localColums = ref<columnSetting<any>[]>([])
 watch(() => props.columns, (newVal) => {
@@ -129,9 +131,27 @@ watch(() => props.columns, (newVal) => {
   let setting = undefined
   columsResult = setting ? ExtractConfiguration(columsResult, setting) : columsResult
   localColums.value = columsResult
+
 }, {
   immediate: true
 })
+
+watch(() => props.columns, (newVal) => {
+  let type:tableCheckType = null
+  const col = newVal.find(col=>col.type === 'selection')
+  if(col){
+    if((col as any).multiple===false){
+      type = 'radio'
+    }else{
+      type = 'checkBox'
+    }
+  }
+  tableCheck.value = type
+}, {
+  immediate: true,
+  deep:false,
+})
+
 const TableColumns = computed(() => {
   const arr: DataTableColumn<any>[] = localColums.value.filter(
     col => col.isShow,
@@ -233,24 +253,30 @@ let tableRowProps = (row: ColumnProps<any>) => {
       if (!props.checkedRows) return
       if (loadFlag.value) return
       const isInIndex = props.checkedRowKeys.findIndex(key => key === row.key)
-      const checkedRowKeys = deepCopy<typeof props.checkedRowKeys>(props.checkedRowKeys)
-      const checkedRows = deepCopy<typeof props.checkedRows>(props.checkedRows)
+      let checkedRowKeys = deepCopy<typeof props.checkedRowKeys>(props.checkedRowKeys)
+      let checkedRows = deepCopy<typeof props.checkedRows>(props.checkedRows)
       if (isInIndex > -1) {
         checkedRowKeys.splice(isInIndex, 1)
         checkedRows.splice(isInIndex, 1)
       } else {
-        checkedRowKeys.push(row.key)
-        checkedRows.push(row)
+        if(tableCheck.value==='checkBox'){
+          checkedRowKeys.push(row.key)
+          checkedRows.push(row)
+        }else{
+          checkedRowKeys = [row.key]
+          checkedRows = [row]
+        }
       }
       changeRowKeys(checkedRowKeys, checkedRows)
     }
   }
 }
-props.checkedRowKeys && watch(() => props.checkedRowKeys, (val) => {
-  const data = deepCopy<typeof tableData>(tableData.value)
-  const newData = data.filter((row: any) => val?.includes(row.key))
-  emits('update:checkedRows', newData)
-})
+// props.checkedRowKeys && watch(() => props.checkedRowKeys, (val) => {
+//   const data = deepCopy<typeof tableData>(tableData.value)
+//   const newData = data.filter((row: any) => val?.includes(row.key))
+//   emits('update:checkedRows', newData)
+// })
+// todo useTableSelect 配置，是否显示input列，是多选还是单选，与键盘快捷键绑定
 defineExpose({
   refresh
 })

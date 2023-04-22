@@ -25,3 +25,5 @@ export type resType = {
   data?: resDataType,
 }
 export type requestFnType = (params: any) => Promise<resType>
+
+export type tableCheckType = null | 'checkBox' | 'radio'
