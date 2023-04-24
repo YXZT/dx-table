@@ -15,9 +15,10 @@ import type { ColumnProps, columnSetting, paginationType, requestFnType, tableCh
 import { NDataTable, type DataTableRowKey } from 'naive-ui'
 import type { DataTableProps, DataTableColumn } from 'naive-ui'
 import TableConfig from './TableConfig.vue'
-import { ref, watch, computed } from 'vue'
+import { ref, watch, computed, toRef } from 'vue'
 import { setStore } from "@/utils/store";
 import { useTableSelect } from "@/hooks/useTableSelect";
+import { deepCopy } from "@/utils";
 interface tablePropType extends Omit<DataTableProps, 'columns'> {
   data?: Array<any>,
   request?: requestFnType,
@@ -216,15 +217,16 @@ function refresh(reset?: boolean) {
   }
   loadData();
 }
-const options = { checkedRowKeys: props.checkedRowKeys, checkedRows: props.checkedRows as any[], loadFlag: loadFlag.value, tableData: tableData.value, columns: props.columns ,emits}
-const { updateRowKeys,
-  tableRowProps } = useTableSelect(options)
+const checkedRowKeysRef = toRef(props, 'checkedRowKeys')
+const options = { checkedRowKeys: checkedRowKeysRef, checkedRows: props.checkedRows as any[], loadFlag: loadFlag.value, tableData: tableData.value, columns: props.columns, emits }
+const { updateRowKeys, tableRowProps } = useTableSelect(options)
 // props.checkedRowKeys && watch(() => props.checkedRowKeys, (val) => {
 //   const data = deepCopy<typeof tableData>(tableData.value)
 //   const newData = data.filter((row: any) => val?.includes(row.key))
 //   emits('update:checkedRows', newData)
 // })
-// todo useTableSelect 配置，是否显示input列，是多选还是单选，与键盘快捷键绑定
+// todo 1、props有key就watch没有就不watch，2、props传参，单选或多选，3、点击样式修改
+// todo 键盘快捷键
 defineExpose({
   refresh
 })

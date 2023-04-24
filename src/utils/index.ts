@@ -1,3 +1,5 @@
+import { isRef,ref,type Ref } from "vue";
+
 export function deepCopy<T>(obj: T): T {
   if (typeof obj !== 'object' || obj === null) {
     return obj;
@@ -10,4 +12,12 @@ export function deepCopy<T>(obj: T): T {
   });
 
   return copy as T;
+}
+
+export function getRef<T>(a: T):Ref<T> {
+  if (isRef(a)) {
+    return a
+  } else {
+    return ref(a)
+  }
 }
