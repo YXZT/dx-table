@@ -1,5 +1,5 @@
 import { ref, watch } from 'vue';
-import { deepCopy, getRef } from "@/utils";
+import { deepCopy } from "@/utils";
 import type { ColumnProps, tableCheckType } from "@/interface";
 import type { DataTableProps } from 'naive-ui'
 import type { DataTableRowKey } from 'naive-ui'
@@ -14,7 +14,7 @@ type hookType = {
 // 处理表格的选择逻辑
 export function useTableSelect(options: hookType) {
   const { checkedRowKeys: checkedRowKeysRef, checkedRows, loadFlag, tableData, columns, emits } = options
-  const checkedRowKeys = getRef<typeof checkedRowKeysRef>(checkedRowKeysRef)
+  const checkedRowKeys = ref(checkedRowKeysRef)
   const tableCheck = ref<tableCheckType>(null)
   const updateRowKeys: DataTableProps['onUpdate:checkedRowKeys'] = (rowKeys, rows, meta) => {
     if (loadFlag) return

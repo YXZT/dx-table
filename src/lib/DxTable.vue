@@ -11,14 +11,13 @@
 </template>
  
 <script setup lang="ts">
-import type { ColumnProps, columnSetting, paginationType, requestFnType, tableCheckType } from "@/interface";
-import { NDataTable, type DataTableRowKey } from 'naive-ui'
+import type { ColumnProps, columnSetting, paginationType, requestFnType } from "@/interface";
+import { NDataTable } from 'naive-ui'
 import type { DataTableProps, DataTableColumn } from 'naive-ui'
 import TableConfig from './TableConfig.vue'
 import { ref, watch, computed, toRef } from 'vue'
 import { setStore,getStore } from "@/utils/store";
 import { useTableSelect } from "@/hooks/useTableSelect";
-import { deepCopy } from "@/utils";
 interface tablePropType extends Omit<DataTableProps, 'columns'> {
   data?: Array<any>,
   request?: requestFnType,
@@ -229,7 +228,7 @@ function refresh(reset?: boolean) {
   loadData();
 }
 const checkedRowKeysRef = toRef(props, 'checkedRowKeys')
-const options = { checkedRowKeys: checkedRowKeysRef, checkedRows: props.checkedRows as any[], loadFlag: loadFlag.value, tableData: tableData.value, columns: props.columns, emits }
+const options = { checkedRowKeys: checkedRowKeysRef, checkedRows: props.checkedRows, loadFlag: loadFlag.value, tableData: tableData.value, columns: props.columns, emits }
 const { updateRowKeys, tableRowProps } = useTableSelect(options)
 // props.checkedRowKeys && watch(() => props.checkedRowKeys, (val) => {
 //   const data = deepCopy<typeof tableData>(tableData.value)

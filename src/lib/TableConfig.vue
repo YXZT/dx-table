@@ -126,10 +126,7 @@ function resetConf(){
 .table-info {
   width: 100%;
 }
-
-::v-deep{
-  .n-drawer-header__main{
-    flex:1
-  }
+:deep(.n-drawer-header__main){
+  flex:1
 }
 </style>
