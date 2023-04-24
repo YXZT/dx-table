@@ -15,7 +15,9 @@
       </n-tab-pane>
       <n-tab-pane :name="2" tab="长列表">
         <dx-table :columns="columns" :data="data" virtual-scroll :style="{ height: `400px` }" flex-height :scroll-x="1200"
-          storeName="test_table2"/>
+          storeName="test_table2" v-model:checked-row-keys="checkedRowKeys2" v-model:checkedRows="checkedRows2"/>
+          <div>{{ checkedRowKeys2 }}</div>
+          <div>{{ checkedRows2 }}</div>
         <n-card embedded :bordered="false">
           只要添加virtual-scroll属性，就能让表格支持虚拟滚动，处理大量数据的卡顿问题,目前开源的组件库里我比较了下这个做的最好，所以我才选择用这个组件库封装。
         </n-card>
@@ -57,7 +59,8 @@ const columns = ref(mockColumns)
 const request = ref<requestFnType | undefined>(undefined)
 const checkedRowKeys = ref<Array<string | number>>([])
 const checkedRows = ref<Array<any>>([])
-
+const checkedRowKeys2 = ref<Array<string | number>>([])
+const checkedRows2 = ref<Array<any>>([])
 let type = ref(1)
 watch(type, (val) => {
   if (val === 1) {

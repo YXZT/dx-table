@@ -2,12 +2,12 @@
   <TableConfig :tableRef="dataTable" :tableCols="localColums" @change-show="changeCol" @change-sequence="changeSequence" @reset-conf="resetConf"
     @change-fixed="changeCol">
     <slot name="title">
-      <div v-show="props.checkedRowKeys?.length">已经选择：{{ props.checkedRowKeys?.length }} 条</div>
+      <div v-show="checkedRowKeysRef?.length">已经选择：{{ checkedRowKeysRef?.length }} 条</div>
     </slot>
   </TableConfig>
   <NDataTable v-bind="$attrs" :columns="TableColumns" :data="tableData" ref="dataTable" :loading="loadFlag"
     @scroll="scroll" :pagination="pagination" remote @update:page-size="handleSizeChange" @update:page="handlePageChange"
-    :row-props="tableRowProps" :checkedRowKeys="props.checkedRowKeys" @update-checked-row-keys="updateRowKeys" />
+    :row-props="tableRowProps" :checkedRowKeys="checkedRowKeysRef" @update-checked-row-keys="updateRowKeys" />
 </template>
  
 <script setup lang="ts">
@@ -15,8 +15,9 @@ import type { ColumnProps, columnSetting, paginationType, requestFnType } from "
 import { NDataTable } from 'naive-ui'
 import type { DataTableProps, DataTableColumn } from 'naive-ui'
 import TableConfig from './TableConfig.vue'
-import { ref, watch, computed, toRef } from 'vue'
+import { ref, watch, computed } from 'vue'
 import { setStore,getStore } from "@/utils/store";
+import { deepCopy } from "@/utils";
 import { useTableSelect } from "@/hooks/useTableSelect";
 interface tablePropType extends Omit<DataTableProps, 'columns'> {
   data?: Array<any>,
@@ -30,12 +31,21 @@ interface tablePropType extends Omit<DataTableProps, 'columns'> {
   checkedRows?: Array<any>,
   rowProps?: DataTableProps['rowProps']
 }
+
 const props = withDefaults(defineProps<tablePropType>(), {
   immediateRequest: false,
   needInfinite: false,
   isPagination: false,
 })
 const emits = defineEmits(['refreshed', 'update:checkedRowKeys', 'update:checkedRows'])
+const checkedRowKeysRef = props.checkedRowKeys ? ref(props.checkedRowKeys) : ref([])
+const checkedRowsRef = props.checkedRows ? ref(props.checkedRows) : ref([])
+props.checkedRowKeys && watch(() => props.checkedRowKeys, (val) => {
+  const data = deepCopy<typeof tableData>(tableData.value)
+  const newData = data.filter((row: any) => val?.includes(row.key))
+  checkedRowKeysRef.value = deepCopy<typeof val>(val)
+  emits('update:checkedRows', newData)
+})
 // 是否开始加载
 const loadFlag = ref(false)
 let tableData = ref<any>([])
@@ -144,8 +154,8 @@ const resetConf = ()=>{
     }
     return newCol
   })
-  needStore.value && setConf()
   localColums.value = columsResult
+  needStore.value && setConf()
 }
 
 const TableColumns = computed(() => {
@@ -227,8 +237,7 @@ function refresh(reset?: boolean) {
   }
   loadData();
 }
-const checkedRowKeysRef = toRef(props, 'checkedRowKeys')
-const options = { checkedRowKeys: checkedRowKeysRef, checkedRows: props.checkedRows, loadFlag: loadFlag.value, tableData: tableData.value, columns: props.columns, emits }
+const options = { checkedRowKeys: checkedRowKeysRef, checkedRows: checkedRowsRef, loadFlag: loadFlag.value, tableData: tableData.value, columns: props.columns, emits }
 const { updateRowKeys, tableRowProps } = useTableSelect(options)
 // props.checkedRowKeys && watch(() => props.checkedRowKeys, (val) => {
 //   const data = deepCopy<typeof tableData>(tableData.value)
