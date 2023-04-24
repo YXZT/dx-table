@@ -14,9 +14,17 @@
     </div>
     <n-drawer v-model:show="isActive" :width="500" placement="right" :trap-focus="false" :block-scroll="false"
       :to="tableEl">
-      <n-drawer-content title="表格列设置">
-        <n-data-table ref="dataTable" :bordered="false" :single-line="false" :columns="columnsSetting"
-          :data="dataSetting" />
+      <n-drawer-content>
+        <template #header>
+          <div class="s-flex-between">
+            <div>表格列设置</div>
+            <n-button size="small" @click="resetConf">
+              重置
+            </n-button>
+          </div>
+        </template>
+        <n-data-table ref="dataTable" :bordered="false" :single-line="false" :columns="columnsSetting" :data="dataSetting"
+          :rowProps="rowProps" />
       </n-drawer-content>
     </n-drawer>
   </div>
@@ -33,7 +41,7 @@ interface propsType {
   tableCols: columnSetting<any>[],
 }
 const props = defineProps<propsType>()
-const emits = defineEmits(['change-show', 'change-sequence', 'change-fixed'])
+const emits = defineEmits(['change-show', 'change-sequence', 'change-fixed','reset-conf'])
 const dataSetting = ref<columnSetting<any>[]>([])
 const columnsSetting = ref([{
   title: '列名',
@@ -62,7 +70,7 @@ const isActive = ref(false)
 const activate = () => {
   dataSetting.value = props.tableCols
   isActive.value = true
-  dataTable.value && nextTick(() => {
+  !dataTable.value && nextTick(() => {
     columnDrop()
   })
 }
@@ -96,8 +104,18 @@ function columnDrop() {
     }
   });
 }
+const rowProps = () => {
+  return {
+    style: 'cursor: move;',
+  }
+}
+function resetConf(){
+  isActive.value = false
+  emits('reset-conf')
+}
+// todo 重置配置
 </script>
-<style scoped>
+<style scoped lang="scss">
 .table-title {
   display: flex;
   align-items: center;
@@ -107,5 +125,11 @@ function columnDrop() {
 
 .table-info {
   width: 100%;
+}
+
+::v-deep{
+  .n-drawer-header__main{
+    flex:1
+  }
 }
 </style>

@@ -1,5 +1,5 @@
 <template>
-  <TableConfig :tableRef="dataTable" :tableCols="localColums" @change-show="changeCol" @change-sequence="changeSequence"
+  <TableConfig :tableRef="dataTable" :tableCols="localColums" @change-show="changeCol" @change-sequence="changeSequence" @reset-conf="resetConf"
     @change-fixed="changeCol">
     <slot name="title">
       <div v-show="props.checkedRowKeys?.length">已经选择：{{ props.checkedRowKeys?.length }} 条</div>
@@ -16,7 +16,7 @@ import { NDataTable, type DataTableRowKey } from 'naive-ui'
 import type { DataTableProps, DataTableColumn } from 'naive-ui'
 import TableConfig from './TableConfig.vue'
 import { ref, watch, computed, toRef } from 'vue'
-import { setStore } from "@/utils/store";
+import { setStore,getStore } from "@/utils/store";
 import { useTableSelect } from "@/hooks/useTableSelect";
 import { deepCopy } from "@/utils";
 interface tablePropType extends Omit<DataTableProps, 'columns'> {
@@ -40,6 +40,7 @@ const emits = defineEmits(['refreshed', 'update:checkedRowKeys', 'update:checked
 // 是否开始加载
 const loadFlag = ref(false)
 let tableData = ref<any>([])
+const needStore = ref(true)
 watch([() => props.data, () => props.request], () => {
   refresh(true)
 })
@@ -127,16 +128,26 @@ watch(() => props.columns, (newVal) => {
     }
     return newCol
   })
-  // let setting = props.storeName && getStore(props.storeName)
-  let setting = undefined
+  let setting = props.storeName && needStore.value && getStore(props.storeName)
   columsResult = setting ? ExtractConfiguration(columsResult, setting) : columsResult
   localColums.value = columsResult
-
 }, {
   immediate: true
 })
 
-
+const resetConf = ()=>{
+  let columsResult = props.columns.map(col => {
+    let newCol: columnSetting<any> = {
+      ...col,
+      isShow: col.isShow === undefined ? true : col.isShow,
+      fixed: col.fixed === undefined ? 'none' : col.fixed,
+      resizable: col.resizable === undefined ? true : col.resizable,
+    }
+    return newCol
+  })
+  needStore.value && setConf()
+  localColums.value = columsResult
+}
 
 const TableColumns = computed(() => {
   const arr: DataTableColumn<any>[] = localColums.value.filter(
@@ -185,13 +196,13 @@ function changeCol(col: columnSetting<any>) {
   if (index > -1) {
     localColums.value[index] = col
   }
-  setConf()
+  needStore.value && setConf()
 }
 function changeSequence(oldIndex: number, newIndex: number) {
   let temp = localColums.value[oldIndex];
   localColums.value[oldIndex] = localColums.value[newIndex];
   localColums.value[newIndex] = temp;
-  setConf()
+  needStore.value && setConf()
 }
 const scroll: DataTableProps['onScroll'] = (event) => {
   if (!props.needInfinite || !props.request) return;

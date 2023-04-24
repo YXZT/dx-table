@@ -6,3 +6,25 @@
 
   font-weight: normal;
 }
+.s-flex-between {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.s-flex-around {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
+.s-flex{
+  display: flex;
+}
+.s-flex-center{
+  display: flex;
+  align-items: center;
+}
+.s-flex-center2{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
