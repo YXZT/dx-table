@@ -27,8 +27,11 @@ export function useTableSelect(options: hookType) {
     }
   }
   const changeRowKeys = (rowKeys: DataTableRowKey[], checkedRows: any[]) => {
-    emits('update:checkedRowKeys', rowKeys)
+    // emits('update:checkedRowKeys', rowKeys)
     emits('update:checkedRows', checkedRows)
+    checkedRowKeys.value = rowKeys
+    console.log(checkedRowKeys.rowKeys);
+    
   }
   watch(columns, (newVal) => {
     let type: tableCheckType = null
@@ -49,8 +52,10 @@ export function useTableSelect(options: hookType) {
     return {
       style: 'cursor: pointer;',
       onClick: () => {
+        console.log(checkedRowKeys,checkedRows,loadFlag);
+        
         if (!checkedRowKeys.value) return
-        if (!checkedRows) return
+        // if (!checkedRows) return
         if (loadFlag) return
         const isInIndex = checkedRowKeys.value.findIndex(key => key === row.key)
         let _checkedRowKeys = deepCopy<typeof checkedRowKeys.value>(checkedRowKeys.value)
