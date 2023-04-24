@@ -1,4 +1,4 @@
-import { ref, watch } from 'vue';
+import { ref, watch ,unref} from 'vue';
 import { deepCopy, getRef } from "@/utils";
 import type { ColumnProps, tableCheckType } from "@/interface";
 import type { DataTableProps } from 'naive-ui'
@@ -13,8 +13,9 @@ type hookType = {
 }
 // 处理表格的选择逻辑
 export function useTableSelect(options: hookType) {
-  const { checkedRowKeys: checkedRowKeysRef, checkedRows, loadFlag, tableData, columns, emits } = options
+  const { checkedRowKeys: checkedRowKeysRef, checkedRows:checkedRowsRef, loadFlag, tableData, columns, emits } = options
   const checkedRowKeys = getRef<typeof checkedRowKeysRef>(checkedRowKeysRef)
+  const checkedRows = getRef<typeof checkedRowsRef>(checkedRowsRef)
   const tableCheck = ref<tableCheckType>(null)
   const updateRowKeys: DataTableProps['onUpdate:checkedRowKeys'] = (rowKeys, rows, meta) => {
     if (loadFlag) return
@@ -26,12 +27,11 @@ export function useTableSelect(options: hookType) {
       changeRowKeys([], [])
     }
   }
-  const changeRowKeys = (rowKeys: DataTableRowKey[], checkedRows: any[]) => {
-    // emits('update:checkedRowKeys', rowKeys)
-    emits('update:checkedRows', checkedRows)
+  const changeRowKeys = (rowKeys: DataTableRowKey[], rows: any[]) => {
+    emits('update:checkedRowKeys', rowKeys)
+    // emits('update:checkedRows', checkedRows)
     checkedRowKeys.value = rowKeys
-    console.log(checkedRowKeys.rowKeys);
-    
+    // checkedRows.value = rows
   }
   watch(columns, (newVal) => {
     let type: tableCheckType = null
@@ -52,14 +52,14 @@ export function useTableSelect(options: hookType) {
     return {
       style: 'cursor: pointer;',
       onClick: () => {
-        console.log(checkedRowKeys,checkedRows,loadFlag);
-        
         if (!checkedRowKeys.value) return
-        // if (!checkedRows) return
+        if (!checkedRows.value) return
         if (loadFlag) return
         const isInIndex = checkedRowKeys.value.findIndex(key => key === row.key)
         let _checkedRowKeys = deepCopy<typeof checkedRowKeys.value>(checkedRowKeys.value)
-        let _checkedRows = deepCopy<typeof checkedRows>(checkedRows)
+        let _checkedRows = deepCopy<typeof checkedRows.value>(checkedRows.value)
+        console.log(_checkedRows);
+        
         if (isInIndex > -1) {
           _checkedRowKeys.splice(isInIndex, 1)
           _checkedRows.splice(isInIndex, 1)

@@ -38,10 +38,14 @@ const props = withDefaults(defineProps<tablePropType>(), {
   isPagination: false,
 })
 const emits = defineEmits(['refreshed', 'update:checkedRowKeys', 'update:checkedRows'])
-const checkedRowKeysRef = props.checkedRowKeys ? toRef(props, 'checkedRowKeys') : ref([])
-// props.checkedRowKeys && watch(() => props.checkedRowKeys, (val) => {
-//   checkedRowKeysRef.value = val
-// })
+const checkedRowKeysRef = props.checkedRowKeys ? ref(props.checkedRowKeys) : ref([])
+const checkedRowsRef = props.checkedRows ? ref(props.checkedRows) : ref([])
+props.checkedRowKeys && watch(() => props.checkedRowKeys, (val) => {
+  const data = deepCopy<typeof tableData>(tableData.value)
+  const newData = data.filter((row: any) => val?.includes(row.key))
+  checkedRowKeysRef.value = deepCopy<typeof val>(val)
+  emits('update:checkedRows', newData)
+})
 // 是否开始加载
 const loadFlag = ref(false)
 let tableData = ref<any>([])
@@ -233,7 +237,7 @@ function refresh(reset?: boolean) {
   }
   loadData();
 }
-const options = { checkedRowKeys: checkedRowKeysRef, checkedRows: props.checkedRows as any[], loadFlag: loadFlag.value, tableData: tableData.value, columns: props.columns, emits }
+const options = { checkedRowKeys: checkedRowKeysRef, checkedRows: checkedRowsRef, loadFlag: loadFlag.value, tableData: tableData.value, columns: props.columns, emits }
 const { updateRowKeys, tableRowProps } = useTableSelect(options)
 // props.checkedRowKeys && watch(() => props.checkedRowKeys, (val) => {
 //   const data = deepCopy<typeof tableData>(tableData.value)
