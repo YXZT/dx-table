@@ -22,12 +22,12 @@ export function useTableSelect(options: hookType) {
     if (meta.action === 'checkAll') {
       const data = deepCopy<typeof tableData>(tableData)
       const keys = data.map((dataRow: any) => dataRow.key)
-      changeRowKeys(keys, data)
+      changeRowKeys(keys)
     } else if (meta.action === 'uncheckAll') {
-      changeRowKeys([], [])
+      changeRowKeys([])
     }
   }
-  const changeRowKeys = (rowKeys: DataTableRowKey[], rows: any[]) => {
+  const changeRowKeys = (rowKeys: DataTableRowKey[]) => {
     emits('update:checkedRowKeys', rowKeys)
     // emits('update:checkedRows', checkedRows)
     checkedRowKeys.value = rowKeys
@@ -57,22 +57,17 @@ export function useTableSelect(options: hookType) {
         if (loadFlag) return
         const isInIndex = checkedRowKeys.value.findIndex(key => key === row.key)
         let _checkedRowKeys = deepCopy<typeof checkedRowKeys.value>(checkedRowKeys.value)
-        let _checkedRows = deepCopy<typeof checkedRows.value>(checkedRows.value)
-        console.log(_checkedRows);
         
         if (isInIndex > -1) {
           _checkedRowKeys.splice(isInIndex, 1)
-          _checkedRows.splice(isInIndex, 1)
         } else {
           if (tableCheck.value === 'checkBox') {
             _checkedRowKeys.push(row.key)
-            _checkedRows.push(row)
           } else {
             _checkedRowKeys = [row.key]
-            _checkedRows = [row]
           }
         }
-        changeRowKeys(_checkedRowKeys, _checkedRows)
+        changeRowKeys(_checkedRowKeys)
       }
     }
   }
