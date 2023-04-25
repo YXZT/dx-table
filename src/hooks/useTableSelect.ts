@@ -6,19 +6,17 @@ import type { DataTableRowKey } from 'naive-ui'
 type hookType = {
   checkedRowKeys: Ref<DataTableProps['checkedRowKeys']>,
   checkedRows: Ref<Array<any>>,
-  loadFlag: boolean,
   tableData: any[],
   columns: ColumnProps<any>[],
   emits: any
 }
 // 处理表格的选择逻辑
 export function useTableSelect(options: hookType) {
-  const { checkedRowKeys, checkedRows, loadFlag, tableData, columns, emits } = options
+  const { checkedRowKeys, checkedRows, tableData, columns, emits } = options
   // const checkedRowKeys = ref(checkedRowKeysRef)
   // const checkedRows = ref(checkedRowsRef)
   const tableCheck = ref<tableCheckType>(null)
   const updateRowKeys: DataTableProps['onUpdate:checkedRowKeys'] = (rowKeys, rows, meta) => {
-    if (loadFlag) return
     if (meta.action === 'checkAll') {
       const data = deepCopy<typeof tableData>(tableData)
       const keys = data.map((dataRow: any) => dataRow.key)

@@ -238,7 +238,7 @@ function refresh(reset?: boolean) {
   }
   loadData();
 }
-const options = { checkedRowKeys: checkedRowKeysRef, checkedRows: checkedRowsRef, loadFlag: loadFlag.value, tableData: tableData.value, columns: props.columns, emits }
+const options = { checkedRowKeys: checkedRowKeysRef, checkedRows: checkedRowsRef, tableData: tableData.value, columns: props.columns, emits }
 const { updateRowKeys, tableRowProps } = useTableSelect(options)
 // props.checkedRowKeys && watch(() => props.checkedRowKeys, (val) => {
 //   const data = deepCopy<typeof tableData>(tableData.value)
