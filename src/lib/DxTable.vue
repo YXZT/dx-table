@@ -8,6 +8,9 @@
   <NDataTable v-bind="$attrs" :columns="TableColumns" :data="tableData" ref="dataTable" :loading="loadFlag"
     @scroll="scroll" :pagination="pagination" remote @update:page-size="handleSizeChange" @update:page="handlePageChange"
     :row-props="tableRowProps" :checkedRowKeys="checkedRowKeysRef" @update-checked-row-keys="updateRowKeys" />
+    <div>
+      {{ curRowRef }}
+    </div>
 </template>
  
 <script setup lang="ts">
@@ -19,6 +22,7 @@ import { ref, watch, computed } from 'vue'
 import { setStore,getStore } from "@/utils/store";
 import { deepCopy } from "@/utils";
 import { useTableSelect } from "@/hooks/useTableSelect";
+import { useKeyboardControl } from '@/hooks/useKeyboardControl'
 interface tablePropType extends Omit<DataTableProps, 'columns'> {
   data?: Array<any>,
   request?: requestFnType,
@@ -29,7 +33,8 @@ interface tablePropType extends Omit<DataTableProps, 'columns'> {
   isPagination?: boolean,
   checkedRowKeys?: DataTableProps['checkedRowKeys'],
   checkedRows?: Array<any>,
-  rowProps?: DataTableProps['rowProps']
+  rowProps?: DataTableProps['rowProps'],
+  curRow?:Object,
 }
 
 const props = withDefaults(defineProps<tablePropType>(), {
@@ -48,7 +53,7 @@ props.checkedRowKeys && watch(() => props.checkedRowKeys, (val) => {
   emits('update:checkedRows', newData)
 })
 // 是否开始加载
-const loadFlag = ref(false)
+const loadFlag = ref(true)
 let tableData = ref<any>([])
 const needStore = ref(true)
 watch([() => props.data, () => props.request], () => {
@@ -95,7 +100,6 @@ function loadTbData(request: requestFnType, isAppend: Boolean, pagination?: pagi
   }
   const result = request(parameter)
   result.then(res => {
-    loadFlag.value = false
     if (props.isPagination || props.needInfinite) {
       localPagination.value =
         Object.assign({}, localPagination.value, {
@@ -110,10 +114,11 @@ function loadTbData(request: requestFnType, isAppend: Boolean, pagination?: pagi
     } else {
       tableData.value = records
     }
-  }).catch(() => {
     loadFlag.value = false
+  }).catch(() => {
     tableData.value = []
     localPagination.value = { total: 0, pageSize: 20, pageNum: 1 }
+    loadFlag.value = false
   })
 }
 function loadData(pagination?: paginationType) {
@@ -192,9 +197,10 @@ function ExtractConfiguration(colums: columnSetting<any>[], columsConfig: column
 }
 
 
-const dataTable = ref<InstanceType<typeof NDataTable> | null>(null)
+const dataTable = ref<InstanceType<typeof NDataTable> | []>([])
 function loadDataDirect() {
   tableData.value = props.data
+  loadFlag.value = false
 }
 function setConf() {
   props.storeName && setStore(props.storeName, localColums.value)
@@ -240,11 +246,18 @@ function refresh(reset?: boolean) {
 }
 const options = { checkedRowKeys: checkedRowKeysRef, checkedRows: checkedRowsRef, tableData: tableData.value, columns: props.columns, emits }
 const { updateRowKeys, tableRowProps } = useTableSelect(options)
-// props.checkedRowKeys && watch(() => props.checkedRowKeys, (val) => {
-//   const data = deepCopy<typeof tableData>(tableData.value)
-//   const newData = data.filter((row: any) => val?.includes(row.key))
-//   emits('update:checkedRows', newData)
-// })
+const curRowRef = ref(props.curRow||{})
+const { startListening, stopListening } = useKeyboardControl(curRowRef, tableData)
+
+watch(loadFlag,(val)=>{
+  if(val){
+    stopListening()
+  }else{
+    startListening()
+  }
+},{
+  immediate:true
+})
 // todo 1、props有key就watch没有就不watch，2、props传参，单选或多选，3、点击样式修改
 // todo 键盘快捷键
 defineExpose({

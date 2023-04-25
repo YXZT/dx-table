@@ -52,7 +52,6 @@ export function useTableSelect(options: hookType) {
       onClick: () => {
         if (!checkedRowKeys.value) return
         if (!checkedRows.value) return
-        if (loadFlag) return
         const isInIndex = checkedRowKeys.value.findIndex(key => key === row.key)
         let _checkedRowKeys = deepCopy<typeof checkedRowKeys.value>(checkedRowKeys.value)
         
