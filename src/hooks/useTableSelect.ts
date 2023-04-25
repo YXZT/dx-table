@@ -1,11 +1,11 @@
-import { ref, watch} from 'vue';
+import { ref, watch,type Ref} from 'vue';
 import { deepCopy } from "@/utils";
 import type { ColumnProps, tableCheckType } from "@/interface";
 import type { DataTableProps } from 'naive-ui'
 import type { DataTableRowKey } from 'naive-ui'
 type hookType = {
-  checkedRowKeys: DataTableProps['checkedRowKeys'],
-  checkedRows: Array<any>,
+  checkedRowKeys: Ref<DataTableProps['checkedRowKeys']>,
+  checkedRows: Ref<Array<any>>,
   loadFlag: boolean,
   tableData: any[],
   columns: ColumnProps<any>[],
@@ -13,9 +13,9 @@ type hookType = {
 }
 // 处理表格的选择逻辑
 export function useTableSelect(options: hookType) {
-  const { checkedRowKeys: checkedRowKeysRef, checkedRows:checkedRowsRef, loadFlag, tableData, columns, emits } = options
-  const checkedRowKeys = ref(checkedRowKeysRef)
-  const checkedRows = ref(checkedRowsRef)
+  const { checkedRowKeys, checkedRows, loadFlag, tableData, columns, emits } = options
+  // const checkedRowKeys = ref(checkedRowKeysRef)
+  // const checkedRows = ref(checkedRowsRef)
   const tableCheck = ref<tableCheckType>(null)
   const updateRowKeys: DataTableProps['onUpdate:checkedRowKeys'] = (rowKeys, rows, meta) => {
     if (loadFlag) return

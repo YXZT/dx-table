@@ -41,6 +41,7 @@ const emits = defineEmits(['refreshed', 'update:checkedRowKeys', 'update:checked
 const checkedRowKeysRef = props.checkedRowKeys ? ref(props.checkedRowKeys) : ref([])
 const checkedRowsRef = props.checkedRows ? ref(props.checkedRows) : ref([])
 props.checkedRowKeys && watch(() => props.checkedRowKeys, (val) => {
+  if(val===undefined) return
   const data = deepCopy<typeof tableData>(tableData.value)
   const newData = data.filter((row: any) => val?.includes(row.key))
   checkedRowKeysRef.value = deepCopy<typeof val>(val)
