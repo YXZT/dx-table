@@ -3,7 +3,8 @@ import { ref, type Ref } from 'vue'
 type commandType = 'up' | 'down'
 
 type RowType = {
-  [key: string]: any
+  [key: string]: any,
+  key: string
 }
 export function useCurRow(curRowRef: Ref<object>, allRowRef: Ref<any[]>, rowKey: string | number) {
   function getCurIndex() {

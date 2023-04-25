@@ -23,6 +23,10 @@ import { setStore, getStore } from "@/utils/store";
 import { deepCopy } from "@/utils";
 import { useTableSelect } from "@/hooks/useTableSelect";
 import { useKeyboardControl } from '@/hooks/useKeyboardControl'
+type RowType = {
+  [key: string]: any,
+  key: string
+}
 interface tablePropType extends Omit<DataTableProps, 'columns'> {
   data?: Array<any>,
   request?: requestFnType,
@@ -34,7 +38,7 @@ interface tablePropType extends Omit<DataTableProps, 'columns'> {
   checkedRowKeys?: DataTableProps['checkedRowKeys'],
   checkedRows?: Array<any>,
   rowProps?: DataTableProps['rowProps'],
-  curRow?: Object,
+  curRow?: RowType,
 }
 
 const props = withDefaults(defineProps<tablePropType>(), {
@@ -245,22 +249,24 @@ function refresh(reset?: boolean) {
   loadData();
 }
 const options = { checkedRowKeys: checkedRowKeysRef, checkedRows: checkedRowsRef, tableData: tableData.value, columns: props.columns, emits }
-let { updateRowKeys, tableRowProps,toggleRow, rowClass } = useTableSelect(options)
+let { updateRowKeys, tableRowProps, toggleRow, rowClass } = useTableSelect(options)
+
 rowClass.value = (row) => {
+  if (!Object.keys(curRowRef.value).length) return
   if (row['key'] === curRowRef.value['key']) {
     return ['cur-selected-row']
   } else {
     return
   }
 }
-const curRowRef = ref(props.curRow || {})
+const curRowRef = ref<RowType>(props.curRow || {} as RowType)
 const trackCurRow = ref(true)
-trackCurRow.value && watch(curRowRef,(val)=>{
-  if(!Object.keys(val).length) return
+trackCurRow.value && watch(curRowRef, (val) => {
+  if (!Object.keys(val).length) return
   checkedRowKeysRef.value = [val['key']]
 })
 const { startListening, stopListening, pressEnter } = useKeyboardControl(curRowRef, tableData)
-pressEnter.value = ()=>{
+pressEnter.value = () => {
   toggleRow(curRowRef.value)
 }
 watch(loadFlag, (val) => {
@@ -282,7 +288,8 @@ defineExpose({
 :deep(.cur-selected-row .n-data-table-td) {
   background-color: #cfe8fb;
 }
-:deep(.n-data-table-tr:not(.n-data-table-tr--summary):hover){
+
+:deep(.n-data-table-tr:not(.n-data-table-tr--summary):hover) {
   background-color: var(--n-merged-td-color-hover);
 }
 </style>

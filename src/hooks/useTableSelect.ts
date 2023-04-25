@@ -47,10 +47,14 @@ export function useTableSelect(options: hookType) {
     deep: false,
   })
   const rowClass = ref<classFnType>(() => [])
-  const toggleRow = (row: ColumnProps<any>) => {
+  type RowType = {
+    [key: string]: any,
+    key: string
+  }
+  const toggleRow = (row: RowType) => {
     if (!checkedRowKeys.value) return
     if (!checkedRows.value) return
-    const isInIndex = checkedRowKeys.value.findIndex(key => key === row.key)
+    const isInIndex = checkedRowKeys.value.findIndex(key => key === row['key'])
     let _checkedRowKeys = deepCopy<typeof checkedRowKeys.value>(checkedRowKeys.value)
 
     if (isInIndex > -1) {
@@ -64,7 +68,7 @@ export function useTableSelect(options: hookType) {
     }
     changeRowKeys(_checkedRowKeys)
   }
-  const tableRowProps = (row: ColumnProps<any>) => {
+  const tableRowProps = (row: RowType) => {
     return {
       style: 'cursor: pointer;',
       class: rowClass.value(row),

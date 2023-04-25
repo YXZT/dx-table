@@ -5,10 +5,10 @@ export type ColumnProps<T> = DataTableColumn<T> & {
   isShow?: Boolean,
   key: string | number,
 }
-export type columnSetting<T> = Omit<DataTableColumn<T>,'fixed'> & {
+export type columnSetting<T> = Omit<DataTableColumn<T>, 'fixed'> & {
   isShow: Boolean,
   key: string | number,
-  fixed : "left" | "right" | "none"
+  fixed: "left" | "right" | "none"
 }
 
 export type paginationType = {
@@ -28,4 +28,4 @@ export type requestFnType = (params: any) => Promise<resType>
 
 export type tableCheckType = null | 'checkBox' | 'radio'
 
-export type classFnType = (row: ColumnProps<any>)=>Array<string>
+export type classFnType = (row: ColumnProps<any>) => Array<string> | undefined
