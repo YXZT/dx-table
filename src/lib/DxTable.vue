@@ -8,14 +8,16 @@
   <NDataTable v-bind="$attrs" :columns="TableColumns" :data="tableData" ref="dataTable" :loading="loadFlag"
     @scroll="scroll" :pagination="pagination" remote @update:page-size="handleSizeChange" @update:page="handlePageChange"
     :row-props="tableRowProps" :checkedRowKeys="checkedRowKeysRef" @update-checked-row-keys="updateRowKeys" />
+
   <div>
     {{ curRowRef }}
+    <n-button @click="scrollTo">滚动</n-button>
   </div>
 </template>
  
 <script setup lang="ts">
 import type { ColumnProps, columnSetting, paginationType, requestFnType } from "@/interface";
-import { NDataTable } from 'naive-ui'
+import { NDataTable,NButton } from 'naive-ui'
 import type { DataTableProps, DataTableColumn } from 'naive-ui'
 import TableConfig from './TableConfig.vue'
 import { ref, watch, computed } from 'vue'
@@ -46,6 +48,9 @@ const props = withDefaults(defineProps<tablePropType>(), {
   needInfinite: false,
   isPagination: false,
 })
+function scrollTo(){
+  dataTable.value&&dataTable.value.scrollTo({top:200})
+}
 const emits = defineEmits(['refreshed', 'update:checkedRowKeys', 'update:checkedRows'])
 const checkedRowKeysRef = props.checkedRowKeys ? ref(props.checkedRowKeys) : ref([])
 const checkedRowsRef = props.checkedRows ? ref(props.checkedRows) : ref([])
