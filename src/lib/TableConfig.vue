@@ -37,7 +37,7 @@ import type { columnSetting } from "@/interface";
 import Sortable from "sortablejs";
 
 interface propsType {
-  tableRef: InstanceType<typeof NDataTable> | [],
+  tableRef: InstanceType<typeof NDataTable> | null,
   tableCols: columnSetting<any>[],
 }
 const props = defineProps<propsType>()

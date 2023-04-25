@@ -1,6 +1,6 @@
 <template>
-  <TableConfig :tableRef="dataTable" :tableCols="localColums" @change-show="changeCol" @change-sequence="changeSequence" @reset-conf="resetConf"
-    @change-fixed="changeCol">
+  <TableConfig :tableRef="dataTable" :tableCols="localColums" @change-show="changeCol" @change-sequence="changeSequence"
+    @reset-conf="resetConf" @change-fixed="changeCol">
     <slot name="title">
       <div v-show="checkedRowKeysRef?.length">已经选择：{{ checkedRowKeysRef?.length }} 条</div>
     </slot>
@@ -8,9 +8,9 @@
   <NDataTable v-bind="$attrs" :columns="TableColumns" :data="tableData" ref="dataTable" :loading="loadFlag"
     @scroll="scroll" :pagination="pagination" remote @update:page-size="handleSizeChange" @update:page="handlePageChange"
     :row-props="tableRowProps" :checkedRowKeys="checkedRowKeysRef" @update-checked-row-keys="updateRowKeys" />
-    <div>
-      {{ curRowRef }}
-    </div>
+  <div>
+    {{ curRowRef }}
+  </div>
 </template>
  
 <script setup lang="ts">
@@ -19,7 +19,7 @@ import { NDataTable } from 'naive-ui'
 import type { DataTableProps, DataTableColumn } from 'naive-ui'
 import TableConfig from './TableConfig.vue'
 import { ref, watch, computed } from 'vue'
-import { setStore,getStore } from "@/utils/store";
+import { setStore, getStore } from "@/utils/store";
 import { deepCopy } from "@/utils";
 import { useTableSelect } from "@/hooks/useTableSelect";
 import { useKeyboardControl } from '@/hooks/useKeyboardControl'
@@ -34,7 +34,7 @@ interface tablePropType extends Omit<DataTableProps, 'columns'> {
   checkedRowKeys?: DataTableProps['checkedRowKeys'],
   checkedRows?: Array<any>,
   rowProps?: DataTableProps['rowProps'],
-  curRow?:Object,
+  curRow?: Object,
 }
 
 const props = withDefaults(defineProps<tablePropType>(), {
@@ -46,7 +46,7 @@ const emits = defineEmits(['refreshed', 'update:checkedRowKeys', 'update:checked
 const checkedRowKeysRef = props.checkedRowKeys ? ref(props.checkedRowKeys) : ref([])
 const checkedRowsRef = props.checkedRows ? ref(props.checkedRows) : ref([])
 props.checkedRowKeys && watch(() => props.checkedRowKeys, (val) => {
-  if(val===undefined) return
+  if (val === undefined) return
   const data = deepCopy<typeof tableData>(tableData.value)
   const newData = data.filter((row: any) => val?.includes(row.key))
   checkedRowKeysRef.value = deepCopy<typeof val>(val)
@@ -150,7 +150,7 @@ watch(() => props.columns, (newVal) => {
   immediate: true
 })
 
-const resetConf = ()=>{
+const resetConf = () => {
   let columsResult = props.columns.map(col => {
     let newCol: columnSetting<any> = {
       ...col,
@@ -197,7 +197,7 @@ function ExtractConfiguration(colums: columnSetting<any>[], columsConfig: column
 }
 
 
-const dataTable = ref<InstanceType<typeof NDataTable> | []>([])
+const dataTable = ref<InstanceType<typeof NDataTable> | null>(null)
 function loadDataDirect() {
   tableData.value = props.data
   loadFlag.value = false
@@ -245,18 +245,27 @@ function refresh(reset?: boolean) {
   loadData();
 }
 const options = { checkedRowKeys: checkedRowKeysRef, checkedRows: checkedRowsRef, tableData: tableData.value, columns: props.columns, emits }
-const { updateRowKeys, tableRowProps } = useTableSelect(options)
-const curRowRef = ref(props.curRow||{})
-const { startListening, stopListening } = useKeyboardControl(curRowRef, tableData)
-
-watch(loadFlag,(val)=>{
-  if(val){
+let { updateRowKeys, tableRowProps,toggleRow, rowClass } = useTableSelect(options)
+rowClass.value = (row) => {
+  if (row['key'] === curRowRef.value['key']) {
+    return ['cur-selected-row']
+  } else {
+    return
+  }
+}
+const curRowRef = ref(props.curRow || {})
+const { startListening, stopListening, pressEnter } = useKeyboardControl(curRowRef, tableData)
+pressEnter.value = ()=>{
+  toggleRow(curRowRef.value)
+}
+watch(loadFlag, (val) => {
+  if (val) {
     stopListening()
-  }else{
+  } else {
     startListening()
   }
-},{
-  immediate:true
+}, {
+  immediate: true
 })
 // todo 1、props有key就watch没有就不watch，2、props传参，单选或多选，3、点击样式修改
 // todo 键盘快捷键
@@ -265,5 +274,12 @@ defineExpose({
 })
 </script>
  
-<style scoped></style>
+<style scoped lang="scss">
+:deep(.cur-selected-row .n-data-table-td) {
+  background-color: #cfe8fb;
+}
+:deep(.n-data-table-tr:not(.n-data-table-tr--summary):hover){
+  background-color: var(--n-merged-td-color-hover);
+}
+</style>
  

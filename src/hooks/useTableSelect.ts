@@ -1,6 +1,6 @@
-import { ref, watch,type Ref} from 'vue';
+import { ref, watch, type Ref } from 'vue';
 import { deepCopy } from "@/utils";
-import type { ColumnProps, tableCheckType } from "@/interface";
+import type { ColumnProps, tableCheckType, classFnType } from "@/interface";
 import type { DataTableProps } from 'naive-ui'
 import type { DataTableRowKey } from 'naive-ui'
 type hookType = {
@@ -46,31 +46,36 @@ export function useTableSelect(options: hookType) {
     immediate: true,
     deep: false,
   })
+  const rowClass = ref<classFnType>(() => [])
+  const toggleRow = (row: ColumnProps<any>) => {
+    if (!checkedRowKeys.value) return
+    if (!checkedRows.value) return
+    const isInIndex = checkedRowKeys.value.findIndex(key => key === row.key)
+    let _checkedRowKeys = deepCopy<typeof checkedRowKeys.value>(checkedRowKeys.value)
+
+    if (isInIndex > -1) {
+      _checkedRowKeys.splice(isInIndex, 1)
+    } else {
+      if (tableCheck.value === 'checkBox') {
+        _checkedRowKeys.push(row.key)
+      } else {
+        _checkedRowKeys = [row.key]
+      }
+    }
+    changeRowKeys(_checkedRowKeys)
+  }
   const tableRowProps = (row: ColumnProps<any>) => {
     return {
       style: 'cursor: pointer;',
-      onClick: () => {
-        if (!checkedRowKeys.value) return
-        if (!checkedRows.value) return
-        const isInIndex = checkedRowKeys.value.findIndex(key => key === row.key)
-        let _checkedRowKeys = deepCopy<typeof checkedRowKeys.value>(checkedRowKeys.value)
-        
-        if (isInIndex > -1) {
-          _checkedRowKeys.splice(isInIndex, 1)
-        } else {
-          if (tableCheck.value === 'checkBox') {
-            _checkedRowKeys.push(row.key)
-          } else {
-            _checkedRowKeys = [row.key]
-          }
-        }
-        changeRowKeys(_checkedRowKeys)
-      }
+      class: rowClass.value(row),
+      onClick: ()=>toggleRow(row)
     }
   }
   return {
     updateRowKeys,
     tableRowProps,
+    toggleRow,
+    rowClass
   };
 }
 

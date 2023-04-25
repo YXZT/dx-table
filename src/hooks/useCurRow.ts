@@ -27,8 +27,6 @@ export function useCurRow(curRowRef: Ref<object>, allRowRef: Ref<any[]>, rowKey:
         curRowRef.value = allRowRef.value[index.value]
         break;
       case 'down':
-        console.log(index, allRowRef.value);
-
         if (index.value === tableLength - 1) return
         index.value++
         curRowRef.value = allRowRef.value[index.value]
