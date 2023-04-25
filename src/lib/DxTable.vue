@@ -254,6 +254,11 @@ rowClass.value = (row) => {
   }
 }
 const curRowRef = ref(props.curRow || {})
+const trackCurRow = ref(true)
+trackCurRow.value && watch(curRowRef,(val)=>{
+  if(!Object.keys(val).length) return
+  checkedRowKeysRef.value = [val['key']]
+})
 const { startListening, stopListening, pressEnter } = useKeyboardControl(curRowRef, tableData)
 pressEnter.value = ()=>{
   toggleRow(curRowRef.value)
@@ -267,8 +272,7 @@ watch(loadFlag, (val) => {
 }, {
   immediate: true
 })
-// todo 1、props有key就watch没有就不watch，2、props传参，单选或多选，3、点击样式修改
-// todo 键盘快捷键
+// todo 跟随滚动条
 defineExpose({
   refresh
 })
