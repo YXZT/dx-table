@@ -113,7 +113,6 @@ function resetConf(){
   isActive.value = false
   emits('reset-conf')
 }
-// todo 重置配置
 </script>
 <style scoped lang="scss">
 .table-title {
