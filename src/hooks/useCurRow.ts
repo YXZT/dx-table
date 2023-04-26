@@ -34,6 +34,7 @@ export function useCurRow(curRowRef: Ref<object>, allRowRef: Ref<any[]>, rowKey:
     }
   }
   return {
-    setCurRow
+    setCurRow,
+    index
   }
 }

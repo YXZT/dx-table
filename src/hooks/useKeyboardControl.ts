@@ -2,9 +2,16 @@
 import { useCurRow } from './useCurRow'
 import type { Ref } from 'vue'
 import { ref } from 'vue'
-
-export function useKeyboardControl(curRowRef: Ref<object>, allRowRef: Ref<any[]>, rowKey: string = 'key') {
-  const { setCurRow } = useCurRow(curRowRef, allRowRef, rowKey)
+import type { NDataTable } from 'naive-ui'
+type optionsType = {
+  curRowRef: Ref<object>,
+  allRowRef: Ref<any[]>,
+  rowKey?: string,
+  dataTable: InstanceType<typeof NDataTable> | null
+}
+export function useKeyboardControl(options: optionsType) {
+  const { curRowRef, allRowRef, rowKey = 'key', dataTable } = options
+  const { setCurRow, index } = useCurRow(curRowRef, allRowRef, rowKey)
   const pressEnter = ref(() => { })
 
   function handleKeyDown(event: KeyboardEvent) {
@@ -21,7 +28,9 @@ export function useKeyboardControl(curRowRef: Ref<object>, allRowRef: Ref<any[]>
       pressEnter.value()
     }
   }
-
+  function scrollToRow() {
+    dataTable && dataTable.scrollTo({ index: index } as any)
+  }
 
   function startListening() {
     if (!allRowRef.value.length) return
@@ -35,23 +44,10 @@ export function useKeyboardControl(curRowRef: Ref<object>, allRowRef: Ref<any[]>
     window.removeEventListener('keydown', handleKeyDown)
   }
 
-  function scrollToRow() {
-    // nextTick(() => {
-    //   const curRowEl = document.querySelector('.cur-selected-row')
-    //   console.log(curRowEl);
-
-    //   if (curRowEl) {
-    //     const curRowRect = curRowEl.getBoundingClientRect()
-    //     window.scrollTo({
-    //       top: curRowRect.top,
-    //       behavior: 'smooth'
-    //     })
-    //   }
-    // })
-  }
   return {
     startListening,
     stopListening,
-    pressEnter
+    pressEnter,
+    scrollToRow,
   }
 }

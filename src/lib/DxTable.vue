@@ -11,7 +11,6 @@
     :row-key="tableRowKey" />
   <div>
     {{ curRowRef }}
-    <n-button @click="scrollTo">滚动</n-button>
   </div>
 </template>
  
@@ -49,9 +48,7 @@ const rowKey = props.rowKey || 'key'
 const tableRowKey = props.rowKey ? (row: any) => {
   return row[rowKey]
 } : undefined
-function scrollTo() {
-  dataTable.value && dataTable.value.scrollTo({ top: 200 })
-}
+
 const emits = defineEmits(['refreshed', 'update:checkedRowKeys', 'update:checkedRows'])
 const checkedRowKeysRef = props.checkedRowKeys ? ref(props.checkedRowKeys) : ref([])
 const checkedRowsRef = props.checkedRows ? ref(props.checkedRows) : ref([])
@@ -274,7 +271,7 @@ trackCurRow.value && watch(curRowRef, (val) => {
   if (!Object.keys(val).length) return
   checkedRowKeysRef.value = [val[rowKey]]
 })
-const { startListening, stopListening, pressEnter } = useKeyboardControl(curRowRef, tableData)
+const { startListening, stopListening, pressEnter } = useKeyboardControl({curRowRef:curRowRef, allRowRef:tableData,dataTable:dataTable.value})
 pressEnter.value = () => {
   toggleRow(curRowRef.value)
 }
