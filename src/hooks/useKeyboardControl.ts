@@ -3,7 +3,7 @@ import { useCurRow } from './useCurRow'
 import type { Ref } from 'vue'
 import { ref } from 'vue'
 
-export function useKeyboardControl(curRowRef: Ref<object>, allRowRef: Ref<any[]>, rowKey: string | number = 'key') {
+export function useKeyboardControl(curRowRef: Ref<object>, allRowRef: Ref<any[]>, rowKey: string = 'key') {
   const { setCurRow } = useCurRow(curRowRef, allRowRef, rowKey)
   const pressEnter = ref(() => { })
 

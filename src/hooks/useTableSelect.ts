@@ -8,11 +8,12 @@ type hookType = {
   checkedRows: Ref<Array<any>>,
   tableData: any[],
   columns: ColumnProps<any>[],
-  emits: any
+  emits: any,
+  rowKey: string,
 }
 // 处理表格的选择逻辑
 export function useTableSelect(options: hookType) {
-  const { checkedRowKeys, checkedRows, tableData, columns, emits } = options
+  const { checkedRowKeys, checkedRows, tableData, columns, emits ,rowKey} = options
   // const checkedRowKeys = ref(checkedRowKeysRef)
   // const checkedRows = ref(checkedRowsRef)
   const tableCheck = ref<tableCheckType>(null)
@@ -51,16 +52,16 @@ export function useTableSelect(options: hookType) {
   const toggleRow = (row: myRowType) => {
     if (!checkedRowKeys.value) return
     if (!checkedRows.value) return
-    const isInIndex = checkedRowKeys.value.findIndex(key => key === row['key'])
+    const isInIndex = checkedRowKeys.value.findIndex(key => key === row[rowKey])
     let _checkedRowKeys = deepCopy<typeof checkedRowKeys.value>(checkedRowKeys.value)
 
     if (isInIndex > -1) {
       _checkedRowKeys.splice(isInIndex, 1)
     } else {
       if (tableCheck.value === 'checkBox') {
-        _checkedRowKeys.push(row.key)
+        _checkedRowKeys.push(row[rowKey])
       } else {
-        _checkedRowKeys = [row.key]
+        _checkedRowKeys = [row[rowKey]]
       }
     }
     changeRowKeys(_checkedRowKeys)

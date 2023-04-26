@@ -7,7 +7,8 @@
   </TableConfig>
   <NDataTable v-bind="$attrs" :columns="TableColumns" :data="tableData" ref="dataTable" :loading="loadFlag"
     @scroll="scroll" :pagination="pagination" remote @update:page-size="handleSizeChange" @update:page="handlePageChange"
-    :row-props="tableRowProps" :checkedRowKeys="checkedRowKeysRef" @update-checked-row-keys="updateRowKeys" />
+    :row-props="tableRowProps" :checkedRowKeys="checkedRowKeysRef" @update-checked-row-keys="updateRowKeys"
+    :row-key="tableRowKey" />
   <div>
     {{ curRowRef }}
     <n-button @click="scrollTo">滚动</n-button>
@@ -39,12 +40,15 @@ interface tablePropType extends Omit<DataTableProps, 'columns' | 'rowKey'> {
   curRow?: myRowType,
   rowKey?: string,
 }
-
 const props = withDefaults(defineProps<tablePropType>(), {
   immediateRequest: false,
   needInfinite: false,
   isPagination: false,
 })
+const rowKey = props.rowKey || 'key'
+const tableRowKey = props.rowKey ? (row: any) => {
+  return row[rowKey]
+} : undefined
 function scrollTo() {
   dataTable.value && dataTable.value.scrollTo({ top: 200 })
 }
@@ -253,12 +257,12 @@ function refresh(reset?: boolean) {
   }
   loadData();
 }
-const options = { checkedRowKeys: checkedRowKeysRef, checkedRows: checkedRowsRef, tableData: tableData.value, columns: props.columns, emits }
+const options = { checkedRowKeys: checkedRowKeysRef, checkedRows: checkedRowsRef, tableData: tableData.value, columns: props.columns, emits, rowKey }
 let { updateRowKeys, tableRowProps, toggleRow, rowClass } = useTableSelect(options)
 
 rowClass.value = (row) => {
   if (!Object.keys(curRowRef.value).length) return
-  if (row['key'] === curRowRef.value['key']) {
+  if (row[rowKey] === curRowRef.value[rowKey]) {
     return ['cur-selected-row']
   } else {
     return
@@ -268,7 +272,7 @@ const curRowRef = ref<myRowType>(props.curRow || {} as myRowType)
 const trackCurRow = ref(true)
 trackCurRow.value && watch(curRowRef, (val) => {
   if (!Object.keys(val).length) return
-  checkedRowKeysRef.value = [val['key']]
+  checkedRowKeysRef.value = [val[rowKey]]
 })
 const { startListening, stopListening, pressEnter } = useKeyboardControl(curRowRef, tableData)
 pressEnter.value = () => {
