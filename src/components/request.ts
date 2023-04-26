@@ -40,12 +40,12 @@ const columns = [{
   isShow: true,
 }, ...generateColumns(10)]
 const data = generateData(columns, 1000)
-type requestFnType = (params: any) => Promise<resType>
+type requestFnType = (params: any) => Promise<resType<any>>
 const mockRequest: requestFnType = ({ pageNum, pageSize }) => {
   const list = generateData(columns, pageSize, 'row-', (pageNum - 1) * pageSize)
-  const res = new Promise<resType>((resolve) => {
+  const res = new Promise<resType<any>>((resolve) => {
     setTimeout(() => {
-      const res: resType = {
+      const res: resType<any> = {
         status: 0,
         data: {
           pageNum,

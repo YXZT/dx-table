@@ -56,7 +56,7 @@ import {
 
 const data = ref<any[] | undefined>(undefined)
 const columns = ref(mockColumns)
-const request = ref<requestFnType | undefined>(undefined)
+const request = ref<requestFnType<any> | undefined>(undefined)
 const checkedRowKeys = ref<Array<string | number>>([])
 const checkedRows = ref<Array<any>>([])
 const checkedRowKeys2 = ref<Array<string | number>>([])
@@ -98,3 +98,4 @@ function setSelected() {
 </script>
 
 <style scoped></style>
+

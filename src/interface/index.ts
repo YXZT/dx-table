@@ -16,16 +16,21 @@ export type paginationType = {
   pageSize: number,
   total: number,
 }
-type resDataType = {
-  [records: string]: any,
-} & paginationType
+// type resDataType<myRowType> = {
+//   [records: string]: any,
+// } & paginationType
+type resDataType<myRowType> = {records:myRowType} & paginationType
 
-export type resType = {
+export type resType<myRowType> = {
   status: number,
-  data?: resDataType,
+  data?: resDataType<myRowType>,
 }
-export type requestFnType = (params: any) => Promise<resType>
+export type requestFnType<myRowType> = (params: any) => Promise<resType<myRowType>>
 
 export type tableCheckType = null | 'checkBox' | 'radio'
 
-export type classFnType = (row: ColumnProps<any>) => Array<string> | undefined
+export type classFnType = (row: myRowType) => Array<string> | undefined
+// 临时解决
+export type myRowType = {
+  [key: string]: string
+}

@@ -1,17 +1,14 @@
 import { ref, type Ref } from 'vue'
+import type { myRowType } from "@/interface";
 
 type commandType = 'up' | 'down'
 
-type RowType = {
-  [key: string]: any,
-  key: string
-}
 export function useCurRow(curRowRef: Ref<object>, allRowRef: Ref<any[]>, rowKey: string | number) {
   function getCurIndex() {
     if (!allRowRef.value.length) return null
     if (!Object.keys(curRowRef.value).length) return null
     const index = allRowRef.value.findIndex(row => {
-      return row[rowKey] === (curRowRef.value as RowType)[rowKey]
+      return row[rowKey] === (curRowRef.value as myRowType)[rowKey]
     })
     return index
   }

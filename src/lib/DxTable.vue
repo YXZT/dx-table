@@ -15,8 +15,8 @@
 </template>
  
 <script setup lang="ts">
-import type { ColumnProps, columnSetting, paginationType, requestFnType } from "@/interface";
-import { NDataTable,NButton } from 'naive-ui'
+import type { ColumnProps, columnSetting, paginationType, requestFnType, myRowType } from "@/interface";
+import { NDataTable, NButton } from 'naive-ui'
 import type { DataTableProps, DataTableColumn } from 'naive-ui'
 import TableConfig from './TableConfig.vue'
 import { ref, watch, computed } from 'vue'
@@ -24,13 +24,10 @@ import { setStore, getStore } from "@/utils/store";
 import { deepCopy } from "@/utils";
 import { useTableSelect } from "@/hooks/useTableSelect";
 import { useKeyboardControl } from '@/hooks/useKeyboardControl'
-type RowType = {
-  [key: string]: any,
-  key: string
-}
-interface tablePropType extends Omit<DataTableProps, 'columns'> {
-  data?: Array<any>,
-  request?: requestFnType,
+
+interface tablePropType extends Omit<DataTableProps, 'columns' | 'rowKey'> {
+  data?: Array<myRowType>,
+  request?: requestFnType<myRowType>,
   columns: ColumnProps<any>[],
   immediateRequest?: boolean,
   needInfinite?: boolean,
@@ -39,7 +36,8 @@ interface tablePropType extends Omit<DataTableProps, 'columns'> {
   checkedRowKeys?: DataTableProps['checkedRowKeys'],
   checkedRows?: Array<any>,
   rowProps?: DataTableProps['rowProps'],
-  curRow?: RowType,
+  curRow?: myRowType,
+  rowKey?: string,
 }
 
 const props = withDefaults(defineProps<tablePropType>(), {
@@ -47,22 +45,22 @@ const props = withDefaults(defineProps<tablePropType>(), {
   needInfinite: false,
   isPagination: false,
 })
-function scrollTo(){
-  dataTable.value&&dataTable.value.scrollTo({top:200})
+function scrollTo() {
+  dataTable.value && dataTable.value.scrollTo({ top: 200 })
 }
 const emits = defineEmits(['refreshed', 'update:checkedRowKeys', 'update:checkedRows'])
 const checkedRowKeysRef = props.checkedRowKeys ? ref(props.checkedRowKeys) : ref([])
 const checkedRowsRef = props.checkedRows ? ref(props.checkedRows) : ref([])
 props.checkedRowKeys && watch(() => props.checkedRowKeys, (val) => {
   if (val === undefined) return
-  const data = deepCopy<typeof tableData>(tableData.value)
+  const data = deepCopy<typeof tableData.value>(tableData.value)
   const newData = data.filter((row: any) => val?.includes(row.key))
   checkedRowKeysRef.value = deepCopy<typeof val>(val)
   emits('update:checkedRows', newData)
 })
 // 是否开始加载
 const loadFlag = ref(true)
-let tableData = ref<any>([])
+let tableData = ref<myRowType[]>([])
 const needStore = ref(true)
 watch([() => props.data, () => props.request], () => {
   refresh(true)
@@ -98,7 +96,8 @@ function handleSizeChange(val: number) {
   emits('refreshed')
 }
 loadData()
-function loadTbData(request: requestFnType, isAppend: Boolean, pagination?: paginationType) {
+
+function loadTbData(request: requestFnType<myRowType>, isAppend: Boolean, pagination?: paginationType) {
   loadFlag.value = true
   const parameter = {
     pageNum:
@@ -116,11 +115,13 @@ function loadTbData(request: requestFnType, isAppend: Boolean, pagination?: pagi
           total: res?.data?.total || 0 // 返回结果中的总记录数
         })
     }
-    const records = (res.data?.records) as Array<any>
-    if (isAppend) {
-      tableData.value.push(...records)
-    } else {
-      tableData.value = records
+    const records = res.data?.records
+    if (Array.isArray(records) && records.length) {
+      if (isAppend) {
+        tableData.value.push(...records)
+      } else {
+        tableData.value = records
+      }
     }
     loadFlag.value = false
   }).catch(() => {
@@ -131,7 +132,7 @@ function loadTbData(request: requestFnType, isAppend: Boolean, pagination?: pagi
 }
 function loadData(pagination?: paginationType) {
   if (Array.isArray(props.data)) {
-    loadDataDirect()
+    loadDataDirect(props.data)
     return
   }
   if (!props.request) return
@@ -206,8 +207,8 @@ function ExtractConfiguration(colums: columnSetting<any>[], columsConfig: column
 
 
 const dataTable = ref<InstanceType<typeof NDataTable> | null>(null)
-function loadDataDirect() {
-  tableData.value = props.data
+function loadDataDirect(data: myRowType[]) {
+  tableData.value = data
   loadFlag.value = false
 }
 function setConf() {
@@ -263,7 +264,7 @@ rowClass.value = (row) => {
     return
   }
 }
-const curRowRef = ref<RowType>(props.curRow || {} as RowType)
+const curRowRef = ref<myRowType>(props.curRow || {} as myRowType)
 const trackCurRow = ref(true)
 trackCurRow.value && watch(curRowRef, (val) => {
   if (!Object.keys(val).length) return

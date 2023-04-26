@@ -1,6 +1,6 @@
 
 import { useCurRow } from './useCurRow'
-import { nextTick, type Ref } from 'vue'
+import type { Ref } from 'vue'
 import { ref } from 'vue'
 
 export function useKeyboardControl(curRowRef: Ref<object>, allRowRef: Ref<any[]>, rowKey: string | number = 'key') {

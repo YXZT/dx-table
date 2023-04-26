@@ -1,6 +1,6 @@
 import { ref, watch, type Ref } from 'vue';
 import { deepCopy } from "@/utils";
-import type { ColumnProps, tableCheckType, classFnType } from "@/interface";
+import type { ColumnProps, tableCheckType, classFnType,myRowType } from "@/interface";
 import type { DataTableProps } from 'naive-ui'
 import type { DataTableRowKey } from 'naive-ui'
 type hookType = {
@@ -47,11 +47,8 @@ export function useTableSelect(options: hookType) {
     deep: false,
   })
   const rowClass = ref<classFnType>(() => [])
-  type RowType = {
-    [key: string]: any,
-    key: string
-  }
-  const toggleRow = (row: RowType) => {
+
+  const toggleRow = (row: myRowType) => {
     if (!checkedRowKeys.value) return
     if (!checkedRows.value) return
     const isInIndex = checkedRowKeys.value.findIndex(key => key === row['key'])
@@ -68,7 +65,7 @@ export function useTableSelect(options: hookType) {
     }
     changeRowKeys(_checkedRowKeys)
   }
-  const tableRowProps = (row: RowType) => {
+  const tableRowProps = (row: myRowType) => {
     return {
       style: 'cursor: pointer;',
       class: rowClass.value(row),
