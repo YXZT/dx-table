@@ -3,7 +3,7 @@
     <n-tabs v-model:value="type">
       <n-tab-pane :name="1" tab="简单数据">
         <dx-table :columns="columns" :data="data" virtual-scroll :style="{ height: `400px` }" flex-height :scroll-x="1200"
-          storeName="test_table1" :row-props="rowProps" v-model:checked-row-keys="checkedRowKeys" v-model:checkedRows="checkedRows"/>
+          storeName="test_table1" :row-props="rowProps"  ref="testTable1"/>
         <n-button @click="setSelected">打钩</n-button>
           <div>{{ checkedRowKeys }}</div>
           <div>{{ checkedRows }}</div>
@@ -15,9 +15,9 @@
       </n-tab-pane>
       <n-tab-pane :name="2" tab="长列表">
         <dx-table :columns="columns" :data="data" virtual-scroll :style="{ height: `400px` }" flex-height :scroll-x="1200"
-          storeName="test_table2" v-model:checked-row-keys="checkedRowKeys2" v-model:checkedRows="checkedRows2"/>
-          <div>{{ checkedRowKeys2 }}</div>
-          <div>{{ checkedRows2 }}</div>
+          storeName="test_table2" />
+          <div>{{ checkedRowKeys }}</div>
+          <div>{{ checkedRows }}</div>
         <n-card embedded :bordered="false">
           只要添加virtual-scroll属性，就能让表格支持虚拟滚动，处理大量数据的卡顿问题,目前开源的组件库里我比较了下这个做的最好，所以我才选择用这个组件库封装。
         </n-card>
@@ -41,7 +41,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { nextTick, onMounted, ref, watch } from 'vue';
 import DxTable from "../lib/DxTable.vue";
 import { NTabs, NTabPane, NCard, NButton } from 'naive-ui'
 import type { requestFnType } from "@/interface";
@@ -57,16 +57,17 @@ import {
 const data = ref<any[] | undefined>(undefined)
 const columns = ref(mockColumns)
 const request = ref<requestFnType<any> | undefined>(undefined)
-const checkedRowKeys = ref<Array<string | number>>([])
-const checkedRows = ref<Array<any>>([])
-const checkedRowKeys2 = ref<Array<string | number>>([])
-const checkedRows2 = ref<Array<any>>([])
+let checkedRowKeys = ref<Array<string | number>>([])
+  let checkedRows = ref<Array<any>>([])
 let type = ref(1)
 watch(type, (val) => {
+
   if (val === 1) {
     data.value = simpleData
     request.value = undefined
     columns.value = simpleColumns
+    // checkedRowKeys = checkedRowKeysVal
+    // checkedRows = checkedRowsVal
   }
   else if (val === 2) {
     data.value = mockData
@@ -84,6 +85,17 @@ watch(type, (val) => {
 }, {
   immediate: true
 })
+const testTable1 = ref()
+onMounted(() => {
+  const { checkedRowKeys:checkedRowKeysVal,checkedRows:checkedRowsVal} = testTable1.value.useTableSelect({checkedRowKeys:[],checkedRows:[]})
+  watch(checkedRowKeysVal,(val)=>{
+    console.log(val);
+    checkedRowKeys.value = checkedRowKeysVal
+    checkedRows.value = checkedRowsVal
+  })
+})
+
+
 const rowProps = (row: simpleDataType) => {
   return {
     style: 'cursor: pointer;',

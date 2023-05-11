@@ -7,7 +7,7 @@
   </TableConfig>
   <NDataTable v-bind="$attrs" :columns="TableColumns" :data="tableData" ref="dataTable" :loading="loadFlag"
     @scroll="scroll" :pagination="pagination" remote @update:page-size="handleSizeChange" @update:page="handlePageChange"
-    :row-props="tableRowProps" :checkedRowKeys="checkedRowKeysRef" @update-checked-row-keys="updateRowKeys"
+    :row-props="tableRowProps" :checkedRowKeys="checkedRowKeysRef" @update-checked-row-keys="updateRowKeysEvent"
     :row-key="tableRowKey" />
   <div>
     {{ curRowRef }}
@@ -19,11 +19,12 @@ import type { ColumnProps, columnSetting, paginationType, requestFnType, myRowTy
 import { NDataTable, NButton } from 'naive-ui'
 import type { DataTableProps, DataTableColumn } from 'naive-ui'
 import TableConfig from './TableConfig.vue'
-import { ref, watch, computed } from 'vue'
+import { ref, watch, computed, readonly, unref } from 'vue'
 import { setStore, getStore } from "@/utils/store";
 import { deepCopy } from "@/utils";
-import { useTableSelect } from "@/hooks/useTableSelect";
+import { useTableSelect as useTableSelectIn } from "@/hooks/useTableSelect";
 import { useKeyboardControl } from '@/hooks/useKeyboardControl'
+import type { OnUpdateCheckedRowKeys } from "naive-ui/es/data-table/src/interface";
 
 interface tablePropType extends Omit<DataTableProps, 'columns' | 'rowKey'> {
   data?: Array<myRowType>,
@@ -33,8 +34,8 @@ interface tablePropType extends Omit<DataTableProps, 'columns' | 'rowKey'> {
   needInfinite?: boolean,
   storeName?: string,
   isPagination?: boolean,
-  checkedRowKeys?: DataTableProps['checkedRowKeys'],
-  checkedRows?: Array<any>,
+  // checkedRowKeys?: DataTableProps['checkedRowKeys'],
+  // checkedRows?: Array<any>,
   rowProps?: DataTableProps['rowProps'],
   curRow?: myRowType,
   rowKey?: string,
@@ -50,15 +51,41 @@ const tableRowKey = props.rowKey ? (row: any) => {
 } : undefined
 
 const emits = defineEmits(['refreshed', 'update:checkedRowKeys', 'update:checkedRows'])
-const checkedRowKeysRef = props.checkedRowKeys ? ref(props.checkedRowKeys) : ref([])
-const checkedRowsRef = props.checkedRows ? ref(props.checkedRows) : ref([])
-props.checkedRowKeys && watch(() => props.checkedRowKeys, (val) => {
-  if (val === undefined) return
-  const data = deepCopy<typeof tableData.value>(tableData.value)
-  const newData = data.filter((row: any) => val?.includes(row.key))
-  checkedRowKeysRef.value = deepCopy<typeof val>(val)
-  emits('update:checkedRows', newData)
-})
+
+const checkedRowKeysRef = ref<DataTableProps['checkedRowKeys']>([])
+const checkedRowsRef = ref<Array<any>>([])
+const updateRowKeysEvent = ref<OnUpdateCheckedRowKeys>(() => { })
+const tableRowProps = ref()
+const toggleRow = ref<(row: myRowType) => void>(() => { })
+function useTableSelect({ checkedRowKeys, checkedRows }: { checkedRowKeys: DataTableProps['checkedRowKeys'], checkedRows: Array<any> }) {
+  checkedRowKeysRef.value = unref(checkedRowKeys)
+  checkedRowsRef.value = unref(checkedRows)
+
+  function changeRowKeys(keys: DataTableProps['checkedRowKeys']) {
+    const data = deepCopy<typeof tableData.value>(tableData.value)
+    const newData = data.filter((row: any) => keys?.includes(row.key))
+    checkedRowKeysRef.value = deepCopy<typeof keys>(keys)
+    checkedRowsRef.value = newData
+  }
+  const options = { checkedRowKeys: checkedRowKeysRef, checkedRows: checkedRowsRef, tableData: tableData.value, columns: props.columns, emits, rowKey }
+  let { updateRowKeys, tableRowProps: tableRowPropsIn, toggleRow: toggleRowIn, rowClass } = useTableSelectIn(options)
+  tableRowProps.value = tableRowPropsIn
+  updateRowKeysEvent.value = updateRowKeys
+  toggleRow.value = toggleRowIn
+  rowClass.value = (row) => {
+    if (!Object.keys(curRowRef.value).length) return
+    if (row[rowKey] === curRowRef.value[rowKey]) {
+      return ['cur-selected-row']
+    } else {
+      return
+    }
+  }
+  return {
+    checkedRowKeys: readonly(checkedRowKeysRef),
+    checkedRows: readonly(checkedRowsRef),
+    changeRowKeys
+  }
+}
 // 是否开始加载
 const loadFlag = ref(true)
 let tableData = ref<myRowType[]>([])
@@ -254,26 +281,16 @@ function refresh(reset?: boolean) {
   }
   loadData();
 }
-const options = { checkedRowKeys: checkedRowKeysRef, checkedRows: checkedRowsRef, tableData: tableData.value, columns: props.columns, emits, rowKey }
-let { updateRowKeys, tableRowProps, toggleRow, rowClass } = useTableSelect(options)
 
-rowClass.value = (row) => {
-  if (!Object.keys(curRowRef.value).length) return
-  if (row[rowKey] === curRowRef.value[rowKey]) {
-    return ['cur-selected-row']
-  } else {
-    return
-  }
-}
 const curRowRef = ref<myRowType>(props.curRow || {} as myRowType)
 const trackCurRow = ref(true)
 trackCurRow.value && watch(curRowRef, (val) => {
   if (!Object.keys(val).length) return
   checkedRowKeysRef.value = [val[rowKey]]
 })
-const { startListening, stopListening, pressEnter } = useKeyboardControl({curRowRef:curRowRef, allRowRef:tableData,dataTable:dataTable.value})
+const { startListening, stopListening, pressEnter } = useKeyboardControl({ curRowRef: curRowRef, allRowRef: tableData, dataTable: dataTable.value })
 pressEnter.value = () => {
-  toggleRow(curRowRef.value)
+  toggleRow.value(curRowRef.value)
 }
 watch(loadFlag, (val) => {
   if (val) {
@@ -286,7 +303,8 @@ watch(loadFlag, (val) => {
 })
 // todo 跟随滚动条
 defineExpose({
-  refresh
+  refresh,
+  useTableSelect
 })
 </script>
  

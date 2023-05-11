@@ -8,12 +8,11 @@ type hookType = {
   checkedRows: Ref<Array<any>>,
   tableData: any[],
   columns: ColumnProps<any>[],
-  emits: any,
   rowKey: string,
 }
 // 处理表格的选择逻辑
 export function useTableSelect(options: hookType) {
-  const { checkedRowKeys, checkedRows, tableData, columns, emits ,rowKey} = options
+  const { checkedRowKeys, checkedRows, tableData, columns ,rowKey} = options
   // const checkedRowKeys = ref(checkedRowKeysRef)
   // const checkedRows = ref(checkedRowsRef)
   const tableCheck = ref<tableCheckType>(null)
@@ -27,10 +26,7 @@ export function useTableSelect(options: hookType) {
     }
   }
   const changeRowKeys = (rowKeys: DataTableRowKey[]) => {
-    emits('update:checkedRowKeys', rowKeys)
-    // emits('update:checkedRows', checkedRows)
     checkedRowKeys.value = rowKeys
-    // checkedRows.value = rows
   }
   watch(columns, (newVal) => {
     let type: tableCheckType = null
