@@ -8,7 +8,7 @@
   <NDataTable v-bind="$attrs" :columns="TableColumns" :data="tableData" ref="dataTable" :loading="loadFlag"
     @scroll="scroll" :pagination="pagination" remote @update:page-size="handleSizeChange" @update:page="handlePageChange"
     :row-props="tableRowProps" :checkedRowKeys="checkedRowKeysRef" @update-checked-row-keys="updateRowKeys"
-    :row-key="tableRowKey" />
+    :row-key="tableRowKey" v-bind:style="{'overflow-x': 'hidden'}"/>
   <div>
     {{ curRowRef }}
   </div>
@@ -298,7 +298,6 @@ watch(loadFlag, (val) => {
 }, {
   immediate: true
 })
-// todo 跟随滚动条
 defineExpose({
   refresh
 })
