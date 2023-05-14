@@ -25,7 +25,7 @@ import { deepCopy } from "@/utils";
 import { useTableSelect } from "@/hooks/useTableSelect";
 import { useKeyboardControl } from '@/hooks/useKeyboardControl'
 
-interface tablePropType extends Omit<DataTableProps, 'columns' | 'rowKey'> {
+interface tablePropType extends /* @vue-ignore */Omit<DataTableProps, 'columns' | 'rowKey'> {
   data?: Array<myRowType>,
   request?: requestFnType<myRowType>,
   columns: ColumnProps<any>[],
@@ -39,6 +39,20 @@ interface tablePropType extends Omit<DataTableProps, 'columns' | 'rowKey'> {
   curRow?: myRowType,
   rowKey?: string,
 }
+// type tablePropType = Omit<DataTableProps, 'columns' | 'rowKey'> & {
+//   data?: Array<myRowType>,
+//   request?: requestFnType<myRowType>,
+//   columns: ColumnProps<any>[],
+//   immediateRequest?: boolean,
+//   needInfinite?: boolean,
+//   storeName?: string,
+//   isPagination?: boolean,
+//   checkedRowKeys?: DataTableProps['checkedRowKeys'],
+//   checkedRows?: Array<any>,
+//   rowProps?: DataTableProps['rowProps'],
+//   curRow?: myRowType,
+//   rowKey?: string,
+// }
 const props = withDefaults(defineProps<tablePropType>(), {
   immediateRequest: false,
   needInfinite: false,

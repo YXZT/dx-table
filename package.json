@@ -17,7 +17,7 @@
     "sortablejs": "^1.15.0",
     "unplugin-element-plus": "^0.7.0",
     "unplugin-vue-components": "^0.24.0",
-    "vue": "^3.2.47",
+    "vue": "^3.3.2",
     "vue-hooks-plus": "1.6.0-alpha.8"
   },
   "devDependencies": {
