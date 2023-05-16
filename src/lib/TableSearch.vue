@@ -1,21 +1,15 @@
 <template>
   <div>
     <Grid ref="gridRef" :collapsed="collapsed" :gap="[20, 0]" :cols="searchCol">
-      <GridItem v-for="(item, index) in columns" :key="item.prop" v-bind="getResponsive(item)" :index="index">
+      <GridItem v-for="(item, index) in searchColumns" :key="item.prop" v-bind="getResponsive(item)" :index="index">
         <el-form-item :label="`${item.label} :`">
-          <SearchFormItem :column="item" :search-param="searchParam" />
+          <SearchFormItem :column="item" :search-param="searchData" />
         </el-form-item>
       </GridItem>
       <GridItem suffix>
         <div class="operation">
-          <el-button type="primary" :icon="Search" @click="search">搜索</el-button>
-          <el-button :icon="Delete" @click="reset">重置</el-button>
-          <el-button v-if="showCollapse" type="primary" link class="search-isOpen" @click="collapsed = !collapsed">
-            {{ collapsed ? "展开" : "合并" }}
-            <el-icon class="el-icon--right">
-              <component :is="collapsed ? ArrowDown : ArrowUp"></component>
-            </el-icon>
-          </el-button>
+          <n-button type="primary" @click="search">搜索</n-button>
+          <n-button  @click="reset">重置</n-button>
         </div>
       </GridItem>
     </Grid>
@@ -25,26 +19,25 @@
 <script setup lang='ts' generic="T">
 import Grid from "@/lib/Grid/index.vue";
 import GridItem from "@/lib/Grid/components/GridItem.vue";
-import type { BreakPoint } from "@/lib/Grid/interface";
+import type { BreakPoint, Responsive } from "@/lib/Grid/interface";
 import { computed, ref } from "vue"
 type searchFormType = {
   label: string,
   prop: string,
   search?: {
-    span?: number,
-    offset?: number,
-    xs?: number,
-    sm?: number,
-    md?: number,
-    lg?: number,
-    xl?: number,
-  },
+    order?: number; // 搜索项排序（从大到小）
+    span?: number; // 搜索项所占用的列数，默认为1列
+    offset?: number; // 搜索字段左侧偏移列数
+    defaultValue?: string | number | boolean | any[]; // 搜索项默认值
+  } & Partial<Record<BreakPoint, Responsive>>,
   [key: string]: any,
 }
 type tableSearchProps = {
   searchData: any,
   searchColumns: searchFormType[],
   searchCol: number | Record<BreakPoint, number>;
+  search?: (params: any) => void; // 搜索方法
+	reset?: (params: any) => void; // 重置方法
 }
 const props = defineProps<tableSearchProps>()
 // 获取响应式设置
