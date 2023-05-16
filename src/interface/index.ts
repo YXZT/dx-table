@@ -34,3 +34,35 @@ export type classFnType = (row: myRowType) => Array<string> | undefined
 export type myRowType = {
   [key: string]: string
 }
+export type searchFormType = {
+  label: string,
+  prop: string,
+  search?: {
+    el?: SearchType; // 当前项搜索框的类型
+    order?: number; // 搜索项排序（从大到小）
+    span?: number; // 搜索项所占用的列数，默认为1列
+    offset?: number; // 搜索字段左侧偏移列数
+    defaultValue?: string | number | boolean | any[]; // 搜索项默认值
+  } & Partial<Record<BreakPoint, Responsive>>,
+  [key: string]: any,
+}
+
+export type BreakPoint = "xs" | "sm" | "md" | "lg" | "xl";
+
+export type Responsive = {
+  span?: number;
+  offset?: number;
+};
+
+export type SearchType =
+  | "input"
+  | "input-number"
+  | "select"
+  | "select-v2"
+  | "tree-select"
+  | "cascader"
+  | "date-picker"
+  | "time-picker"
+  | "time-select"
+  | "switch"
+  | "slider";

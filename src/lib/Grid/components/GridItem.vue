@@ -4,9 +4,12 @@
   </div>
 </template>
 <script setup lang="ts" name="GridItem">
-import { computed, inject, Ref, ref, useAttrs, watch } from "vue";
-import { BreakPoint, Responsive } from "../interface/index";
-
+import type { BreakPoint, Responsive } from "@/interface";
+import { computed, inject, ref, useAttrs, watch } from "vue";
+import type { Ref } from "vue";
+// defineOptions({
+//   name: "GridItem"
+// })
 type Props = {
   offset?: number;
   span?: number;
@@ -38,7 +41,7 @@ const shouldHiddenIndex = inject<Ref<number>>("shouldHiddenIndex", ref(-1));
 watch(
   () => [shouldHiddenIndex.value, breakPoint.value],
   n => {
-    if (!!attrs.index) {
+    if (attrs.index) {
       isShow.value = !(n[0] !== -1 && parseInt(attrs.index) >= Number(n[0]));
     }
   },

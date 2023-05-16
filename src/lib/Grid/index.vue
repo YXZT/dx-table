@@ -16,8 +16,8 @@ import {
   onUnmounted,
   onDeactivated,
   onActivated,
-  VNodeArrayChildren,
-  VNode
+  type VNodeArrayChildren,
+  type VNode,
 } from "vue";
 import type { BreakPoint } from "./interface/index";
 

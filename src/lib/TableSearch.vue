@@ -1,45 +1,48 @@
 <template>
-  <div>
-    <Grid ref="gridRef" :collapsed="collapsed" :gap="[20, 0]" :cols="searchCol">
-      <GridItem v-for="(item, index) in searchColumns" :key="item.prop" v-bind="getResponsive(item)" :index="index">
-        <el-form-item :label="`${item.label} :`">
-          <SearchFormItem :column="item" :search-param="searchData" />
-        </el-form-item>
-      </GridItem>
-      <GridItem suffix>
-        <div class="operation">
-          <n-button type="primary" @click="search">搜索</n-button>
-          <n-button  @click="reset">重置</n-button>
-        </div>
-      </GridItem>
-    </Grid>
+  <div style="background-color:#eee">
+    <n-form>
+      <Grid ref="gridRef" :collapsed="collapsed" :gap="[20, 0]" :cols="searchCol">
+        <GridItem v-for="(item, index) in searchColumns" :key="item.prop" v-bind="getResponsive(item)" :index="index">
+          <n-form-item :label="`${item.label} :`">
+            <!-- <SearchFormItem :column="item" :search-param="searchData" /> -->
+          </n-form-item>
+        </GridItem>
+        <GridItem suffix>
+          <div class="operation">
+            <n-button type="primary" @click="search">搜索</n-button>
+            <n-button @click="reset">重置</n-button>
+            <n-button v-if="showCollapse" icon-placement="right" quaternary  @click="collapsed = !collapsed">
+              {{ collapsed ? "展开" : "合并" }}
+              <template #icon>
+                <n-icon>
+                  <component :is="collapsed ? ArrowDown : ArrowUp"></component>
+                </n-icon>
+              </template>
+            </n-button>
+          </div>
+        </GridItem>
+      </Grid>
+    </n-form>
   </div>
 </template>
 
-<script setup lang='ts' generic="T">
+<script setup lang='ts'>
 import Grid from "@/lib/Grid/index.vue";
 import GridItem from "@/lib/Grid/components/GridItem.vue";
-import type { BreakPoint, Responsive } from "@/lib/Grid/interface";
 import { computed, ref } from "vue"
-type searchFormType = {
-  label: string,
-  prop: string,
-  search?: {
-    order?: number; // 搜索项排序（从大到小）
-    span?: number; // 搜索项所占用的列数，默认为1列
-    offset?: number; // 搜索字段左侧偏移列数
-    defaultValue?: string | number | boolean | any[]; // 搜索项默认值
-  } & Partial<Record<BreakPoint, Responsive>>,
-  [key: string]: any,
-}
+import type { BreakPoint, searchFormType } from "@/interface";
+import { NForm, NFormItem, NButton,NIcon } from 'naive-ui'
+import { ArrowDown, ArrowUp } from '@vicons/ionicons5'
 type tableSearchProps = {
   searchData: any,
   searchColumns: searchFormType[],
   searchCol: number | Record<BreakPoint, number>;
   search?: (params: any) => void; // 搜索方法
-	reset?: (params: any) => void; // 重置方法
+  reset?: (params: any) => void; // 重置方法
 }
-const props = defineProps<tableSearchProps>()
+const props = withDefaults(defineProps<tableSearchProps>(), {
+  searchCol: () => ({ xs: 1, sm: 2, md: 2, lg: 3, xl: 4 })
+})
 // 获取响应式设置
 const getResponsive = (item: searchFormType) => {
   return {

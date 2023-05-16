@@ -47,7 +47,7 @@ import { ref, watch } from 'vue';
 import DxTable from "../lib/DxTable.vue";
 import TableSearch from "../lib/TableSearch.vue";
 import { NTabs, NTabPane, NCard, NButton } from 'naive-ui'
-import type { requestFnType } from "@/interface";
+import type { requestFnType, searchFormType } from "@/interface";
 import {
   mockColumns,
   mockData,
@@ -99,36 +99,33 @@ function setSelected() {
   checkedRowKeys.value = [1, 2]
 }
 
-const searchColumns = ref(
-  [{
-    prop: "username",
-    label: "用户姓名",
-    search: { el: "input" },
+const searchColumns: searchFormType[] = [{
+  prop: "username",
+  label: "用户姓名",
+  search: { el: "input" },
+},
+{
+  prop: "gender",
+  label: "性别",
+  search: { el: "select" }
+},
+{ prop: "idCard", label: "身份证号", search: { el: "input" } },
+{ prop: "email", label: "邮箱", search: { el: "input" } },
+{
+  prop: "userStatus",
+  label: "用户状态",
+  search: {
+    el: "tree-select",
   },
-  {
-    prop: "gender",
-    label: "性别",
-    enum: [],
-    search: { el: "select" }
-  },
-  { prop: "idCard", label: "身份证号", search: { el: "input" } },
-  { prop: "email", label: "邮箱", search: { el: "input" } },
-  {
-    prop: "userStatus",
-    label: "用户状态",
-    enum: [],
-    search: {
-      el: "tree-select",
-    },
-  },
-  {
-    prop: "createTime",
-    label: "创建时间",
-    search: {
-      el: "date-picker",
-    }
+},
+{
+  prop: "createTime",
+  label: "创建时间",
+  search: {
+    el: "date-picker",
   }
-])
+}
+]
 
 const searchData = ref({
   username: '',
