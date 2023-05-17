@@ -8,7 +8,7 @@
   <NDataTable v-bind="$attrs" :columns="TableColumns" :data="tableData" ref="dataTable" :loading="loadFlag"
     @scroll="scroll" :pagination="pagination" remote @update:page-size="handleSizeChange" @update:page="handlePageChange"
     :row-props="tableRowProps" :checkedRowKeys="checkedRowKeysRef" @update-checked-row-keys="updateRowKeys"
-    :row-key="tableRowKey" v-bind:style="{'overflow-x': 'hidden'}"/>
+    :row-key="tableRowKey" v-bind:style="{'overflow-x': 'hidden'}" size="small" :theme-overrides="dataTableThemeOverrides"/>
   <div>
     {{ curRowRef }}
   </div>
@@ -25,6 +25,11 @@ import { deepCopy } from "@/utils";
 import { useTableSelect } from "@/hooks/useTableSelect";
 import { useKeyboardControl } from '@/hooks/useKeyboardControl'
 
+type DataTableThemeOverrides = NonNullable<DataTableProps['themeOverrides']>
+const dataTableThemeOverrides:DataTableThemeOverrides = {
+  thPaddingSmall: '2px',
+  tdPaddingSmall: '2px'
+}
 interface tablePropType extends /* @vue-ignore */Omit<DataTableProps, 'columns' | 'rowKey'> {
   data?: Array<myRowType>,
   request?: requestFnType<myRowType>,
@@ -285,7 +290,7 @@ trackCurRow.value && watch(curRowRef, (val) => {
   if (!Object.keys(val).length) return
   checkedRowKeysRef.value = [val[rowKey]]
 })
-const { startListening, stopListening, pressEnter } = useKeyboardControl({curRowRef:curRowRef, allRowRef:tableData,dataTable:dataTable.value})
+const { startListening, stopListening, pressEnter } = useKeyboardControl({curRowRef:curRowRef, allRowRef:tableData,dataTable:dataTable})
 pressEnter.value = () => {
   toggleRow(curRowRef.value)
 }

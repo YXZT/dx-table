@@ -7,7 +7,7 @@ type optionsType = {
   curRowRef: Ref<object>,
   allRowRef: Ref<any[]>,
   rowKey?: string,
-  dataTable: InstanceType<typeof NDataTable> | null
+  dataTable: Ref<InstanceType<typeof NDataTable> | null>
 }
 export function useKeyboardControl(options: optionsType) {
   const { curRowRef, allRowRef, rowKey = 'key', dataTable } = options
@@ -29,7 +29,7 @@ export function useKeyboardControl(options: optionsType) {
     }
   }
   function scrollToRow() {
-    dataTable && dataTable.scrollTo({ index: index } as any)
+    dataTable?.value?.scrollTo({ index: index.value } as any)
   }
 
   function startListening() {
