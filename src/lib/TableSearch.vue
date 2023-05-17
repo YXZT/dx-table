@@ -4,7 +4,7 @@
       <Grid ref="gridRef" :collapsed="collapsed" :gap="[20, 0]" :cols="searchCol">
         <GridItem v-for="(item, index) in searchColumns" :key="item.prop" v-bind="getResponsive(item)" :index="index">
           <n-form-item :label="`${item.label} :`" size="small">
-            <!-- <SearchFormItem :column="item" :search-param="searchData" /> -->
+            <SearchFormItem :column="item" :search-param="searchData" />
             <n-input></n-input>
           </n-form-item>
         </GridItem>
@@ -37,7 +37,7 @@ import { computed, ref } from "vue"
 import type { BreakPoint, searchFormType } from "@/interface";
 import { NForm, NFormItem, NButton, NIcon, NInput, NConfigProvider, type GlobalThemeOverrides,NSpace } from 'naive-ui'
 import { ArrowDown, ArrowUp } from '@vicons/ionicons5'
-import { } from 'naive-ui'
+import SearchFormItem from './SearchFormItem.vue'
 
 const themeOverrides: GlobalThemeOverrides = {
   Form: {
