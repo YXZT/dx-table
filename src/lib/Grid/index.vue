@@ -102,7 +102,6 @@ const findIndex = () => {
   slots.forEach((slot: any) => {
     if (typeof slot.type === "object" && slot.type.name === "GridItem" && slot.props?.suffix !== undefined) suffix = slot;
     if (typeof slot.type === "symbol" && Array.isArray(slot.children)) slot.children.forEach((child: any) => fields.push(child));
-    console.log(slot.type,slot.type.name);
   });
 
   // 计算 suffix 所占用的列
@@ -112,7 +111,6 @@ const findIndex = () => {
     suffixCols =
       (suffix.props![breakPoint.value]?.span ?? suffix.props?.span ?? 1) +
       (suffix.props![breakPoint.value]?.offset ?? suffix.props?.offset ?? 0);
-      console.log(suffix.props![breakPoint.value]?.span ?? suffix.props?.span ?? 1);
   }
   try {
     let find = false;

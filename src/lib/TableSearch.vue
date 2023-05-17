@@ -41,7 +41,8 @@ import { } from 'naive-ui'
 
 const themeOverrides: GlobalThemeOverrides = {
   Form: {
-    feedbackHeightSmall: '4px'
+    feedbackHeightSmall: '4px',
+    labelPaddingVertical: '0 0 0 2px'
   },
 }
 type tableSearchProps = {
@@ -99,5 +100,8 @@ const showCollapse = computed(() => {
   padding-bottom: 4px;
   height: 100%;
   box-sizing: border-box;
+}
+:deep(.n-form-item.n-form-item--top-labelled .n-form-item-label){
+  align-items: center;
 }
 </style>
