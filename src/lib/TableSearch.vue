@@ -1,28 +1,32 @@
 <template>
   <div style="background-color:#eee">
-    <n-form>
+    <n-config-provider :theme-overrides="themeOverrides">
       <Grid ref="gridRef" :collapsed="collapsed" :gap="[20, 0]" :cols="searchCol">
         <GridItem v-for="(item, index) in searchColumns" :key="item.prop" v-bind="getResponsive(item)" :index="index">
-          <n-form-item :label="`${item.label} :`">
+          <n-form-item :label="`${item.label} :`" size="small">
             <!-- <SearchFormItem :column="item" :search-param="searchData" /> -->
+            <n-input></n-input>
           </n-form-item>
         </GridItem>
         <GridItem suffix>
           <div class="operation">
-            <n-button type="primary" @click="search">搜索</n-button>
-            <n-button @click="reset">重置</n-button>
-            <n-button v-if="showCollapse" icon-placement="right" quaternary  @click="collapsed = !collapsed">
-              {{ collapsed ? "展开" : "合并" }}
-              <template #icon>
-                <n-icon>
-                  <component :is="collapsed ? ArrowDown : ArrowUp"></component>
-                </n-icon>
-              </template>
-            </n-button>
+            <n-space>
+              <n-button type="primary" @click="search">搜索</n-button>
+              <n-button @click="reset">重置</n-button>
+              <n-button v-if="showCollapse" icon-placement="right" type="primary" quaternary
+                @click="collapsed = !collapsed">
+                {{ collapsed ? "展开" : "合并" }}
+                <template #icon>
+                  <n-icon>
+                    <component :is="collapsed ? ArrowDown : ArrowUp"></component>
+                  </n-icon>
+                </template>
+              </n-button>
+            </n-space>
           </div>
         </GridItem>
       </Grid>
-    </n-form>
+    </n-config-provider>
   </div>
 </template>
 
@@ -31,8 +35,15 @@ import Grid from "@/lib/Grid/index.vue";
 import GridItem from "@/lib/Grid/components/GridItem.vue";
 import { computed, ref } from "vue"
 import type { BreakPoint, searchFormType } from "@/interface";
-import { NForm, NFormItem, NButton,NIcon } from 'naive-ui'
+import { NForm, NFormItem, NButton, NIcon, NInput, NConfigProvider, type GlobalThemeOverrides,NSpace } from 'naive-ui'
 import { ArrowDown, ArrowUp } from '@vicons/ionicons5'
+import { } from 'naive-ui'
+
+const themeOverrides: GlobalThemeOverrides = {
+  Form: {
+    feedbackHeightSmall: '4px'
+  },
+}
 type tableSearchProps = {
   searchData: any,
   searchColumns: searchFormType[],
@@ -80,4 +91,13 @@ const showCollapse = computed(() => {
   return show;
 });
 </script>
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.operation {
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  padding-bottom: 4px;
+  height: 100%;
+  box-sizing: border-box;
+}
+</style>

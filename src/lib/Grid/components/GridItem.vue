@@ -3,13 +3,13 @@
     <slot></slot>
   </div>
 </template>
-<script setup lang="ts" name="GridItem">
+<script setup lang="ts">
 import type { BreakPoint, Responsive } from "@/interface";
 import { computed, inject, ref, useAttrs, watch } from "vue";
 import type { Ref } from "vue";
-// defineOptions({
-//   name: "GridItem"
-// })
+defineOptions({
+  name: "GridItem"
+})
 type Props = {
   offset?: number;
   span?: number;

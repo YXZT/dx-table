@@ -123,6 +123,7 @@ const searchColumns: searchFormType[] = [{
   label: "创建时间",
   search: {
     el: "date-picker",
+    span: 2,
   }
 }
 ]

@@ -4,7 +4,7 @@
   </div>
 </template>
 
-<script setup lang="ts" name="Grid">
+<script setup lang="ts">
 import {
   ref,
   watch,
@@ -20,7 +20,9 @@ import {
   type VNode,
 } from "vue";
 import type { BreakPoint } from "./interface/index";
-
+defineOptions({
+  name:'Grid'
+})
 type Props = {
   cols?: number | Record<BreakPoint, number>;
   collapsed?: boolean;
@@ -100,14 +102,17 @@ const findIndex = () => {
   slots.forEach((slot: any) => {
     if (typeof slot.type === "object" && slot.type.name === "GridItem" && slot.props?.suffix !== undefined) suffix = slot;
     if (typeof slot.type === "symbol" && Array.isArray(slot.children)) slot.children.forEach((child: any) => fields.push(child));
+    console.log(slot.type,slot.type.name);
   });
 
   // 计算 suffix 所占用的列
   let suffixCols = 0;
+  
   if (suffix) {
     suffixCols =
       (suffix.props![breakPoint.value]?.span ?? suffix.props?.span ?? 1) +
       (suffix.props![breakPoint.value]?.offset ?? suffix.props?.offset ?? 0);
+      console.log(suffix.props![breakPoint.value]?.span ?? suffix.props?.span ?? 1);
   }
   try {
     let find = false;
@@ -115,7 +120,7 @@ const findIndex = () => {
       prev +=
         ((current as VNode)!.props![breakPoint.value]?.span ?? (current as VNode)!.props?.span ?? 1) +
         ((current as VNode)!.props![breakPoint.value]?.offset ?? (current as VNode)!.props?.offset ?? 0);
-      if ((prev as number) > props.collapsedRows * cols.value - suffixCols) {
+        if ((prev as number) > props.collapsedRows * cols.value - suffixCols) {
         hiddenIndex.value = index;
         find = true;
         throw "find it";
