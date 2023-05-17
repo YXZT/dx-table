@@ -3,6 +3,7 @@
     <n-tabs v-model:value="type">
       <n-tab-pane :name="1" tab="简单数据">
         <table-search :searchData="searchData" :search-columns="searchColumns"></table-search>
+        <div>{{ searchData }}</div>
         <dx-table :columns="columns" :data="data" virtual-scroll :style="{ height: `400px` }" flex-height :scroll-x="1200"
           storeName="test_table1" :row-props="rowProps" v-model:checked-row-keys="checkedRowKeys"
           v-model:checkedRows="checkedRows" />

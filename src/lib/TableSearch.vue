@@ -5,7 +5,6 @@
         <GridItem v-for="(item, index) in searchColumns" :key="item.prop" v-bind="getResponsive(item)" :index="index">
           <n-form-item :label="`${item.label} :`" size="small">
             <SearchFormItem :column="item" :search-param="searchData" />
-            <n-input></n-input>
           </n-form-item>
         </GridItem>
         <GridItem suffix>
