@@ -43,7 +43,7 @@
   </div>
 </template>
 
-<script setup lang="ts">
+<script setup lang="tsx">
 import { ref, watch } from 'vue';
 import DxTable from "../lib/DxTable.vue";
 import TableSearch from "../lib/TableSearch.vue";
@@ -108,23 +108,62 @@ const searchColumns: searchFormType[] = [{
 {
   prop: "gender",
   label: "性别",
-  search: { el: "select" }
+  search: {
+    el: "select", props: {
+      options: [{
+        label: '男',
+        value: '男'
+      }, {
+        label: '女',
+        value: '女'
+      }]
+    }
+  }
 },
 { prop: "idCard", label: "身份证号", search: { el: "input" } },
-{ prop: "email", label: "邮箱", search: { el: "input" } },
+{
+  prop: "email", label: "邮箱", search: {
+    el: "input",
+    // xs: {
+    //   span: 1,
+    //   offset: 0
+    // },
+    // md: {
+    //   span: 2,
+    //   offset: 0
+    // },
+  }
+},
 {
   prop: "userStatus",
   label: "用户状态",
   search: {
-    el: "tree-select",
+    el: "select",
   },
+  // 自定义 search 显示内容
+  // render: ({searchParam}) => {
+  //   return (
+  //     <div class="flx-center">
+  //       {searchParam.gender}
+  //     </div>
+  //   )
+  // }
 },
 {
   prop: "createTime",
   label: "创建时间",
   search: {
     el: "date-picker",
+    span: 1,
+  },
+},
+{
+  prop: "date",
+  label: "时间范围",
+  search: {
+    el: "date-picker",
     span: 2,
+    props: { type: 'daterange' }
   }
 }
 ]

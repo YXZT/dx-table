@@ -1,24 +1,21 @@
 <!-- eslint-disable vue/no-mutating-props -->
 <template>
-  <component
-    :is="`n-input`"
+  <component :is="column?.render ?? `n-${column.search?.el}`"
     v-bind="{ ...handleSearchProps, ...placeholder, searchParam, clearable }"
-    v-model:value.trim="searchParam[column.prop]"
-  >
+    v-model:value.trim="searchParam[column.prop]">
   </component>
 </template>
 
 <script setup lang="ts">
 import type { searchFormType } from "@/interface";
 import { computed, inject, ref } from "vue";
-import { NInput } from 'naive-ui'
-defineOptions({name:"SearchFormItem",components:{NInput}})
+import { NInput, NCheckbox, NCheckboxGroup, NDatePicker, NInputNumber, NRadio, NSelect, NSwitch, NMention } from 'naive-ui'
+defineOptions({ name: "SearchFormItem", components: { NInput, NCheckbox, NCheckboxGroup, NDatePicker, NInputNumber, NRadio, NSelect, NSwitch, NMention } })
 interface SearchFormItem {
   column: searchFormType;
   searchParam: { [key: string]: any };
 }
 const props = defineProps<SearchFormItem>();
-console.log(props.column.search);
 
 // 判断 fieldNames 设置 label && value && children 的 key 值
 const fieldNames = computed(() => {
@@ -34,16 +31,18 @@ const handleSearchProps = computed(() => {
   // const label = fieldNames.value.label;
   // const value = fieldNames.value.value;
   // const children = fieldNames.value.children;
-  // const searchEl = props.column.search?.el;
-  // let searchProps = props.column.search?.props ?? {};
+  const searchEl = props.column.search?.el;
+  let searchProps = props.column.search?.props ?? {};
+  if (searchEl === "date-picker") {
+    searchProps = { ...searchProps,style:{'width':'100%'} }
+  }
   // if (searchEl === "tree-select") {
   //   searchProps = { ...searchProps, props: { ...searchProps.props, label, children }, nodeKey: value };
   // }
   // if (searchEl === "cascader") {
   //   searchProps = { ...searchProps, props: { ...searchProps.props, label, value, children } };
   // }
-  // return searchProps;
-  return {}
+  return searchProps
 });
 
 // 处理默认 placeholder
@@ -54,7 +53,7 @@ const placeholder = computed(() => {
   // }
   // const placeholder = search?.props?.placeholder ?? (search?.el?.includes("input") ? "请输入" : "请选择");
   // return { placeholder };
-  return { placeholder:'' }
+  return { placeholder: '' }
 });
 
 // 是否有清除按钮 (当搜索项有默认值时，清除按钮不显示)
