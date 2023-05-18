@@ -4,11 +4,15 @@ import type { DataTableColumn } from "naive-ui";
 export type ColumnProps<T> = DataTableColumn<T> & {
   isShow?: Boolean,
   key: string | number,
+  sortOrder?: Number,
+  isSort?: Boolean
 }
 export type columnSetting<T> = Omit<DataTableColumn<T>, 'fixed'> & {
   isShow: Boolean,
   key: string | number,
-  fixed: "left" | "right" | "none"
+  fixed: "left" | "right" | "none",
+  sortOrder: Number,
+  isSort: Boolean
 }
 
 export type paginationType = {

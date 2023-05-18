@@ -8,7 +8,8 @@
   <NDataTable v-bind="$attrs" :columns="TableColumns" :data="tableData" ref="dataTable" :loading="loadFlag"
     @scroll="scroll" :pagination="pagination" remote @update:page-size="handleSizeChange" @update:page="handlePageChange"
     :row-props="tableRowProps" :checkedRowKeys="checkedRowKeysRef" @update-checked-row-keys="updateRowKeys"
-    :row-key="tableRowKey" v-bind:style="{'overflow-x': 'hidden'}" size="small" :theme-overrides="dataTableThemeOverrides"/>
+    :row-key="tableRowKey" v-bind:style="{ 'overflow-x': 'hidden' }" size="small"
+    :theme-overrides="dataTableThemeOverrides" />
   <div>
     {{ curRowRef }}
   </div>
@@ -26,7 +27,7 @@ import { useTableSelect } from "@/hooks/useTableSelect";
 import { useKeyboardControl } from '@/hooks/useKeyboardControl'
 
 type DataTableThemeOverrides = NonNullable<DataTableProps['themeOverrides']>
-const dataTableThemeOverrides:DataTableThemeOverrides = {
+const dataTableThemeOverrides: DataTableThemeOverrides = {
   thPaddingSmall: '2px',
   tdPaddingSmall: '2px'
 }
@@ -86,6 +87,7 @@ watch([() => props.data, () => props.request], () => {
   refresh(true)
 })
 let localPagination = ref({ total: 0, pageSize: 20, pageNum: 1 })
+let localSearchSort = ref([])
 let pagination = computed(() => {
   if (props.needInfinite) return undefined
   if (!props.isPagination) return undefined
@@ -117,13 +119,12 @@ function handleSizeChange(val: number) {
 }
 loadData()
 
-function loadTbData(request: requestFnType<myRowType>, isAppend: Boolean, pagination?: paginationType) {
+function loadTbData(request: requestFnType<myRowType>, isAppend: Boolean) {
   loadFlag.value = true
   const parameter = {
-    pageNum:
-      (pagination && pagination.pageNum) || localPagination.value.pageNum,
-    pageSize:
-      (pagination && pagination.pageSize) || localPagination.value.pageSize
+    pageNum: localPagination.value.pageNum,
+    pageSize:localPagination.value.pageSize,
+    sort: localSearchSort.value
   }
   const result = request(parameter)
   result.then(res => {
@@ -150,25 +151,27 @@ function loadTbData(request: requestFnType<myRowType>, isAppend: Boolean, pagina
     loadFlag.value = false
   })
 }
-function loadData(pagination?: paginationType) {
+function loadData() {
   if (Array.isArray(props.data)) {
     loadDataDirect(props.data)
     return
   }
   if (!props.request) return
-  loadTbData(props.request, false, pagination)
+  loadTbData(props.request, false)
 }
 
 
 // 追踪传过来原本的prop并加以改造
 const localColums = ref<columnSetting<any>[]>([])
 watch(() => props.columns, (newVal) => {
-  let columsResult = newVal.map(col => {
+  let columsResult = newVal.map((col,index) => {
     let newCol: columnSetting<any> = {
       ...col,
-      isShow: col.isShow === undefined ? true : col.isShow,
-      fixed: col.fixed === undefined ? 'none' : col.fixed,
-      resizable: col.resizable === undefined ? true : col.resizable,
+      isShow: col.isShow ?? true,
+      fixed: col.fixed ?? 'none' ,
+      resizable: col.resizable ?? true,
+      sortOrder: col.sortOrder ?? index,
+      isSort: col.isSort ?? false,
     }
     return newCol
   })
@@ -180,12 +183,14 @@ watch(() => props.columns, (newVal) => {
 })
 
 const resetConf = () => {
-  let columsResult = props.columns.map(col => {
+  let columsResult = props.columns.map((col,index) => {
     let newCol: columnSetting<any> = {
       ...col,
-      isShow: col.isShow === undefined ? true : col.isShow,
-      fixed: col.fixed === undefined ? 'none' : col.fixed,
-      resizable: col.resizable === undefined ? true : col.resizable,
+      isShow: col.isShow ?? true,
+      fixed: col.fixed ?? 'none' ,
+      resizable: col.resizable ?? true,
+      sortOrder: col.sortOrder ?? index,
+      isSort: col.isSort ?? false,
     }
     return newCol
   })
@@ -290,7 +295,7 @@ trackCurRow.value && watch(curRowRef, (val) => {
   if (!Object.keys(val).length) return
   checkedRowKeysRef.value = [val[rowKey]]
 })
-const { startListening, stopListening, pressEnter } = useKeyboardControl({curRowRef:curRowRef, allRowRef:tableData,dataTable:dataTable})
+const { startListening, stopListening, pressEnter } = useKeyboardControl({ curRowRef: curRowRef, allRowRef: tableData, dataTable: dataTable })
 pressEnter.value = () => {
   toggleRow(curRowRef.value)
 }

@@ -15,16 +15,21 @@
     <n-drawer v-model:show="isActive" :width="500" placement="right" :trap-focus="false" :block-scroll="false"
       :to="tableEl">
       <n-drawer-content>
-        <template #header>
-          <div class="s-flex-between">
-            <div>表格列设置</div>
+        <n-tabs type="line" animated>
+          <n-tab-pane name="表格列设置" tab="表格列设置">
+            <n-data-table ref="dataTable" :bordered="false" :single-line="false" :columns="columnsSetting"
+              :data="dataSetting" :rowProps="rowProps" />
+          </n-tab-pane>
+          <n-tab-pane name="排序顺序设置" tab="排序顺序设置">
+            <n-data-table  :bordered="false" :single-line="false" :columns="sortOrderSetting"
+              :data="columnsSortSetting" :rowProps="rowProps" />
+          </n-tab-pane>
+          <template #suffix>
             <n-button size="small" @click="resetConf">
               重置
             </n-button>
-          </div>
-        </template>
-        <n-data-table ref="dataTable" :bordered="false" :single-line="false" :columns="columnsSetting" :data="dataSetting"
-          :rowProps="rowProps" />
+          </template>
+        </n-tabs>
       </n-drawer-content>
     </n-drawer>
   </div>
@@ -32,7 +37,7 @@
 <script setup lang="ts">
 import { ArchiveSettings16Regular } from '@vicons/fluent'
 import { ref, computed, h, nextTick } from 'vue'
-import { NDataTable, NDrawer, NDrawerContent, NButton, NIcon, NSwitch, NRadioGroup, NRadioButton } from "naive-ui";
+import { NDataTable, NDrawer, NDrawerContent, NButton, NIcon, NSwitch, NRadioGroup, NRadioButton, NTabs, NTabPane } from "naive-ui";
 import type { columnSetting } from "@/interface";
 import Sortable from "sortablejs";
 
@@ -41,8 +46,9 @@ interface propsType {
   tableCols: columnSetting<any>[],
 }
 const props = defineProps<propsType>()
-const emits = defineEmits(['change-show', 'change-sequence', 'change-fixed','reset-conf'])
+const emits = defineEmits(['change-show', 'change-sequence', 'change-fixed', 'reset-conf'])
 const dataSetting = ref<columnSetting<any>[]>([])
+const sortOrderSetting = ref<columnSetting<any>[]>([])
 const columnsSetting = ref([{
   title: '列名',
   key: 'title'
@@ -66,9 +72,14 @@ const columnsSetting = ref([{
     return h(NRadioGroup, { value: fixed, 'onUpdateValue': (e: any) => changeColFixed(e, row) }, buttons)
   }
 }])
+const columnsSortSetting = ref([{
+  title: '列名',
+  key: 'title'
+}])
 const isActive = ref(false)
 const activate = () => {
   dataSetting.value = props.tableCols
+  sortOrderSetting.value = props.tableCols.filter(row=>row.isSort)
   isActive.value = true
   !dataTable.value && nextTick(() => {
     columnDrop()
@@ -109,7 +120,7 @@ const rowProps = () => {
     style: 'cursor: move;',
   }
 }
-function resetConf(){
+function resetConf() {
   isActive.value = false
   emits('reset-conf')
 }
@@ -125,7 +136,8 @@ function resetConf(){
 .table-info {
   width: 100%;
 }
-:deep(.n-drawer-header__main){
-  flex:1
+
+:deep(.n-drawer-header__main) {
+  flex: 1
 }
 </style>
