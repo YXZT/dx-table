@@ -6,13 +6,15 @@ export type ColumnProps<T> = DataTableColumn<T> & {
   key: string | number,
   order?: number,
   sorter?: boolean | Function | 'default',
+  sortOrder?: 'descend' | 'ascend' | false
 }
-export type columnSetting<T=any> = Omit<DataTableColumn<T>, 'fixed'|'sorter'> & {
+export type columnSetting<T=any> = Omit<DataTableColumn<T>, 'fixed'|'sorter'|'sortOrder'> & {
   isShow: Boolean,
   key: string | number,
   fixed: "left" | "right" | "none",
   order: number,
   sorter: boolean | Function | 'default',
+  sortOrder: 'descend' | 'ascend' | false
 }
 export type paginationType = {
   pageNum: number,

@@ -80,6 +80,7 @@ const simpleColumns: ColumnProps<simpleDataType>[] = [
     title: 'Name',
     key: 'name',
     sorter: true,
+    sortOrder:'ascend',
     order: 8
   },
   {

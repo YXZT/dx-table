@@ -94,13 +94,13 @@ const columnsSortSetting = ref<DataTableColumns<columnSetting<any>>>([
     title: '次序',
     key: 'fixed',
     render: (row: columnSetting<any>) => {
-      const fixed = row.fixed || 'none'
+      const sortOrder = row.sortOrder || false
       const buttons = () => [
         h(NRadioButton, { value: 'ascend', label: '升序↑' }),
         h(NRadioButton, { value: 'descend', label: '降序↓' }),
         h(NRadioButton, { value: false, label: '不排序' }),
       ]
-      return h(NRadioGroup, { value: fixed, 'onUpdate:value': (e: any) => changeColSort(), size: 'small' }, buttons)
+      return h(NRadioGroup, { value: sortOrder, 'onUpdate:value': (e: any) => changeColSort(e, row), size: 'small' }, buttons)
     }
   }])
 const isActive = ref(false)
@@ -125,8 +125,10 @@ function changeColFixed(e: 'left' | 'none' | 'right', col: columnSetting<any>) {
   newCol.fixed = e
   emits('change-fixed', newCol)
 }
-function changeColSort() {
-
+function changeColSort(e: any, col: columnSetting<any>) {
+  const newCol = { ...col }
+  newCol.sortOrder = e
+  emits('change-fixed', newCol)
 }
 const dataTable = ref<InstanceType<typeof NDataTable>>()
 const sortDataTable = ref<InstanceType<typeof NDataTable>>()

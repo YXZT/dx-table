@@ -180,6 +180,7 @@ watch(() => props.columns, (newVal) => {
       resizable: col.resizable ?? true,
       order: col.order ?? index,
       sorter: col.sorter ?? false,
+      sortOrder: col.sortOrder ?? false,
     }
     return newCol
   })
@@ -199,6 +200,7 @@ const resetConf = () => {
       resizable: col.resizable ?? true,
       order: col.order ?? index,
       sorter: col.sorter ?? false,
+      sortOrder: col.sortOrder ?? false,
     }
     return newCol
   })
