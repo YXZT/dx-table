@@ -20,7 +20,7 @@
             <n-data-table ref="dataTable" :bordered="false" :single-line="false" :columns="columnsSetting"
               :data="dataSetting" :rowProps="rowProps" size="small" />
           </n-tab-pane>
-          <n-tab-pane name="排序顺序设置" tab="排序顺序设置" display-directive="show">
+          <n-tab-pane name="排序设置" tab="排序设置" display-directive="show">
             <n-data-table ref="sortDataTable" :bordered="false" :single-line="false" :columns="columnsSortSetting"
               :data="sortData" :rowProps="rowProps" size="small" />
           </n-tab-pane>
@@ -44,7 +44,8 @@ import Sortable from "sortablejs";
 
 interface propsType {
   tableRef: InstanceType<typeof NDataTable> | null,
-  tableCols: columnSetting<any>[],
+  dataSetting: columnSetting<any>[],
+  sortData: columnSetting<any>[],
 }
 const props = defineProps<propsType>()
 // const emits = defineEmits(['change-show', 'change-sequence','change-sort-order', 'change-fixed', 'reset-conf'])
@@ -55,8 +56,6 @@ const emits = defineEmits<{
   'change-fixed': [col: columnSetting<any>],
   'reset-conf': []
 }>()
-const dataSetting = ref<columnSetting<any>[]>([])
-const sortData = ref<columnSetting<any>[]>([])
 const columnsSetting = ref([{
   title: '列名',
   key: 'title'
@@ -82,7 +81,7 @@ const columnsSetting = ref([{
 }])
 const columnsSortSetting = ref<DataTableColumns<columnSetting<any>>>([
   {
-    title: '#',
+    title: '顺序',
     key: 'key',
     render: (_, index) => {
       return `${index + 1}`
@@ -91,6 +90,18 @@ const columnsSortSetting = ref<DataTableColumns<columnSetting<any>>>([
   {
     title: '列名',
     key: 'title'
+  }, {
+    title: '次序',
+    key: 'fixed',
+    render: (row: columnSetting<any>) => {
+      const fixed = row.fixed || 'none'
+      const buttons = () => [
+        h(NRadioButton, { value: 'ascend', label: '升序↑' }),
+        h(NRadioButton, { value: 'descend', label: '降序↓' }),
+        h(NRadioButton, { value: false, label: '不排序' }),
+      ]
+      return h(NRadioGroup, { value: fixed, 'onUpdate:value': (e: any) => changeColSort(), size: 'small' }, buttons)
+    }
   }])
 const isActive = ref(false)
 const activate = () => {
@@ -99,13 +110,7 @@ const activate = () => {
     columnDrop()
   })
 }
-watch(props.tableCols,(val)=>{
-  dataSetting.value = val
-  sortData.value = val.filter(row => row.sorter).sort((a, b) => { return a.order - b.order })
-},{
-  immediate:true,
-  deep:false
-})
+
 const tableEl = computed(() => {
   return props.tableRef && props.tableRef.$el
 })
@@ -119,6 +124,9 @@ function changeColFixed(e: 'left' | 'none' | 'right', col: columnSetting<any>) {
   const newCol = { ...col }
   newCol.fixed = e
   emits('change-fixed', newCol)
+}
+function changeColSort() {
+
 }
 const dataTable = ref<InstanceType<typeof NDataTable>>()
 const sortDataTable = ref<InstanceType<typeof NDataTable>>()
@@ -145,12 +153,12 @@ function columnDrop() {
       const oldIndex = evt.oldIndex;
       const newIndex = evt.newIndex;
       if (oldIndex === undefined || newIndex === undefined) return
-      const oldKey = sortData.value[oldIndex].key
-      const newKey = sortData.value[newIndex].key
+      const oldKey = props.sortData[oldIndex].key
+      const newKey = props.sortData[newIndex].key
 
-      const _oldIndex = dataSetting.value.findIndex(ele=>ele.key === oldKey)
-      const _newIndex = dataSetting.value.findIndex(ele=>ele.key === newKey)
-      
+      const _oldIndex = props.dataSetting.findIndex(ele => ele.key === oldKey)
+      const _newIndex = props.dataSetting.findIndex(ele => ele.key === newKey)
+
       emits('change-sort-order', _oldIndex, _newIndex)
     }
   });

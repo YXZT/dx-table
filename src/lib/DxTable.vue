@@ -1,5 +1,5 @@
 <template>
-  <TableConfig :tableRef="dataTable" :tableCols="localColums" @change-show="changeCol" @change-sequence="changeSequence"
+  <TableConfig :tableRef="dataTable" :dataSetting="localColums" :sortData="localSearchSort" @change-show="changeCol" @change-sequence="changeSequence"
   @change-sort-order="changeSortOrder"
     @reset-conf="resetConf" @change-fixed="changeCol">
     <slot name="title">
@@ -88,7 +88,9 @@ watch([() => props.data, () => props.request], () => {
   refresh(true)
 })
 let localPagination = ref({ total: 0, pageSize: 20, pageNum: 1 })
-let localSearchSort = ref([])
+let localSearchSort = computed(()=>{
+  return localColums.value.filter(row => row.sorter).sort((a, b) => { return a.order - b.order })
+})
 let pagination = computed(() => {
   if (props.needInfinite) return undefined
   if (!props.isPagination) return undefined
@@ -122,10 +124,15 @@ loadData()
 
 function loadTbData(request: requestFnType<myRowType>, isAppend: Boolean) {
   loadFlag.value = true
+  function tranform(sortOrder:'ascend'|'descend'|boolean){
+    if(sortOrder === 'ascend') return 1
+    if(sortOrder === 'descend') return -1
+    return null
+  }
   const parameter = {
     pageNum: localPagination.value.pageNum,
     pageSize:localPagination.value.pageSize,
-    sort: localSearchSort.value
+    sort: localSearchSort.value.map(ele=>({ [ele.key] : tranform(ele.sortOrder) }))
   }
   const result = request(parameter)
   result.then(res => {
@@ -220,6 +227,7 @@ function ExtractConfiguration(colums: columnSetting<any>[], columsConfig: column
         width: record.width,
         fixed: record.fixed,
         order: record.order,
+        sorter: record.sorter,
       }
       columsResult.push(Object.assign({}, columsContent[curColIndex], conf))
       columsContent[curColIndex] = undefined
