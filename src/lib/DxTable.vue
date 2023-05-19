@@ -1,5 +1,6 @@
 <template>
   <TableConfig :tableRef="dataTable" :tableCols="localColums" @change-show="changeCol" @change-sequence="changeSequence"
+  @change-sort-order="changeSortOrder"
     @reset-conf="resetConf" @change-fixed="changeCol">
     <slot name="title">
       <div v-show="checkedRowKeysRef?.length">已经选择：{{ checkedRowKeysRef?.length }} 条</div>
@@ -170,8 +171,8 @@ watch(() => props.columns, (newVal) => {
       isShow: col.isShow ?? true,
       fixed: col.fixed ?? 'none' ,
       resizable: col.resizable ?? true,
-      sortOrder: col.sortOrder ?? index,
-      isSort: col.isSort ?? false,
+      order: col.order ?? index,
+      sorter: col.sorter ?? false,
     }
     return newCol
   })
@@ -189,8 +190,8 @@ const resetConf = () => {
       isShow: col.isShow ?? true,
       fixed: col.fixed ?? 'none' ,
       resizable: col.resizable ?? true,
-      sortOrder: col.sortOrder ?? index,
-      isSort: col.isSort ?? false,
+      order: col.order ?? index,
+      sorter: col.sorter ?? false,
     }
     return newCol
   })
@@ -218,6 +219,7 @@ function ExtractConfiguration(colums: columnSetting<any>[], columsConfig: column
         isShow: record.isShow,
         width: record.width,
         fixed: record.fixed,
+        order: record.order,
       }
       columsResult.push(Object.assign({}, columsContent[curColIndex], conf))
       columsContent[curColIndex] = undefined
@@ -252,6 +254,12 @@ function changeSequence(oldIndex: number, newIndex: number) {
   let temp = localColums.value[oldIndex];
   localColums.value[oldIndex] = localColums.value[newIndex];
   localColums.value[newIndex] = temp;
+  needStore.value && setConf()
+}
+function changeSortOrder(oldIndex: number, newIndex: number) {
+  let temp = localColums.value[oldIndex].order;
+  localColums.value[oldIndex].order = localColums.value[newIndex].order;
+  localColums.value[newIndex].order = temp;
   needStore.value && setConf()
 }
 const scroll: DataTableProps['onScroll'] = (event) => {

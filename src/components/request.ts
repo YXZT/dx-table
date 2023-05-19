@@ -79,14 +79,20 @@ const simpleColumns: ColumnProps<simpleDataType>[] = [
   {
     title: 'Name',
     key: 'name',
+    sorter: true,
+    order: 8
   },
   {
     title: 'Age',
     key: 'age',
+    sorter: true,
+    order: 7
   },
   {
     title: 'Address',
     key: 'address',
+    sorter: true,
+    order: 6
   },
   {
     title: 'Tags',

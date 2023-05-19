@@ -4,17 +4,16 @@ import type { DataTableColumn } from "naive-ui";
 export type ColumnProps<T> = DataTableColumn<T> & {
   isShow?: Boolean,
   key: string | number,
-  sortOrder?: Number,
-  isSort?: Boolean
+  order?: number,
+  sorter?: boolean | Function | 'default',
 }
-export type columnSetting<T> = Omit<DataTableColumn<T>, 'fixed'> & {
+export type columnSetting<T=any> = Omit<DataTableColumn<T>, 'fixed'|'sorter'> & {
   isShow: Boolean,
   key: string | number,
   fixed: "left" | "right" | "none",
-  sortOrder: Number,
-  isSort: Boolean
+  order: number,
+  sorter: boolean | Function | 'default',
 }
-
 export type paginationType = {
   pageNum: number,
   pageSize: number,
