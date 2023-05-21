@@ -10,7 +10,7 @@
     @scroll="scroll" :pagination="pagination" remote @update:page-size="handleSizeChange" @update:page="handlePageChange"
     :row-props="tableRowProps" :checkedRowKeys="checkedRowKeysRef" @update-checked-row-keys="updateRowKeys"
     :row-key="tableRowKey" v-bind:style="{ 'overflow-x': 'hidden' }" size="small"
-    :theme-overrides="dataTableThemeOverrides" />
+    :theme-overrides="dataTableThemeOverrides" @update:sorter="handleSorterChange"/>
   <div>
     {{ curRowRef }}
   </div>
@@ -29,7 +29,7 @@ import { useKeyboardControl } from '@/hooks/useKeyboardControl'
 
 type DataTableThemeOverrides = NonNullable<DataTableProps['themeOverrides']>
 const dataTableThemeOverrides: DataTableThemeOverrides = {
-  thPaddingSmall: '2px',
+  thPaddingSmall: '2px 12px 2px 2px',
   tdPaddingSmall: '2px'
 }
 interface tablePropType extends /* @vue-ignore */Omit<DataTableProps, 'columns' | 'rowKey'> {
@@ -290,6 +290,18 @@ const scroll: DataTableProps['onScroll'] = (event) => {
     loadTbData(props.request, true)
   }
 }
+// 类型有问题
+// const handleSorterChange:DataTableProps['onUpdate:sorter'] =(sorter)=> {
+//   localColums.value.forEach((column) => {
+//     if (column.sortOrder === undefined) return
+//     if (!sorter) {
+//       column.sortOrder = false
+//       return
+//     }
+//     if (column.key === sorter.columnKey) column.sortOrder = sorter.order
+//     else column.sortOrder = false
+//   })
+// }
 function refresh(reset?: boolean) {
   if (reset) {
     localPagination.value = { total: 0, pageSize: localPagination.value.pageSize, pageNum: 1 }
