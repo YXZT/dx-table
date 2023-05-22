@@ -1,7 +1,7 @@
 <template>
-  <TableConfig :tableRef="dataTable" :dataSetting="localColums" :sortData="localSearchSort" @change-show="changeCol" @change-sequence="changeSequence"
-  @change-sort-order="changeSortOrder"
-    @reset-conf="resetConf" @change-fixed="changeCol">
+  <TableConfig :tableRef="dataTable" :dataSetting="localColums" :sortData="localSearchSort" @change-show="changeCol"
+    @change-sequence="changeSequence" @change-sort-order="changeSortOrder" @reset-conf="resetConf"
+    @change-fixed="changeCol">
     <slot name="title">
       <div v-show="checkedRowKeysRef?.length">已经选择：{{ checkedRowKeysRef?.length }} 条</div>
     </slot>
@@ -10,7 +10,7 @@
     @scroll="scroll" :pagination="pagination" remote @update:page-size="handleSizeChange" @update:page="handlePageChange"
     :row-props="tableRowProps" :checkedRowKeys="checkedRowKeysRef" @update-checked-row-keys="updateRowKeys"
     :row-key="tableRowKey" v-bind:style="{ 'overflow-x': 'hidden' }" size="small"
-    :theme-overrides="dataTableThemeOverrides" @update:sorter="handleSorterChange"/>
+    :theme-overrides="dataTableThemeOverrides" @update:sorter="handleSorterChange" />
   <div>
     {{ curRowRef }}
   </div>
@@ -88,7 +88,7 @@ watch([() => props.data, () => props.request], () => {
   refresh(true)
 })
 let localPagination = ref({ total: 0, pageSize: 20, pageNum: 1 })
-let localSearchSort = computed(()=>{
+let localSearchSort = computed(() => {
   return localColums.value.filter(row => row.sorter).sort((a, b) => { return a.order - b.order })
 })
 let pagination = computed(() => {
@@ -124,15 +124,15 @@ loadData()
 
 function loadTbData(request: requestFnType<myRowType>, isAppend: Boolean) {
   loadFlag.value = true
-  function tranform(sortOrder:'ascend'|'descend'|boolean){
-    if(sortOrder === 'ascend') return 1
-    if(sortOrder === 'descend') return -1
+  function tranform(sortOrder: 'ascend' | 'descend' | boolean) {
+    if (sortOrder === 'ascend') return 1
+    if (sortOrder === 'descend') return -1
     return null
   }
   const parameter = {
     pageNum: localPagination.value.pageNum,
-    pageSize:localPagination.value.pageSize,
-    sort: localSearchSort.value.map(ele=>({ [ele.key] : tranform(ele.sortOrder) }))
+    pageSize: localPagination.value.pageSize,
+    sort: localSearchSort.value.map(ele => ({ [ele.key]: tranform(ele.sortOrder) }))
   }
   const result = request(parameter)
   result.then(res => {
@@ -172,11 +172,11 @@ function loadData() {
 // 追踪传过来原本的prop并加以改造
 const localColums = ref<columnSetting<any>[]>([])
 watch(() => props.columns, (newVal) => {
-  let columsResult = newVal.map((col,index) => {
+  let columsResult = newVal.map((col, index) => {
     let newCol: columnSetting<any> = {
       ...col,
       isShow: col.isShow ?? true,
-      fixed: col.fixed ?? 'none' ,
+      fixed: col.fixed ?? 'none',
       resizable: col.resizable ?? true,
       order: col.order ?? index,
       sorter: col.sorter ?? false,
@@ -192,11 +192,11 @@ watch(() => props.columns, (newVal) => {
 })
 
 const resetConf = () => {
-  let columsResult = props.columns.map((col,index) => {
+  let columsResult = props.columns.map((col, index) => {
     let newCol: columnSetting<any> = {
       ...col,
       isShow: col.isShow ?? true,
-      fixed: col.fixed ?? 'none' ,
+      fixed: col.fixed ?? 'none',
       resizable: col.resizable ?? true,
       order: col.order ?? index,
       sorter: col.sorter ?? false,
@@ -291,17 +291,12 @@ const scroll: DataTableProps['onScroll'] = (event) => {
   }
 }
 // 类型有问题
-// const handleSorterChange:DataTableProps['onUpdate:sorter'] =(sorter)=> {
-//   localColums.value.forEach((column) => {
-//     if (column.sortOrder === undefined) return
-//     if (!sorter) {
-//       column.sortOrder = false
-//       return
-//     }
-//     if (column.key === sorter.columnKey) column.sortOrder = sorter.order
-//     else column.sortOrder = false
-//   })
-// }
+const handleSorterChange = (sorter: any) => {
+  localColums.value.forEach((column) => {
+    if (column.sortOrder === undefined) return
+    if (column.key === sorter.columnKey) column.sortOrder = sorter.order
+  })
+}
 function refresh(reset?: boolean) {
   if (reset) {
     localPagination.value = { total: 0, pageSize: localPagination.value.pageSize, pageNum: 1 }
