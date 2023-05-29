@@ -68,6 +68,13 @@ const tableRowKey = props.rowKey ? (row: any) => {
 const emits = defineEmits(['refreshed', 'update:checkedRowKeys', 'update:checkedRows'])
 const checkedRowKeysRef = props.checkedRowKeys ? ref(props.checkedRowKeys) : ref([])
 const checkedRowsRef = props.checkedRows ? ref(props.checkedRows) : ref([])
+
+const localColums = ref<columnSetting<any>[]>([])
+let localSearchSort = computed(() => {
+  if(!localColums.value.length) return []
+  return localColums.value.filter(row => row.sorter).sort((a, b) => { return a.order - b.order })
+})
+
 props.checkedRowKeys && watch(() => props.checkedRowKeys, (val) => {
   if (val === undefined) return
   const data = deepCopy<typeof tableData.value>(tableData.value)
@@ -83,9 +90,7 @@ watch([() => props.data, () => props.request], () => {
   refresh(true)
 })
 let localPagination = ref({ total: 0, pageSize: 20, pageNum: 1 })
-let localSearchSort = computed(() => {
-  return localColums.value.filter(row => row.sorter).sort((a, b) => { return a.order - b.order })
-})
+
 let pagination = computed(() => {
   if (props.needInfinite) return undefined
   if (!props.isPagination) return undefined
@@ -165,7 +170,6 @@ function loadData() {
 
 
 // 追踪传过来原本的prop并加以改造
-const localColums = ref<columnSetting<any>[]>([])
 watch(() => props.columns, (newVal) => {
   let columsResult = newVal.map((col, index) => {
     let newCol: columnSetting<any> = {
