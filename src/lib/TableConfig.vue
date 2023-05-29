@@ -4,7 +4,7 @@
       <div class="table-info">
         <slot></slot>
       </div>
-      <n-button @click="activate" circle>
+      <n-button @click="activate" quaternary >
         <template #icon>
           <n-icon>
             <ArchiveSettings16Regular />

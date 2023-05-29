@@ -10,7 +10,8 @@
     :loading="loadFlag" @scroll="scroll" :pagination="pagination" remote @update:page-size="handleSizeChange"
     @update:page="handlePageChange" :row-props="tableRowProps" :checkedRowKeys="checkedRowKeysRef"
     @update-checked-row-keys="updateRowKeys" :row-key="tableRowKey" v-bind:style="{ 'overflow-x': 'hidden' }" size="small"
-    @update:sorter="handleSorterChange" />
+    @update:sorter="handleSorterChange" @contextmenu="handleContextMenu($event)" />
+  <renderDropDown></renderDropDown>
   <div>
     {{ curRowRef }}
   </div>
@@ -18,7 +19,7 @@
  
 <script setup lang="ts">
 import type { ColumnProps, columnSetting, requestFnType, myRowType } from "@/interface";
-import { NDataTable } from 'naive-ui'
+import { NDataTable, NDropdown } from 'naive-ui'
 import type { DataTableProps, DataTableColumn } from 'naive-ui'
 import TableConfig from './TableConfig.vue'
 import { ref, watch, computed } from 'vue'
@@ -26,6 +27,7 @@ import { setStore, getStore } from "@/utils/store";
 import { deepCopy } from "@/utils";
 import { useTableSelect } from "@/hooks/useTableSelect";
 import { useKeyboardControl } from '@/hooks/useKeyboardControl'
+import { useDropDown } from '@/hooks/useDropDown'
 
 interface tablePropType extends /* @vue-ignore */Omit<DataTableProps, 'columns' | 'rowKey'> {
   data?: Array<myRowType>,
@@ -71,7 +73,7 @@ const checkedRowsRef = props.checkedRows ? ref(props.checkedRows) : ref([])
 
 const localColums = ref<columnSetting<any>[]>([])
 let localSearchSort = computed(() => {
-  if(!localColums.value.length) return []
+  if (!localColums.value.length) return []
   return localColums.value.filter(row => row.sorter).sort((a, b) => { return a.order - b.order })
 })
 
@@ -351,6 +353,22 @@ watch(loadFlag, (val) => {
 }, {
   immediate: true
 })
+const { renderDropDown, handleContextMenu } = useDropDown([
+  {
+    label: '复制',
+    key: 'copy',
+    fn: () => {
+
+    }
+  },
+  {
+    label: '粘贴',
+    key: 'paste',
+    fn: () => {
+
+    }
+  },
+])
 defineExpose({
   refresh
 })
