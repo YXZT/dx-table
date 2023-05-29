@@ -17,11 +17,11 @@
 </template>
  
 <script setup lang="ts">
-import type { ColumnProps, columnSetting, paginationType, requestFnType, myRowType } from "@/interface";
-import { NDataTable, NButton } from 'naive-ui'
+import type { ColumnProps, columnSetting, requestFnType, myRowType } from "@/interface";
+import { NDataTable } from 'naive-ui'
 import type { DataTableProps, DataTableColumn } from 'naive-ui'
 import TableConfig from './TableConfig.vue'
-import { ref, watch, computed, h } from 'vue'
+import { ref, watch, computed } from 'vue'
 import { setStore, getStore } from "@/utils/store";
 import { deepCopy } from "@/utils";
 import { useTableSelect } from "@/hooks/useTableSelect";
@@ -224,7 +224,7 @@ const TableColumns = computed(() => {
     fixed: 'left',
     width: '50',
     align: 'center',
-    cellProps: (rowData, rowIndex) => {
+    cellProps: () => {
       return {
         style: { 'background': 'linear-gradient(180deg, #E2EEFE 0%, #F2F6FC 49%, #E2EEFE 100%)', 'border-right-color': '#6C9ABF' },
       }

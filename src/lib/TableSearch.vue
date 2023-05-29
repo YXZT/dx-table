@@ -34,7 +34,7 @@ import Grid from "@/lib/Grid/index.vue";
 import GridItem from "@/lib/Grid/components/GridItem.vue";
 import { computed, ref } from "vue"
 import type { BreakPoint, searchFormType } from "@/interface";
-import { NForm, NFormItem, NButton, NIcon, NInput, NConfigProvider, type GlobalThemeOverrides,NSpace } from 'naive-ui'
+import {  NFormItem, NButton, NConfigProvider, type GlobalThemeOverrides,NSpace } from 'naive-ui'
 import { ArrowDown, ArrowUp } from '@vicons/ionicons5'
 import SearchFormItem from './SearchFormItem.vue'
 

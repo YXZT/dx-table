@@ -37,7 +37,7 @@
 </template>
 <script setup lang="ts">
 import { ArchiveSettings16Regular } from '@vicons/fluent'
-import { ref, computed, h, nextTick, watch } from 'vue'
+import { ref, computed, h, nextTick } from 'vue'
 import { NDataTable, NDrawer, NDrawerContent, NButton, NIcon, NSwitch, NRadioGroup, NRadioButton, NTabs, NTabPane, type DataTableColumns } from "naive-ui";
 import type { columnSetting } from "@/interface";
 import Sortable from "sortablejs";
@@ -64,7 +64,7 @@ const columnsSetting = ref([{
   key: 'isShow',
   render: (row: columnSetting<any>) => {
     const isShow = row.isShow
-    return h(NSwitch, { value: isShow, 'onUpdate:value': (e: any) => changeColShow(e, row), size: 'small' })
+    return h(NSwitch, { value: isShow, 'onUpdate:value': ((e: any) => changeColShow(e, row)), size: 'small' })
   }
 }, {
   title: '固定',
