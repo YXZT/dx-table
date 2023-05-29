@@ -66,10 +66,10 @@ export function useTableSelect(options: hookType) {
     }
     changeRowKeys(_checkedRowKeys)
   }
-  const tableRowProps = (row: myRowType) => {
+  const tableRowProps = (row: myRowType,index:number) => {
     return {
       style: 'cursor: pointer;',
-      class: rowClass.value(row),
+      class: rowClass.value(row,index),
       onClick: ()=>toggleRow(row)
     }
   }

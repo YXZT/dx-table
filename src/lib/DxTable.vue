@@ -6,11 +6,11 @@
       <div v-show="checkedRowKeysRef?.length">已经选择：{{ checkedRowKeysRef?.length }} 条</div>
     </slot>
   </TableConfig>
-  <NDataTable v-bind="$attrs" :columns="TableColumns" :data="tableData" ref="dataTable" :loading="loadFlag"
-    @scroll="scroll" :pagination="pagination" remote @update:page-size="handleSizeChange" @update:page="handlePageChange"
-    :row-props="tableRowProps" :checkedRowKeys="checkedRowKeysRef" @update-checked-row-keys="updateRowKeys"
-    :row-key="tableRowKey" v-bind:style="{ 'overflow-x': 'hidden' }" size="small"
-    :theme-overrides="dataTableThemeOverrides" @update:sorter="handleSorterChange" />
+  <NDataTable v-bind="$attrs" :single-line="false" striped :columns="TableColumns" :data="tableData" ref="dataTable"
+    :loading="loadFlag" @scroll="scroll" :pagination="pagination" remote @update:page-size="handleSizeChange"
+    @update:page="handlePageChange" :row-props="tableRowProps" :checkedRowKeys="checkedRowKeysRef"
+    @update-checked-row-keys="updateRowKeys" :row-key="tableRowKey" v-bind:style="{ 'overflow-x': 'hidden' }" size="small"
+    @update:sorter="handleSorterChange" />
   <div>
     {{ curRowRef }}
   </div>
@@ -21,17 +21,12 @@ import type { ColumnProps, columnSetting, paginationType, requestFnType, myRowTy
 import { NDataTable, NButton } from 'naive-ui'
 import type { DataTableProps, DataTableColumn } from 'naive-ui'
 import TableConfig from './TableConfig.vue'
-import { ref, watch, computed } from 'vue'
+import { ref, watch, computed, h } from 'vue'
 import { setStore, getStore } from "@/utils/store";
 import { deepCopy } from "@/utils";
 import { useTableSelect } from "@/hooks/useTableSelect";
 import { useKeyboardControl } from '@/hooks/useKeyboardControl'
 
-type DataTableThemeOverrides = NonNullable<DataTableProps['themeOverrides']>
-const dataTableThemeOverrides: DataTableThemeOverrides = {
-  thPaddingSmall: '2px 12px 2px 2px',
-  tdPaddingSmall: '2px'
-}
 interface tablePropType extends /* @vue-ignore */Omit<DataTableProps, 'columns' | 'rowKey'> {
   data?: Array<myRowType>,
   request?: requestFnType<myRowType>,
@@ -216,8 +211,24 @@ const TableColumns = computed(() => {
     if (_col.fixed === 'none') _col.fixed = undefined
     return _col
   })
+  arr.unshift({
+    title: '',
+    key: 'key',
+    render: (_, index) => {
+      return `${index + 1}`
+    },
+    fixed: 'left',
+    width: '50',
+    align: 'center',
+    cellProps: (rowData, rowIndex) => {
+      return {
+        style: { 'background': 'linear-gradient(180deg, #E2EEFE 0%, #F2F6FC 49%, #E2EEFE 100%)', 'border-right-color': '#6C9ABF' },
+      }
+    }
+  })
   return arr
 })
+
 function ExtractConfiguration(colums: columnSetting<any>[], columsConfig: columnSetting<any>[]) {
   let columsContent: columnSetting<any>[] | undefined[] = [...colums]
   let columsResult: columnSetting<any>[] = []
@@ -306,13 +317,16 @@ function refresh(reset?: boolean) {
 const options = { checkedRowKeys: checkedRowKeysRef, checkedRows: checkedRowsRef, tableData: tableData.value, columns: props.columns, emits, rowKey }
 let { updateRowKeys, tableRowProps, toggleRow, rowClass } = useTableSelect(options)
 
-rowClass.value = (row) => {
-  if (!Object.keys(curRowRef.value).length) return
-  if (row[rowKey] === curRowRef.value[rowKey]) {
-    return ['cur-selected-row']
-  } else {
-    return
+rowClass.value = (row, index) => {
+  const iStriped = index % 2 === 1
+  const classList = []
+  if (iStriped) classList.push('tr-striped')
+  if (Object.keys(curRowRef.value).length) {
+    if (row[rowKey] === curRowRef.value[rowKey]) {
+      classList.push('cur-selected-row')
+    }
   }
+  return classList
 }
 const curRowRef = ref<myRowType>(props.curRow || {} as myRowType)
 const trackCurRow = ref(true)
@@ -339,12 +353,28 @@ defineExpose({
 </script>
  
 <style scoped lang="scss">
+:deep(.tr-striped .n-data-table-td) {
+  background-color: #F2F2F2;
+}
+
 :deep(.cur-selected-row .n-data-table-td) {
   background-color: #cfe8fb;
 }
 
 :deep(.n-data-table-tr:not(.n-data-table-tr--summary):hover) {
   background-color: var(--n-merged-td-color-hover);
+}
+
+:deep(.n-data-table-th) {
+  border-color: #6C9ABF !important;
+}
+
+:deep(.n-data-table-wrapper) {
+  border-color: #6C9ABF !important;
+}
+
+:deep(.n-data-table-th) {
+  background: linear-gradient(180deg, #E2EEFE 0%, #F2F6FC 49%, #E2EEFE 100%);
 }
 </style>
  

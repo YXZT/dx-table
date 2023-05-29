@@ -34,7 +34,7 @@ export type requestFnType<myRowType> = (params: any) => Promise<resType<myRowTyp
 
 export type tableCheckType = null | 'checkBox' | 'radio'
 
-export type classFnType = (row: myRowType) => Array<string> | undefined
+export type classFnType = (row: myRowType,index:number) => Array<string> | undefined
 // 临时解决
 export type myRowType = {
   [key: string]: string
