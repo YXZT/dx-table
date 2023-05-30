@@ -19,7 +19,7 @@
  
 <script setup lang="ts">
 import type { ColumnProps, columnSetting, requestFnType, myRowType } from "@/interface";
-import { NDataTable, NDropdown } from 'naive-ui'
+import { NDataTable } from 'naive-ui'
 import type { DataTableProps, DataTableColumn } from 'naive-ui'
 import TableConfig from './TableConfig.vue'
 import { ref, watch, computed } from 'vue'

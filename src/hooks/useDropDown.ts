@@ -1,6 +1,6 @@
 
 import { NDropdown } from 'naive-ui';
-import { h, nextTick, reactive, ref, toRefs, watchEffect } from 'vue';
+import { h, nextTick, reactive, ref, toRefs } from 'vue';
 // import { useRoute } from 'vue-router';
 
 export function useDropDown() {
