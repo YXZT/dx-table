@@ -28,7 +28,6 @@ import { deepCopy } from "@/utils";
 import { useTableSelect } from "@/hooks/useTableSelect";
 import { useKeyboardControl } from '@/hooks/useKeyboardControl'
 import { useDropDown } from '@/hooks/useDropDown'
-
 interface tablePropType extends /* @vue-ignore */Omit<DataTableProps, 'columns' | 'rowKey'> {
   data?: Array<myRowType>,
   request?: requestFnType<myRowType>,
@@ -353,22 +352,19 @@ watch(loadFlag, (val) => {
 }, {
   immediate: true
 })
-const { renderDropDown, handleContextMenu } = useDropDown([
-  {
-    label: '复制',
-    key: 'copy',
-    fn: () => {
-
+let { renderDropDown, handleContextMenu, setOptions } = useDropDown()
+setOptions.value = ({curSelection}) => {
+  return [
+    {
+      label: '复制',
+      key: 'copy',
+      disabled: !curSelection,
+      fn: () => {
+        navigator.clipboard.writeText(curSelection);
+      }
     }
-  },
-  {
-    label: '粘贴',
-    key: 'paste',
-    fn: () => {
-
-    }
-  },
-])
+  ]
+}
 defineExpose({
   refresh
 })

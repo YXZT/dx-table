@@ -3,9 +3,19 @@ import { NDropdown } from 'naive-ui';
 import { h, nextTick, reactive, ref, toRefs, watchEffect } from 'vue';
 // import { useRoute } from 'vue-router';
 
-export function useDropDown(options: any[]) {
+export function useDropDown() {
   // const route = useRoute();
-
+  const curSelection = ref()
+  // 等naiveui完善类型
+  type setOptionsType = (arg: {
+    /**
+     * 当前光标选择
+     */
+    curSelection: string
+  }) => any[]
+  const setOptions = ref<setOptionsType>(() => {
+    return []
+  })
   const state = reactive({
     // activeKey: route.fullPath,
     scrollable: false,
@@ -13,14 +23,14 @@ export function useDropDown(options: any[]) {
     dropdownY: 0,
     showDropdown: false,
     isMultiHeaderFixed: false,
-    TabsMenuOptions: options
+    TabsMenuOptions: [] as any
   });
   function onClickOutside() {
     state.showDropdown = false;
   }
   //tab 操作
   const closeHandleSelect = (key: string) => {
-    const opt = options.find(ele => {
+    const opt = state.TabsMenuOptions.find((ele: any) => {
       return ele.key === key
     })
     if (opt) opt?.fn()
@@ -33,6 +43,8 @@ export function useDropDown(options: any[]) {
       state.dropdownX = e.clientX;
       state.dropdownY = e.clientY;
     });
+    curSelection.value = window.getSelection();
+    state.TabsMenuOptions = setOptions.value({ curSelection:curSelection.value?.toString() })
   }
   function renderDropDown() {
     return h(NDropdown, {
@@ -45,7 +57,8 @@ export function useDropDown(options: any[]) {
     handleContextMenu,
     onClickOutside,
     closeHandleSelect,
-    renderDropDown
+    renderDropDown,
+    setOptions
   };
 }
 
