@@ -28,6 +28,7 @@ import { deepCopy } from "@/utils";
 import { useTableSelect } from "@/hooks/useTableSelect";
 import { useKeyboardControl } from '@/hooks/useKeyboardControl'
 import { useDropDown } from '@/hooks/useDropDown'
+defineOptions({ name: 'DxTable' })
 interface tablePropType extends /* @vue-ignore */Omit<DataTableProps, 'columns' | 'rowKey'> {
   data?: Array<myRowType>,
   request?: requestFnType<myRowType>,

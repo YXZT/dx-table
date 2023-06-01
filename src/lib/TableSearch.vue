@@ -37,6 +37,7 @@ import type { BreakPoint, searchFormType } from "@/interface";
 import {  NFormItem, NButton, NConfigProvider, type GlobalThemeOverrides,NSpace } from 'naive-ui'
 import { ArrowDown, ArrowUp } from '@vicons/ionicons5'
 import SearchFormItem from './SearchFormItem.vue'
+defineOptions({ name: 'TableSearch' })
 
 const themeOverrides: GlobalThemeOverrides = {
   Form: {
