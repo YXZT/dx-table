@@ -8,7 +8,7 @@ export type ColumnProps<T> = DataTableColumn<T> & {
   sorter?: boolean | Function | 'default',
   sortOrder?: 'descend' | 'ascend' | false
 }
-export type columnSetting<T=any> = Omit<DataTableColumn<T>, 'fixed'|'sorter'|'sortOrder'> & {
+export type columnSetting<T = any> = Omit<DataTableColumn<T>, 'fixed' | 'sorter' | 'sortOrder'> & {
   isShow: boolean,
   key: string | number,
   fixed: "left" | "right" | "none",
@@ -24,17 +24,21 @@ export type paginationType = {
 // type resDataType<myRowType> = {
 //   [records: string]: any,
 // } & paginationType
-type resDataType<myRowType> = {records:myRowType} & paginationType
+type resDataType<myRowType> = { records: myRowType } & paginationType
 
 export type resType<myRowType> = {
   status: number,
   data?: resDataType<myRowType>,
 }
-export type requestFnType<myRowType> = (params: any) => Promise<resType<myRowType>>
+export type requestFnType<myRowType> = (params: {
+  pageNum: number,
+  pageSize: number,
+  sort: any[]
+}) => Promise<resType<myRowType>>
 
 export type tableCheckType = null | 'checkBox' | 'radio'
 
-export type classFnType = (row: myRowType,index:number) => Array<string> | undefined
+export type classFnType = (row: myRowType, index: number) => Array<string> | undefined
 // 临时解决
 export type myRowType = {
   [key: string]: string

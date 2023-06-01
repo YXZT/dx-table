@@ -180,7 +180,6 @@ function resetConf() {
   display: flex;
   align-items: center;
   background-color: rgba(250, 250, 252, 1);
-  padding: 0 12px;
 }
 
 .table-info {
