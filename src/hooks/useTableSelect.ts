@@ -20,7 +20,7 @@ export function useTableSelect(options: hookType) {
   const updateRowKeys: DataTableProps['onUpdate:checkedRowKeys'] = (rowKeys, rows, meta) => {
     if (meta.action === 'checkAll') {
       const data = deepCopy<typeof tableData>(tableData)
-      const keys = data.map((dataRow: any) => dataRow.key)
+      const keys = data.map((dataRow: any) => dataRow[rowKey])
       changeRowKeys(keys)
     } else if (meta.action === 'uncheckAll') {
       changeRowKeys([])

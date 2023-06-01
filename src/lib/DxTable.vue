@@ -339,7 +339,7 @@ trackCurRow.value && watch(curRowRef, (val) => {
   if (!Object.keys(val).length) return
   checkedRowKeysRef.value = [val[rowKey]]
 })
-const { startListening, stopListening, pressEnter } = useKeyboardControl({ curRowRef: curRowRef, allRowRef: tableData, dataTable: dataTable })
+const { startListening, stopListening, pressEnter } = useKeyboardControl({ curRowRef: curRowRef, allRowRef: tableData, dataTable: dataTable,rowKey })
 pressEnter.value = () => {
   toggleRow(curRowRef.value)
 }
