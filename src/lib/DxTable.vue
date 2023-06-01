@@ -353,7 +353,7 @@ watch(loadFlag, (val) => {
   immediate: true
 })
 let { renderDropDown, handleContextMenu, setOptions } = useDropDown()
-setOptions.value = ({curSelection}) => {
+setOptions.value = ({ curSelection }) => {
   return [
     {
       label: '复制',
@@ -361,6 +361,30 @@ setOptions.value = ({curSelection}) => {
       disabled: !curSelection,
       fn: () => {
         navigator.clipboard.writeText(curSelection);
+      }
+    },
+    {
+      label: '搜索(仅当前)',
+      key: 'search',
+      fn: () => {
+      }
+    },
+    {
+      label: '刷新',
+      key: 'refresh',
+      fn: () => {
+      }
+    },
+    {
+      label: '导出到excel(仅当前)',
+      key: 'exportCurent',
+      fn: () => {
+      }
+    },
+    {
+      label: '导出到excel(所有)',
+      key: 'exportAll',
+      fn: () => {
       }
     }
   ]
