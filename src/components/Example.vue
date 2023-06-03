@@ -5,8 +5,7 @@
         <table-search :searchData="searchData" :search-columns="searchColumns"></table-search>
         <div>{{ searchData }}</div>
         <dx-table :columns="columns" :data="data" virtual-scroll :style="{ height: `400px` }" flex-height :scroll-x="1200"
-          storeName="test_table1" v-model:checked-row-keys="checkedRowKeys"
-          v-model:checkedRows="checkedRows" />
+          storeName="test_table1" v-model:checked-row-keys="checkedRowKeys" v-model:checkedRows="checkedRows" />
         <n-button @click="setSelected">打钩</n-button>
         <div>{{ checkedRowKeys }}</div>
         <div>{{ checkedRows }}</div>
@@ -95,6 +94,7 @@ const searchColumns: searchFormType[] = [{
   prop: "username",
   label: "用户姓名",
   search: { el: "input" },
+  searchType: '包含'
 },
 {
   prop: "gender",
@@ -109,9 +109,13 @@ const searchColumns: searchFormType[] = [{
         value: '女'
       }]
     }
-  }
+  },
+  searchType: '包含'
 },
-{ prop: "idCard", label: "身份证号", search: { el: "input" } },
+{
+  prop: "idCard", label: "身份证号", search: { el: "input" },
+  searchType: '包含'
+},
 {
   prop: "email", label: "邮箱", search: {
     el: "input",
@@ -123,7 +127,8 @@ const searchColumns: searchFormType[] = [{
     //   span: 2,
     //   offset: 0
     // },
-  }
+  },
+  searchType: '包含'
 },
 {
   prop: "userStatus",
@@ -131,6 +136,7 @@ const searchColumns: searchFormType[] = [{
   search: {
     el: "select",
   },
+  searchType: '包含'
   // 自定义 search 显示内容
   // render: ({searchParam}) => {
   //   return (
@@ -147,6 +153,7 @@ const searchColumns: searchFormType[] = [{
     el: "date-picker",
     span: 1,
   },
+  searchType: '包含'
 },
 {
   prop: "date",
@@ -155,7 +162,8 @@ const searchColumns: searchFormType[] = [{
     el: "date-picker",
     span: 2,
     props: { type: 'daterange' }
-  }
+  },
+  searchType: '包含'
 }
 ]
 

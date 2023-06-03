@@ -64,6 +64,7 @@ export type searchFormType = {
     offset?: number; // 搜索字段左侧偏移列数
     defaultValue?: string | number | boolean | any[]; // 搜索项默认值
   } & Partial<Record<BreakPoint, Responsive>>,
+  searchType: '包含'|'不包含'|'等于',
   [key: string]: any,
 }
 
