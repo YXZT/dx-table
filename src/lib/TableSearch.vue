@@ -59,7 +59,7 @@ const themeOverrides: GlobalThemeOverrides = {
 type tableSearchProps = {
   searchData: any,
   searchColumns: searchFormType[],
-  searchCol: number | Record<BreakPoint, number>;
+  searchCol?: number | Record<BreakPoint, number>;
   needMore?: boolean,
   // search?: (params: any) => void; // 搜索方法
   // reset?: (params: any) => void; // 重置方法

@@ -337,6 +337,7 @@ const trackCurRow = ref(true)
 trackCurRow.value && watch(curRowRef, (val) => {
   if (!Object.keys(val).length) return
   checkedRowKeysRef.value = [val[rowKey]]
+  emits('update:checkedRowKeys', checkedRowKeysRef.value)
 })
 const { startListening, stopListening, pressEnter } = useKeyboardControl({ curRowRef: curRowRef, allRowRef: tableData, dataTable: dataTable,rowKey })
 pressEnter.value = () => {
