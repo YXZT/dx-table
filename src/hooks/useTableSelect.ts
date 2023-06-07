@@ -17,7 +17,7 @@ export function useTableSelect(options: hookType) {
   // const checkedRowKeys = ref(checkedRowKeysRef)
   // const checkedRows = ref(checkedRowsRef)
   const tableCheck = ref<tableCheckType>(null)
-  const updateRowKeys: DataTableProps['onUpdate:checkedRowKeys'] = (rowKeys, rows, meta) => {
+  const updateRowKeys: DataTableProps['onUpdate:checkedRowKeys'] = (_rowKeys, _rows, meta) => {
     if (meta.action === 'checkAll') {
       const data = deepCopy<typeof tableData>(tableData)
       const keys = data.map((dataRow: any) => dataRow[rowKey])

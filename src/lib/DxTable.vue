@@ -6,7 +6,7 @@
       <div v-show="checkedRowKeysRef?.length">已经选择：{{ checkedRowKeysRef?.length }} 条</div>
     </slot>
   </TableConfig>
-  <NDataTable v-bind="$attrs" :single-line="false" striped :columns="TableColumns" :data="tableData" ref="dataTable"
+  <NDataTable v-bind="$attrs" :single-line="false" :columns="TableColumns" :data="tableData" ref="dataTable"
     :loading="loadFlag" @scroll="scroll" :pagination="pagination" remote @update:page-size="handleSizeChange"
     @update:page="handlePageChange" :row-props="tableRowProps" :checkedRowKeys="checkedRowKeysRef"
     @update-checked-row-keys="updateRowKeys" :row-key="tableRowKey" v-bind:style="{ 'overflow-x': 'hidden' }" size="small"
@@ -323,10 +323,8 @@ function refresh(reset?: boolean) {
 const options = { checkedRowKeys: checkedRowKeysRef, checkedRows: checkedRowsRef, tableData: tableData.value, columns: props.columns, emits, rowKey }
 let { updateRowKeys, tableRowProps, toggleRow, rowClass } = useTableSelect(options)
 
-rowClass.value = (row, index) => {
-  const iStriped = index % 2 === 1
+rowClass.value = (row) => {
   const classList = []
-  if (iStriped) classList.push('tr-striped')
   if (Object.keys(curRowRef.value).length) {
     if (row[rowKey] === curRowRef.value[rowKey]) {
       classList.push('cur-selected-row')
@@ -396,10 +394,6 @@ defineExpose({
 </script>
  
 <style scoped lang="scss">
-:deep(.tr-striped .n-data-table-td) {
-  background-color: #F2F2F2;
-}
-
 :deep(.cur-selected-row .n-data-table-td) {
   background-color: #cfe8fb;
 }
