@@ -182,6 +182,7 @@ watch(() => props.columns, (newVal) => {
       order: col.order ?? index,
       sorter: col.sorter ?? false,
       sortOrder: col.sortOrder ?? false,
+      titleAlign: col.titleAlign ?? 'center',
     }
     return newCol
   })
@@ -202,6 +203,7 @@ const resetConf = () => {
       order: col.order ?? index,
       sorter: col.sorter ?? false,
       sortOrder: col.sortOrder ?? false,
+      titleAlign: col.titleAlign ?? 'center',
     }
     return newCol
   })

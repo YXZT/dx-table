@@ -38,7 +38,7 @@
 <script setup lang="ts">
 import { ArchiveSettings16Regular } from '@vicons/fluent'
 import { ref, computed, h, nextTick } from 'vue'
-import { NDataTable, NDrawer, NDrawerContent, NButton, NIcon, NSwitch, NRadioGroup, NRadioButton, NTabs, NTabPane, type DataTableColumns } from "naive-ui";
+import { NDataTable, NDrawer, NDrawerContent, NButton, NIcon, NSwitch, NRadioGroup, NRadioButton, NTabs, NTabPane } from "naive-ui";
 import type { columnSetting } from "@/interface";
 import Sortable from "sortablejs";
 
@@ -79,11 +79,11 @@ const columnsSetting = ref([{
     return h(NRadioGroup, { value: fixed, 'onUpdate:value': (e: any) => changeColFixed(e, row), size: 'small' }, buttons)
   }
 }])
-const columnsSortSetting = ref<DataTableColumns<columnSetting<any>>>([
+const columnsSortSetting = ref([
   {
     title: '顺序',
     key: 'key',
-    render: (_, index) => {
+    render: (_: any, index: number) => {
       return `${index + 1}`
     }
   },

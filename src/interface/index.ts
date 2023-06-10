@@ -6,7 +6,8 @@ export type ColumnProps<T> = DataTableColumn<T> & {
   key: string | number,
   order?: number,
   sorter?: boolean | Function | 'default',
-  sortOrder?: 'descend' | 'ascend' | false
+  sortOrder?: 'descend' | 'ascend' | false,
+  titleAlign?: 'left' | 'right' | 'center'
 }
 export type columnSetting<T = any> = Omit<DataTableColumn<T>, 'fixed' | 'sorter' | 'sortOrder'> & {
   isShow: boolean,
@@ -15,6 +16,7 @@ export type columnSetting<T = any> = Omit<DataTableColumn<T>, 'fixed' | 'sorter'
   order: number,
   sorter: boolean | Function | 'default',
   sortOrder: 'descend' | 'ascend' | false
+  titleAlign: 'left' | 'right' | 'center'
 }
 export type paginationType = {
   pageNum: number,
@@ -64,7 +66,7 @@ export type searchFormType = {
     offset?: number; // 搜索字段左侧偏移列数
     defaultValue?: string | number | boolean | any[]; // 搜索项默认值
   } & Partial<Record<BreakPoint, Responsive>>,
-  searchType: '包含'|'不包含'|'等于',
+  searchType: '包含' | '不包含' | '等于',
   [key: string]: any,
 }
 
