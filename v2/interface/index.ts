@@ -1,4 +1,3 @@
-import type { DataTableColumn } from "naive-ui";
 
 export type paginationType = {
   pageNum: number,
@@ -7,11 +6,11 @@ export type paginationType = {
 }
 type resDataType<T> = { records: T } & paginationType
 
-export type resType<T=myRowType> = {
+export type resType<T> = {
   status: number,
   data?: resDataType<T>,
 }
-export type requestFnType<T> = (params: {
+export type requestFnType<T=myRowType> = (params: {
   pageNum: number,
   pageSize: number,
   sort: any[]

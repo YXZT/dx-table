@@ -92,7 +92,8 @@ const columns = [{
   fixed: 'left',
   key: 'selection',
 }, ...generateColumns(10)]
-const mockRequest = ({ pageNum, pageSize }) => {
+const mockRequest = ({ pageNum, pageSize }:{ pageNum:number, pageSize:number }) => {
+  console.log(pageNum, pageSize)
   const list = generateData(columns, pageSize, 'row-', (pageNum - 1) * pageSize)
   const res = new Promise((resolve) => {
     setTimeout(() => {
@@ -106,7 +107,7 @@ const mockRequest = ({ pageNum, pageSize }) => {
         }
       }
       resolve(res)
-    }, 2000)
+    }, 1000)
   })
   return res
 }
