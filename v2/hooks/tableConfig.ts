@@ -118,9 +118,55 @@ function useTableConfig({ tableProps,loadDataFn }: pageChangeType) {
     return {
       storageString,
       tableRowKey,
-      localColums
+      localColums,
     }
   }
+  function setConf() {
+    setStore(tableProps.storeName as string, localColums.value)
+  }
+  const localSearchSort = computed(() => {
+    if (!localColums.value.length) return []
+    return localColums.value.filter(row => row.sorter).sort((a, b) => { return a.order - b.order })
+  })
+  function changeCol(col: columnSetting) {
+    const index = localColums.value.findIndex(item => {
+      return item.key === col.key
+    })
+    if (index > -1) {
+      localColums.value[index] = col
+    }
+    storageString && setConf()
+  }
+  function changeSequence(oldIndex: number, newIndex: number) {
+    const temp = localColums.value[oldIndex];
+    localColums.value[oldIndex] = localColums.value[newIndex];
+    localColums.value[newIndex] = temp;
+    storageString && setConf()
+  }
+  function changeSortOrder(oldIndex: number, newIndex: number) {
+    const temp = localColums.value[oldIndex].order;
+    localColums.value[oldIndex].order = localColums.value[newIndex].order;
+    localColums.value[newIndex].order = temp;
+    storageString && setConf()
+  }
+  const resetConf = () => {
+    const columsResult = tableProps.columns.map((col, index) => {
+      const newCol: columnSetting = {
+        ...col,
+        isShow: col.isShow ?? true,
+        fixed: col.fixed ?? 'none',
+        resizable: col.resizable ?? true,
+        order: col.order ?? index,
+        sorter: col.sorter ?? false,
+        sortOrder: col.sortOrder ?? false,
+        titleAlign: col.titleAlign ?? 'center',
+      }
+      return newCol
+    })
+    localColums.value = columsResult
+    storageString && setConf()
+  }
+
 
   return {
     init,
@@ -128,7 +174,12 @@ function useTableConfig({ tableProps,loadDataFn }: pageChangeType) {
     initRowKey,
     initColums,
     initLoadData,
-    TableColumns
+    TableColumns,
+    localSearchSort,
+    changeCol,
+    changeSequence,
+    changeSortOrder,
+    resetConf
   }
 }
 export default useTableConfig

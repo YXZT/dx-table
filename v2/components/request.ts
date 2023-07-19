@@ -13,18 +13,22 @@ const simpleColumns = [
   {
     type: 'selection',
     key: 'selection',
+    sorter: true,
   },
   {
     title: 'Name',
     key: 'name',
+    sorter: true,
   },
   {
     title: 'Age',
     key: 'age',
+    sorter: true,
   },
   {
     title: 'Address',
     key: 'address',
+    sorter: true,
   },
   {
     title: 'Tags',

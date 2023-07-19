@@ -24,7 +24,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue';
 import DxTable from "../lib/DxTable.vue";
-import { NTabs, NTabPane, NCard, NButton } from 'naive-ui'
+import { NTabs, NTabPane, NCard } from 'naive-ui'
 import {
   simpleColumns,
   simpleData,

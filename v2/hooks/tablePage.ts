@@ -1,8 +1,19 @@
-import type { paginationType } from "@/interface"
+import type { ColumnsProps, paginationType, requestFnType } from "@/interface"
 import type { DataTableProps } from "naive-ui";
-import type { Ref } from "vue";
-
+import { computed, type Ref } from "vue";
+interface tablePropType extends /* @vue-ignore */ Omit<DataTableProps, 'columns' | 'rowKey'> {
+  columns: ColumnsProps,
+  request?: requestFnType,
+  data?: Array<any>,
+  isPagination?: boolean,
+  needInfinite?: boolean,
+  rowKey?: string,
+  immediateRequest?: boolean,
+  needStore?: boolean,
+  storeName?: string,
+}
 type pageChangeType = {
+  tableProps: Readonly<tablePropType>,
   loadFlag: Ref<boolean>,
   localPagination: Ref<paginationType>,
   /**
@@ -10,13 +21,13 @@ type pageChangeType = {
    */
   changFn: Function,
 }
-function useTablePage({loadFlag,localPagination,changFn}:pageChangeType) {
-  const handlePageChange:DataTableProps['onUpdate:page'] = (val) =>  {
+function useTablePage({ loadFlag, localPagination, changFn, tableProps }: pageChangeType) {
+  const handlePageChange: DataTableProps['onUpdate:page'] = (val) => {
     if (loadFlag.value) return
     localPagination.value.pageNum = val;
     changFn()
   }
-  const handleSizeChange:DataTableProps['onUpdate:pageSize'] = (val)=> {
+  const handleSizeChange: DataTableProps['onUpdate:pageSize'] = (val) => {
     if (loadFlag.value) return
     localPagination.value.pageSize = val;
     // 获取最大页数
@@ -27,9 +38,19 @@ function useTablePage({loadFlag,localPagination,changFn}:pageChangeType) {
     }
     changFn()
   }
-
+  const pagination = computed(() => {
+    if (tableProps.needInfinite) return undefined
+    if (!tableProps.isPagination) return undefined
+    return {
+      page: localPagination.value.pageNum,
+      pageSize: localPagination.value.pageSize,
+      itemCount: localPagination.value.total,
+      showSizePicker: true,
+      pageSizes: [20, 30, 50, 100, 1000],
+    }
+  })
   return {
-    handlePageChange,handleSizeChange
+    handlePageChange, handleSizeChange, pagination
   }
 }
 export default useTablePage

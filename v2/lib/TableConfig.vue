@@ -4,7 +4,7 @@
       <div class="table-info">
         <slot></slot>
       </div>
-      <n-button @click="activate" quaternary >
+      <n-button @click="activate" quaternary>
         <template #icon>
           <n-icon>
             <ArchiveSettings16Regular />
@@ -147,6 +147,7 @@ function columnDrop() {
     }
   });
   const el2 = sortDataTable?.value?.$el
+  if (!el2) return
   const wrapperTr2 = el2.querySelector(".n-data-table-tbody");
   Sortable.create(wrapperTr2, {
     animation: 180,
