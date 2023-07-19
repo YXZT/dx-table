@@ -15,6 +15,7 @@ interface tablePropType extends /* @vue-ignore */ Omit<DataTableProps, 'columns'
 }
 
 const props = defineProps<tablePropType>()
+
 const loadFlag = ref(true)
 let tableData = ref<NonNullable<DataTableProps['data']>>([])
 
@@ -23,6 +24,7 @@ const TableColumns = computed(() => {
   return arr
 })
 let localPagination = ref({ total: 0, pageSize: 30, pageNum: 1 })
+
 const { loadData } = useTableRequest({ loadFlag: loadFlag, localPagination: localPagination, tableData: tableData, tableProps: props })
 loadData()
 
@@ -31,8 +33,8 @@ loadData()
 
 </script>
 <template>
-  <n-data-table v-bind="$attrs" v-bind:style="{ 'overflow-x': 'hidden' }" size="small" :single-line="false"
-    :data="tableData" :columns="TableColumns" ref="dataTable" />
+  <n-data-table v-bind="$attrs" size="small" :single-line="false" :data="tableData" :columns="TableColumns"
+    ref="dataTable" :loading="loadFlag" v-bind:style="{ 'overflow-x': 'hidden' }" virtual-scroll />
 </template>
 
 <style scoped lang='scss'></style>

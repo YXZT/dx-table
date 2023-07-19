@@ -15,11 +15,10 @@ type requestType = {
   loadFlag: Ref<boolean>,
   localPagination: Ref<paginationType>,
   tableData: Ref<any[]>,
-  tableProps: tablePropType
+  tableProps: Readonly<tablePropType>
 }
 function useTableRequest({ loadFlag, localPagination, tableData, tableProps }: requestType) {
   function loadTbData(request: requestFnType, isAppend: boolean) {
-
 
     loadFlag.value = true
     const parameter = {
