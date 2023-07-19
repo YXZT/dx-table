@@ -3,7 +3,7 @@
     <n-tabs v-model:value="type">
       <n-tab-pane :name="1" tab="简单数据">
         <DxTable :columns="columns" :data="data" virtual-scroll
-          storeName="test_table1" flex-height :style="{ height: `400px` }"  :scroll-x="1400"></DxTable>
+          storeName="test_table1" flex-height :style="{ height: `400px` }"  :scroll-x="1400" row-key="key1"></DxTable>
         <n-card embedded :bordered="false">
           基于Naive UI的数据表格Data
           Table组件，使用属性透传保留了原本的有的功能，在此基础上做了一些功能扩展。增加了列顺序、列显隐、列固定的自定义配置，为了让程序正确识别，需要在colums中设置列的key，不能重复。

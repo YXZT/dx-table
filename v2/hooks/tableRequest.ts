@@ -1,13 +1,14 @@
-import type { paginationType, requestFnType } from "@/interface"
+import type { ColumnsProps,paginationType, requestFnType } from "@/interface"
 import type { DataTableProps } from "naive-ui";
 import type { Ref } from "vue";
-
-interface tablePropType extends /* @vue-ignore */ Omit<DataTableProps, 'columns'> {
-  columns: DataTableProps['columns'],
+interface tablePropType extends /* @vue-ignore */ Omit<DataTableProps, 'columns' | 'rowKey'> {
+  columns: ColumnsProps,
   request?: requestFnType,
   data?: Array<any>,
   isPagination?: boolean,
   needInfinite?: boolean,
+  rowKey?: string,
+  immediateRequest?: Boolean,
 }
 
 

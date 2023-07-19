@@ -51,7 +51,7 @@ const simpleColumns = [
 ]
 const simpleData = Mock.mock({
   'list|100': [{
-    'key|+1': 1,
+    'key1|+1': 1,
     'name': "@cname",
     "age|1-100": 1,
     "address": "@province" + "@city" + "@county",
@@ -93,7 +93,6 @@ const columns = [{
   key: 'selection',
 }, ...generateColumns(10)]
 const mockRequest = ({ pageNum, pageSize }:{ pageNum:number, pageSize:number }) => {
-  console.log(pageNum, pageSize)
   const list = generateData(columns, pageSize, 'row-', (pageNum - 1) * pageSize)
   const res = new Promise((resolve) => {
     setTimeout(() => {

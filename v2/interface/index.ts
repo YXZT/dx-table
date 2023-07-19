@@ -1,3 +1,4 @@
+import type { TableColumn } from "naive-ui/es/data-table/src/interface"
 
 export type paginationType = {
   pageNum: number,
@@ -19,3 +20,23 @@ export type requestFnType<T=myRowType> = (params: {
 export type myRowType = {
   [key: string]: string
 }
+
+export type ColumnProps = Omit<NonNullable<TableColumn>,'sorter'|'sortOrder'|'fixed'>  & {
+  isShow?: boolean,
+  key: string | number,
+  fixed?: "left" | "right" | "none",
+  order?: number,
+  sorter: boolean | Function | 'default',
+  sortOrder: 'descend' | 'ascend' | false
+}
+export type ColumnsProps = Array<ColumnProps>
+export type columnSetting = Omit<NonNullable<TableColumn>,'sorter'|'sortOrder'|'fixed'> & {
+  isShow: boolean,
+  key: string | number,
+  fixed: "left" | "right" | "none",
+  order: number,
+  sorter: boolean | Function | 'default',
+  sortOrder: 'descend' | 'ascend' | false
+  titleAlign: 'left' | 'right' | 'center'
+}
+export type columnsSetting = Array<columnSetting>
