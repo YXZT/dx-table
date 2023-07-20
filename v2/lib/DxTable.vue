@@ -7,6 +7,7 @@ import type { ColumnsProps, columnSetting, columnsSetting, requestFnType } from 
 import useTableRequest from '../hooks/tableRequest'
 import useTablePage from '../hooks/tablePage'
 import useTableConfig from '../hooks/tableConfig'
+import useTableDrag from '../hooks/tableDrag'
 
 import { computed, ref, watch } from 'vue';
 import type { TableColumn } from 'naive-ui/es/data-table/src/interface';
@@ -54,7 +55,7 @@ watch([() => props.data, () => props.request], () => {
 
 const { handlePageChange, handleSizeChange, pagination, scroll } = useTablePage({ loadFlag, localPagination, tableProps: props, changFn: loadData })
 
-const { init, TableColumns, localSearchSort, changeCol, changeSequence, changeSortOrder, resetConf, handleSorterChange } = useTableConfig({ tableProps: props, loadDataFn: loadData })
+const { init, TableColumns, localSearchSort, changeCol, changeSequence, changeSortOrder, resetConf, handleSorterChange, columDragEnd } = useTableConfig({ tableProps: props, loadDataFn: loadData })
 
 const { tableRowKey, localColums } = init()
 
@@ -71,7 +72,7 @@ const { tableRowKey, localColums } = init()
   <n-data-table v-bind="$attrs" size="small" :single-line="false" :data="tableData" :columns="TableColumns"
     ref="dataTable" :loading="loadFlag" v-bind:style="{ 'overflow-x': 'hidden' }" virtual-scroll :pagination="pagination"
     remote @update:page-size="handleSizeChange" @update:page="handlePageChange" :row-key="tableRowKey"
-    @update:sorter="handleSorterChange" @scroll="scroll" />
+    @update:sorter="handleSorterChange" @scroll="scroll" :on-update-drag-end="columDragEnd" />
 </template>
 
 <style scoped lang='scss'></style>

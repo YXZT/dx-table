@@ -50,7 +50,7 @@ function useTableConfig({ tableProps,loadDataFn }: pageChangeType) {
   })
   function initNeedStorage() {
     if (tableProps.needStore) {
-      storageString = getStore(tableProps.storeName || 'default')
+      storageString = tableProps.storeName || 'default'
     } else {
       storageString = null
     }
@@ -97,6 +97,7 @@ function useTableConfig({ tableProps,loadDataFn }: pageChangeType) {
         sorter: col.sorter ?? false,
         sortOrder: col.sortOrder ?? false,
         titleAlign: col.titleAlign ?? 'center',
+        width: col.width ?? undefined,
       }
       return newCol
     })
@@ -174,6 +175,13 @@ function useTableConfig({ tableProps,loadDataFn }: pageChangeType) {
     })
   }
 
+  const columDragEnd = (resizedWidth: number, limitedWidth: number, column: any) => {
+    const index = localColums.value.findIndex(ele=>ele.key === column.key)
+    localColums.value[index].width = limitedWidth
+    storageString && setConf()
+  }
+
+
   return {
     init,
     initNeedStorage,
@@ -186,7 +194,8 @@ function useTableConfig({ tableProps,loadDataFn }: pageChangeType) {
     changeSequence,
     changeSortOrder,
     resetConf,
-    handleSorterChange
+    handleSorterChange,
+    columDragEnd
   }
 }
 export default useTableConfig
