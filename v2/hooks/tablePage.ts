@@ -49,8 +49,26 @@ function useTablePage({ loadFlag, localPagination, changFn, tableProps }: pageCh
       pageSizes: [20, 30, 50, 100, 1000],
     }
   })
+  const scroll: DataTableProps['onScroll'] = (event) => {
+    if (!tableProps.needInfinite || !tableProps.request) return;
+    if (loadFlag.value) return
+    const dom = event.target as HTMLDivElement;
+    const clientHeight = dom.clientHeight;
+    const scrollTop = dom.scrollTop;
+    const scrollHeight = dom.scrollHeight;
+    if (clientHeight + scrollTop === scrollHeight) {
+      const num = Math.ceil(
+        localPagination.value.total / localPagination.value.pageSize
+      );
+      if (localPagination.value.pageNum + 1 > num) {
+        return;
+      }
+      localPagination.value.pageNum += 1
+      changFn(true)
+    }
+  }
   return {
-    handlePageChange, handleSizeChange, pagination
+    handlePageChange, handleSizeChange, pagination, scroll
   }
 }
 export default useTablePage

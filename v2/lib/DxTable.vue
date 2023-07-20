@@ -52,9 +52,9 @@ watch([() => props.data, () => props.request], () => {
   refresh(true)
 })
 
-const { handlePageChange, handleSizeChange, pagination } = useTablePage({ loadFlag, localPagination, tableProps: props, changFn: loadData })
+const { handlePageChange, handleSizeChange, pagination, scroll } = useTablePage({ loadFlag, localPagination, tableProps: props, changFn: loadData })
 
-const { init, TableColumns, localSearchSort, changeCol, changeSequence, changeSortOrder, resetConf } = useTableConfig({ tableProps: props, loadDataFn: loadData })
+const { init, TableColumns, localSearchSort, changeCol, changeSequence, changeSortOrder, resetConf, handleSorterChange } = useTableConfig({ tableProps: props, loadDataFn: loadData })
 
 const { tableRowKey, localColums } = init()
 
@@ -70,7 +70,8 @@ const { tableRowKey, localColums } = init()
   </TableConfig>
   <n-data-table v-bind="$attrs" size="small" :single-line="false" :data="tableData" :columns="TableColumns"
     ref="dataTable" :loading="loadFlag" v-bind:style="{ 'overflow-x': 'hidden' }" virtual-scroll :pagination="pagination"
-    remote @update:page-size="handleSizeChange" @update:page="handlePageChange" :row-key="tableRowKey" />
+    remote @update:page-size="handleSizeChange" @update:page="handlePageChange" :row-key="tableRowKey"
+    @update:sorter="handleSorterChange" @scroll="scroll" />
 </template>
 
 <style scoped lang='scss'></style>

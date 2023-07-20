@@ -17,6 +17,13 @@
           实际工作中数据往往是异步函数返回的，这时可以传入返回promise的异步函数request来代替原本的data，组件内部会处理返回的请求。节省代码的代价就是失去了自由度，因为返回的格式数据是每个公司不一定的，可以根据实际需要自己修改。
         </n-card>
       </n-tab-pane>
+      <n-tab-pane :name="4" tab="无限滚动">
+        <dx-table :columns="columns" virtual-scroll :style="{ height: `400px` }" flex-height :scroll-x="1400"
+          storeName="test_table4" :request="request" needInfinite />
+        <n-card embedded :bordered="false">
+          无限滚动也是常见的需求，添加needInfinite就可以自动监测滚动和发送的请求啦。或许可以把监测的时间提前，这样提前请求，加上去掉load动画，用户体验会更好点。
+        </n-card>
+      </n-tab-pane>
     </n-tabs>
   </div>
 </template>
@@ -43,6 +50,10 @@ watch(type, (val) => {
     request.value = null
     columns.value = simpleColumns
   }else if (val === 3) {
+    data.value = []
+    request.value = mockRequest
+    columns.value = mockColumns
+  }else if (val === 4) {
     data.value = []
     request.value = mockRequest
     columns.value = mockColumns

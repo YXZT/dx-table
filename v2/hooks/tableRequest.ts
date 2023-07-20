@@ -56,10 +56,10 @@ function useTableRequest({ loadFlag, localPagination, tableData, tableProps }: r
     tableData.value = data
     loadFlag.value = false
   }
-  function loadData() {
+  function loadData(isAppend: boolean=false) {
     // 是否开始加载
     if (tableProps.request) {
-      loadTbData(tableProps.request, false)
+      loadTbData(tableProps.request, isAppend)
     } else if (Array.isArray(tableProps.data)) {
       loadDataDirect(tableProps.data)
     }

@@ -166,7 +166,13 @@ function useTableConfig({ tableProps,loadDataFn }: pageChangeType) {
     localColums.value = columsResult
     storageString && setConf()
   }
-
+  // 类型有问题
+  const handleSorterChange = (sorter: any) => {
+    localColums.value.forEach((column) => {
+      if (column.sortOrder === undefined) return
+      if (column.key === sorter.columnKey) column.sortOrder = sorter.order
+    })
+  }
 
   return {
     init,
@@ -179,7 +185,8 @@ function useTableConfig({ tableProps,loadDataFn }: pageChangeType) {
     changeCol,
     changeSequence,
     changeSortOrder,
-    resetConf
+    resetConf,
+    handleSorterChange
   }
 }
 export default useTableConfig
