@@ -70,7 +70,8 @@ const { currentFocusRow,
   tableRowProps,
   setCurrentFocusRow,
   setTableCurrent,
-  tableRowClass } = useTableRow({ tableProps: props, tableData })
+  tableRowClass,
+  clickRowFn } = useTableRow({ tableProps: props, tableData })
 
 loadDataCb.value = () => {
   setTableCurrent()
@@ -80,17 +81,17 @@ const checkedRowKeysRef = props.checkedRowKeys ? ref(props.checkedRowKeys) : ref
 
 const checkedRowsRef = ref([])
 
-const { updateCheckedRowKeys,
-  updateCheckedRows,
-  updateRowKeys } = useTableSelect({ tableData, tableProps: props, checkedRowKeys: checkedRowKeysRef })
+const { updateCheckedRowKeys,updateCheckedRows,updateRowKeys,selectToggleRow } = useTableSelect({ tableData, tableProps: props, checkedRowKeys: checkedRowKeysRef })
 
-  updateCheckedRowKeys.value = (rowKeys)=>{
-    emits('update:checkedRowKeys', rowKeys)
-  }
+clickRowFn.value = selectToggleRow
 
-  updateCheckedRows.value = (rowKeys)=>{
-    emits('update:checkedRows', rowKeys)
-  }
+updateCheckedRowKeys.value = (rowKeys) => {
+  emits('update:checkedRowKeys', rowKeys)
+}
+
+updateCheckedRows.value = (rowKeys) => {
+  emits('update:checkedRows', rowKeys)
+}
 
 const { tableRowKey, localColums } = init()
 

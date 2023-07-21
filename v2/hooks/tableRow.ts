@@ -30,6 +30,7 @@ function useTableRow({ tableData, tableProps }: tableRowFocusType) {
   const currentFocusRowKey = ref<number | null>()
   const currentFocusRowIndex = ref<number | null>(null)
   const rowKey = tableProps.rowKey || 'id'
+  const clickRowFn = ref<(row: RowData)=>void>(()=>{})
 
   const setCurrentFocusRow: setCurrentFocusRowType = ({ setKey, index }) => {
     let rowIndex = -1
@@ -67,6 +68,7 @@ function useTableRow({ tableData, tableProps }: tableRowFocusType) {
   }
   const toggleRow = (row: RowData) => {
     setCurrentFocusRow({ setKey: row[rowKey] })
+    clickRowFn.value(row)
   }
   const tableRowProps = (row: RowData, index: number) => {
     return {
@@ -88,7 +90,8 @@ function useTableRow({ tableData, tableProps }: tableRowFocusType) {
     tableRowProps,
     setCurrentFocusRow,
     tableRowClass,
-    setTableCurrent
+    setTableCurrent,
+    clickRowFn
   }
 }
 export default useTableRow
