@@ -1,6 +1,6 @@
 import type { ColumnsProps,paginationType, requestFnType } from "@/interface"
 import type { DataTableProps } from "naive-ui";
-import type { Ref } from "vue";
+import { ref, type Ref } from "vue";
 interface tablePropType extends /* @vue-ignore */ Omit<DataTableProps, 'columns' | 'rowKey'> {
   columns: ColumnsProps,
   request?: requestFnType,
@@ -19,6 +19,7 @@ type requestType = {
   tableProps: Readonly<tablePropType>
 }
 function useTableRequest({ loadFlag, localPagination, tableData, tableProps }: requestType) {
+  const loadDataCb = ref(()=>{})
   function loadTbData(request: requestFnType, isAppend: boolean) {
 
     loadFlag.value = true
@@ -46,6 +47,7 @@ function useTableRequest({ loadFlag, localPagination, tableData, tableProps }: r
         }
       }
       loadFlag.value = false
+      loadDataCb.value()
     }).catch(() => {
       tableData.value = []
       localPagination.value = { total: 0, pageSize: 20, pageNum: 1 }
@@ -55,6 +57,7 @@ function useTableRequest({ loadFlag, localPagination, tableData, tableProps }: r
   function loadDataDirect(data: NonNullable<DataTableProps['data']>) {
     tableData.value = data
     loadFlag.value = false
+    loadDataCb.value()
   }
   function loadData(isAppend: boolean=false) {
     // 是否开始加载
@@ -65,7 +68,8 @@ function useTableRequest({ loadFlag, localPagination, tableData, tableProps }: r
     }
   }
   return {
-    loadData
+    loadData,
+    loadDataCb
   }
 }
 export default useTableRequest

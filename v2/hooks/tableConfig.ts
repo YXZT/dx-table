@@ -181,7 +181,7 @@ function useTableConfig({ tableProps,loadDataFn }: pageChangeType) {
     storageString && setConf()
   }
 
-
+  
   return {
     init,
     initNeedStorage,

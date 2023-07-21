@@ -7,7 +7,7 @@ import type { ColumnsProps, columnSetting, columnsSetting, requestFnType } from 
 import useTableRequest from '../hooks/tableRequest'
 import useTablePage from '../hooks/tablePage'
 import useTableConfig from '../hooks/tableConfig'
-import useTableDrag from '../hooks/tableDrag'
+import useTableRow from '../hooks/tableRow'
 
 import { computed, ref, watch } from 'vue';
 import type { TableColumn } from 'naive-ui/es/data-table/src/interface';
@@ -24,12 +24,14 @@ interface tablePropType extends /* @vue-ignore */ Omit<DataTableProps, 'columns'
 }
 
 const props = withDefaults(defineProps<tablePropType>(), {
+  rowKey: 'id',
   needStore: true,
   immediateRequest: true,
   needInfinite: false,
   isPagination: true,
   storeName: 'default'
 })
+const emits = defineEmits(['refreshed', 'update:checkedRowKeys', 'update:checkedRows'])
 
 const loadFlag = ref(true)
 let tableData = ref<NonNullable<DataTableProps['data']>>([])
@@ -40,7 +42,7 @@ let localPagination = ref({ total: 0, pageSize: 30, pageNum: 1 })
 
 const dataTable = ref<InstanceType<typeof NDataTable> | null>(null)
 
-const { loadData } = useTableRequest({ loadFlag, localPagination, tableData: tableData, tableProps: props })
+const { loadData, loadDataCb } = useTableRequest({ loadFlag, localPagination, tableData: tableData, tableProps: props })
 
 function refresh(reset?: boolean) {
   if (reset) {
@@ -57,7 +59,20 @@ const { handlePageChange, handleSizeChange, pagination, scroll } = useTablePage(
 
 const { init, TableColumns, localSearchSort, changeCol, changeSequence, changeSortOrder, resetConf, handleSorterChange, columDragEnd } = useTableConfig({ tableProps: props, loadDataFn: loadData })
 
+
+const { currentFocusRow,
+  currentFocusRowKey,
+  tableRowProps,
+  setCurrentFocusRow,
+  setTableCurrent,
+  tableRowClasss } = useTableRow({ tableProps: props, tableData })
+
+loadDataCb.value = () => {
+  setTableCurrent()
+}
+
 const { tableRowKey, localColums } = init()
+
 
 
 </script>
@@ -65,14 +80,22 @@ const { tableRowKey, localColums } = init()
   <TableConfig :tableRef="dataTable" :dataSetting="localColums" :sortData="localSearchSort" @change-show="changeCol"
     @change-sequence="changeSequence" @change-sort-order="changeSortOrder" @reset-conf="resetConf"
     @change-fixed="changeCol">
-    <slot name="title">123
+    <slot name="title">123 {{ currentFocusRow }} {{ currentFocusRowKey }}
       <!-- <div v-show="checkedRowKeysRef?.length">已经选择：{{ checkedRowKeysRef?.length }} 条</div> -->
     </slot>
   </TableConfig>
   <n-data-table v-bind="$attrs" size="small" :single-line="false" :data="tableData" :columns="TableColumns"
     ref="dataTable" :loading="loadFlag" v-bind:style="{ 'overflow-x': 'hidden' }" virtual-scroll :pagination="pagination"
     remote @update:page-size="handleSizeChange" @update:page="handlePageChange" :row-key="tableRowKey"
-    @update:sorter="handleSorterChange" @scroll="scroll" :on-update-drag-end="columDragEnd" />
+    @update:sorter="handleSorterChange" @scroll="scroll" :on-update-drag-end="columDragEnd" :row-props="tableRowProps" :row-class-name="tableRowClasss"/>
 </template>
 
-<style scoped lang='scss'></style>
+<style scoped lang='scss'>
+:deep(.cur-focus-row .n-data-table-td) {
+  background-color: #cfe8fb !important;
+}
+:deep(.n-data-table-tr:not(.n-data-table-tr--summary):hover){
+  box-shadow: 0 0 10px 0px #aaa;
+  position: relative;
+}
+</style>
