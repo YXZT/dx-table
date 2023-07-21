@@ -8,6 +8,7 @@ import useTableRequest from '../hooks/tableRequest'
 import useTablePage from '../hooks/tablePage'
 import useTableConfig from '../hooks/tableConfig'
 import useTableRow from '../hooks/tableRow'
+import useKeyboardControl from '../hooks/tableKeyboardControl'
 
 import { computed, ref, watch } from 'vue';
 import type { TableColumn } from 'naive-ui/es/data-table/src/interface';
@@ -62,6 +63,7 @@ const { init, TableColumns, localSearchSort, changeCol, changeSequence, changeSo
 
 const { currentFocusRow,
   currentFocusRowKey,
+  currentFocusRowIndex,
   tableRowProps,
   setCurrentFocusRow,
   setTableCurrent,
@@ -73,7 +75,20 @@ loadDataCb.value = () => {
 
 const { tableRowKey, localColums } = init()
 
+const {
+  startListening,
+  stopListening,
+} = useKeyboardControl({ dataTable, tableData, setCurrentFocusRow, currentFocusRowIndex })
 
+watch(loadFlag, (val) => {
+  if (val) {
+    stopListening()
+  } else {
+    startListening()
+  }
+}, {
+  immediate: true
+})
 
 </script>
 <template>
@@ -87,14 +102,16 @@ const { tableRowKey, localColums } = init()
   <n-data-table v-bind="$attrs" size="small" :single-line="false" :data="tableData" :columns="TableColumns"
     ref="dataTable" :loading="loadFlag" v-bind:style="{ 'overflow-x': 'hidden' }" virtual-scroll :pagination="pagination"
     remote @update:page-size="handleSizeChange" @update:page="handlePageChange" :row-key="tableRowKey"
-    @update:sorter="handleSorterChange" @scroll="scroll" :on-update-drag-end="columDragEnd" :row-props="tableRowProps" :row-class-name="tableRowClasss"/>
+    @update:sorter="handleSorterChange" @scroll="scroll" :on-update-drag-end="columDragEnd" :row-props="tableRowProps"
+    :row-class-name="tableRowClasss" />
 </template>
 
 <style scoped lang='scss'>
 :deep(.cur-focus-row .n-data-table-td) {
   background-color: #cfe8fb !important;
 }
-:deep(.n-data-table-tr:not(.n-data-table-tr--summary):hover){
+
+:deep(.n-data-table-tr:not(.n-data-table-tr--summary):hover) {
   box-shadow: 0 0 10px 0px #aaa;
   position: relative;
 }
