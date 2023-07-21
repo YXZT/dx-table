@@ -75,7 +75,7 @@ function useTableRow({ tableData, tableProps }: tableRowFocusType) {
       onClick: () => toggleRow(row)
     }
   }
-  const tableRowClasss = (row: RowData) => {
+  const tableRowClass = (row: RowData) => {
     if (currentFocusRowKey.value && row[rowKey] === currentFocusRowKey.value) {
       return 'cur-focus-row'
     }
@@ -87,7 +87,7 @@ function useTableRow({ tableData, tableProps }: tableRowFocusType) {
     currentFocusRowIndex,
     tableRowProps,
     setCurrentFocusRow,
-    tableRowClasss,
+    tableRowClass,
     setTableCurrent
   }
 }

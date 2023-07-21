@@ -40,3 +40,5 @@ export type columnSetting = Omit<NonNullable<TableColumn>,'sorter'|'sortOrder'|'
   titleAlign: 'left' | 'right' | 'center'
 }
 export type columnsSetting = Array<columnSetting>
+
+export type tableCheckType = null | 'checkBox' | 'radio'

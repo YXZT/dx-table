@@ -3,12 +3,14 @@
     <n-tabs v-model:value="type">
       <n-tab-pane :name="1" tab="简单数据">
         <DxTable :columns="columns" :data="data" virtual-scroll
-          storeName="test_table1" flex-height :style="{ height: `400px` }"  :scroll-x="1400" row-key="key1"></DxTable>
+          storeName="test_table1" flex-height :style="{ height: `400px` }"  :scroll-x="1400" row-key="key1" v-model:checked-row-keys="checkedRowKeys" v-model:checkedRows="checkedRows"></DxTable>
         <n-card embedded :bordered="false">
           基于Naive UI的数据表格Data
           Table组件，使用属性透传保留了原本的有的功能，在此基础上做了一些功能扩展。增加了列顺序、列显隐、列固定的自定义配置，为了让程序正确识别，需要在colums中设置列的key，不能重复。
           刷新网页后配置就丢失了怎么行！只要给每个表格一个独特的store-name就可以找到啦。
         </n-card>
+        <div>{{ checkedRowKeys }}</div>
+        <div>{{ checkedRows }}</div>
       </n-tab-pane>
       <n-tab-pane :name="3" tab="异步获取">
         <dx-table :columns="columns" :request="request" virtual-scroll :style="{ height: `400px` }" flex-height
@@ -43,6 +45,9 @@ let type = ref(1)
 const data = ref<any []>([])
 const columns = ref()
 const request = ref()
+
+const checkedRowKeys = ref<Array<string | number>>([])
+const checkedRows = ref<Array<any>>([])
 
 watch(type, (val) => {
   if (val === 1) {

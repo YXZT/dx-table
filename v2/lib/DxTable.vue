@@ -9,6 +9,7 @@ import useTablePage from '../hooks/tablePage'
 import useTableConfig from '../hooks/tableConfig'
 import useTableRow from '../hooks/tableRow'
 import useKeyboardControl from '../hooks/tableKeyboardControl'
+import useTableSelect from '../hooks/tableSelect'
 
 import { computed, ref, watch } from 'vue';
 import type { TableColumn } from 'naive-ui/es/data-table/src/interface';
@@ -22,6 +23,8 @@ interface tablePropType extends /* @vue-ignore */ Omit<DataTableProps, 'columns'
   immediateRequest?: boolean,
   needStore?: boolean,
   storeName?: string,
+  checkedRowKeys?: DataTableProps['checkedRowKeys'],
+  checkedRows?: Array<any>,
 }
 
 const props = withDefaults(defineProps<tablePropType>(), {
@@ -67,11 +70,27 @@ const { currentFocusRow,
   tableRowProps,
   setCurrentFocusRow,
   setTableCurrent,
-  tableRowClasss } = useTableRow({ tableProps: props, tableData })
+  tableRowClass } = useTableRow({ tableProps: props, tableData })
 
 loadDataCb.value = () => {
   setTableCurrent()
 }
+
+const checkedRowKeysRef = props.checkedRowKeys ? ref(props.checkedRowKeys) : ref([])
+
+const checkedRowsRef = ref([])
+
+const { updateCheckedRowKeys,
+  updateCheckedRows,
+  updateRowKeys } = useTableSelect({ tableData, tableProps: props, checkedRowKeys: checkedRowKeysRef })
+
+  updateCheckedRowKeys.value = (rowKeys)=>{
+    emits('update:checkedRowKeys', rowKeys)
+  }
+
+  updateCheckedRows.value = (rowKeys)=>{
+    emits('update:checkedRows', rowKeys)
+  }
 
 const { tableRowKey, localColums } = init()
 
@@ -95,7 +114,7 @@ watch(loadFlag, (val) => {
   <TableConfig :tableRef="dataTable" :dataSetting="localColums" :sortData="localSearchSort" @change-show="changeCol"
     @change-sequence="changeSequence" @change-sort-order="changeSortOrder" @reset-conf="resetConf"
     @change-fixed="changeCol">
-    <slot name="title">123 {{ currentFocusRow }} {{ currentFocusRowKey }}
+    <slot name="title">123
       <!-- <div v-show="checkedRowKeysRef?.length">已经选择：{{ checkedRowKeysRef?.length }} 条</div> -->
     </slot>
   </TableConfig>
@@ -103,7 +122,7 @@ watch(loadFlag, (val) => {
     ref="dataTable" :loading="loadFlag" v-bind:style="{ 'overflow-x': 'hidden' }" virtual-scroll :pagination="pagination"
     remote @update:page-size="handleSizeChange" @update:page="handlePageChange" :row-key="tableRowKey"
     @update:sorter="handleSorterChange" @scroll="scroll" :on-update-drag-end="columDragEnd" :row-props="tableRowProps"
-    :row-class-name="tableRowClasss" />
+    :row-class-name="tableRowClass" :checkedRowKeys="checkedRowKeysRef" @update-checked-row-keys="updateRowKeys" />
 </template>
 
 <style scoped lang='scss'>
