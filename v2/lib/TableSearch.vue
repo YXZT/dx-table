@@ -16,14 +16,18 @@ const props = withDefaults(defineProps<tableSearchProps>(), {
   needMore: false,
 })
 
+
+
 </script>
 
 <template>
   <div class="search">
-    <n-form-item v-for="(item, index) in searchColumns" :key="item.prop" :label="`${item.label} :`" size="small"
+    <div v-for="(item, index) in searchColumns" :key="item.prop" class="item-box">
+      <n-form-item :label="`${item.label} :`" size="small"
       :show-feedback="false" label-placement="left">
       <SearchFormItem :column="item" :search-param="searchData" />
-    </n-form-item>
+      </n-form-item>
+    </div>
   </div>
 </template>
 
@@ -35,8 +39,12 @@ const props = withDefaults(defineProps<tableSearchProps>(), {
   display: flex;
   flex-wrap: wrap;
 }
-.search>div{
-  padding-bottom: 4px;
-  padding-left: 6px;
+.item-box{
+  margin-bottom: 4px;
+  margin-left: 6px;
+  border: 1px solid #eee;
+}
+.item-box:hover{
+  border: 1px solid #aaa;
 }
 </style>
