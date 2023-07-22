@@ -41,4 +41,4 @@ export type columnSetting = Omit<NonNullable<TableColumn>,'sorter'|'sortOrder'|'
 }
 export type columnsSetting = Array<columnSetting>
 
-export type tableCheckType = null | 'checkBox' | 'radio'
+export type tableCheckType = 'checkBox' | 'radio'

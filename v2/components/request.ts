@@ -14,7 +14,7 @@ const simpleColumns = [
     type: 'selection',
     key: 'selection',
     sorter: true,
-    multiple: false,
+    // multiple: false,
   },
   {
     title: 'Name',

@@ -24,8 +24,12 @@ export type selectToggleRowType = (row: RowData) => void
 function useTableSelect({ tableData, tableProps, checkedRowKeys }: tableSelectType) {
   const updateCheckedRowKeys = ref<(rowKeys: any[]) => void>(() => { })
   const updateCheckedRows = ref<(rowKeys: any[]) => void>(() => { })
-  const tableCheck = ref<tableCheckType>(null)
+  /**
+   * 这个表格要的是多选还是单选
+   */
+  const tableCheck = ref<tableCheckType>('radio')
   const rowKey = tableProps.rowKey || 'id'
+
   const updateRowKeys: DataTableProps['onUpdate:checkedRowKeys'] = (_rowKeys, _rows, meta) => {
     if (meta.action === 'checkAll') {
       const data = [...tableData.value]
@@ -48,8 +52,8 @@ function useTableSelect({ tableData, tableProps, checkedRowKeys }: tableSelectTy
     updateCheckedRows.value(newData)
   })
 
-  tableProps.checkedRowKeys && watch(tableProps.columns, (newVal) => {
-    let type: tableCheckType = null
+  watch(tableProps.columns, (newVal) => {
+    let type: tableCheckType = 'radio'
     const col = newVal.find(col => col.type === 'selection')
     if (col) {
       if ((col as any).multiple === false) {
@@ -57,6 +61,9 @@ function useTableSelect({ tableData, tableProps, checkedRowKeys }: tableSelectTy
       } else {
         type = 'checkBox'
       }
+    }else{
+      // 没有selection的时候依然当成单选
+      type = 'radio'
     }
     tableCheck.value = type
   }, {
@@ -70,7 +77,12 @@ function useTableSelect({ tableData, tableProps, checkedRowKeys }: tableSelectTy
     let _checkedRowKeys = [...checkedRowKeys.value]
 
     if (isInIndex > -1) {
-      _checkedRowKeys.splice(isInIndex, 1)
+      // 如果是单选，那还是保持这样
+      if(tableCheck.value==='radio'){
+        return
+      }else{
+        _checkedRowKeys.splice(isInIndex, 1)
+      }
     } else {
       if (tableCheck.value === 'checkBox') {
         _checkedRowKeys.push(row[rowKey])
@@ -85,7 +97,8 @@ function useTableSelect({ tableData, tableProps, checkedRowKeys }: tableSelectTy
     updateCheckedRowKeys,
     updateCheckedRows,
     updateRowKeys,
-    selectToggleRow
+    selectToggleRow,
+    tableCheck
   };
 }
 export default useTableSelect

@@ -2,7 +2,7 @@
 import type { Ref } from 'vue'
 import { ref } from 'vue'
 import type { DataTableProps, NDataTable } from 'naive-ui'
-import type { ColumnsProps, requestFnType } from '@/interface'
+import type { ColumnsProps, requestFnType, tableCheckType } from '@/interface'
 import type { setCurrentFocusRowType } from './tableRow'
 import type { RowData } from 'naive-ui/es/data-table/src/interface'
 import type { selectToggleRowType } from './tableSelect'
@@ -12,10 +12,11 @@ type optionsType = {
   setCurrentFocusRow: setCurrentFocusRowType,
   dataTable: Readonly<Ref<InstanceType<typeof NDataTable> | null>>,
   tableData: Readonly<Ref<any[]>>,
-  selectToggleRow: selectToggleRowType
+  selectToggleRow: selectToggleRowType,
+  tableCheck: Ref<tableCheckType>
 }
 function useKeyboardControl(options: optionsType) {
-  const { dataTable, tableData, currentFocusRowIndex, setCurrentFocusRow, selectToggleRow } = options
+  const { dataTable, tableData, currentFocusRowIndex, setCurrentFocusRow, selectToggleRow,tableCheck } = options
 
 
   function handleKeyDown(event: KeyboardEvent) {
@@ -49,14 +50,17 @@ function useKeyboardControl(options: optionsType) {
     const tableLength = tableData.value.length
     if (tableLength === 0) return
     if (currentFocusRowIndex.value == null) return
+    const needSetSelectRow = tableCheck.value === 'radio'
     switch (command) {
       case 'up':
         if (currentFocusRowIndex.value === 0) return
         setCurrentFocusRow({ index: currentFocusRowIndex.value - 1 })
+        needSetSelectRow && selectToggleRow(tableData.value[currentFocusRowIndex.value])
         break;
       case 'down':
         if (currentFocusRowIndex.value === tableLength - 1) return
         setCurrentFocusRow({ index: currentFocusRowIndex.value + 1 })
+        needSetSelectRow && selectToggleRow(tableData.value[currentFocusRowIndex.value])
         break;
       default:
         break;

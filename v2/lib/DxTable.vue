@@ -73,17 +73,21 @@ const { currentFocusRow,
   tableRowClass,
   clickRowFn } = useTableRow({ tableProps: props, tableData })
 
-loadDataCb.value = () => {
-  setTableCurrent()
-}
 
 const checkedRowKeysRef = props.checkedRowKeys ? ref(props.checkedRowKeys) : ref([])
 
 const checkedRowsRef = ref([])
 
-const { updateCheckedRowKeys,updateCheckedRows,updateRowKeys,selectToggleRow } = useTableSelect({ tableData, tableProps: props, checkedRowKeys: checkedRowKeysRef })
+const { updateCheckedRowKeys, updateCheckedRows, updateRowKeys, selectToggleRow, tableCheck } = useTableSelect({ tableData, tableProps: props, checkedRowKeys: checkedRowKeysRef })
 
 clickRowFn.value = selectToggleRow
+
+loadDataCb.value = () => {
+  setTableCurrent()
+  if(tableCheck.value === 'radio'){
+    currentFocusRow.value && selectToggleRow(currentFocusRow.value)
+  }
+}
 
 updateCheckedRowKeys.value = (rowKeys) => {
   emits('update:checkedRowKeys', rowKeys)
@@ -98,7 +102,7 @@ const { tableRowKey, localColums } = init()
 const {
   startListening,
   stopListening,
-} = useKeyboardControl({ dataTable, tableData, setCurrentFocusRow, currentFocusRowIndex,selectToggleRow })
+} = useKeyboardControl({ dataTable, tableData, setCurrentFocusRow, currentFocusRowIndex, selectToggleRow, tableCheck })
 
 watch(loadFlag, (val) => {
   if (val) {
