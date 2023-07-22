@@ -19,15 +19,17 @@ type tableSelectType = {
   tableProps: Readonly<tablePropType>,
   checkedRowKeys: Ref<any[]>
 }
-function useTableSelect({tableData,tableProps,checkedRowKeys }: tableSelectType) {
-  const updateCheckedRowKeys = ref<(rowKeys:any[])=>void>(()=>{})
-  const updateCheckedRows = ref<(rowKeys:any[])=>void>(()=>{})
+export type selectToggleRowType = (row: RowData) => void
+
+function useTableSelect({ tableData, tableProps, checkedRowKeys }: tableSelectType) {
+  const updateCheckedRowKeys = ref<(rowKeys: any[]) => void>(() => { })
+  const updateCheckedRows = ref<(rowKeys: any[]) => void>(() => { })
   const tableCheck = ref<tableCheckType>(null)
-  const rowKey = tableProps.rowKey||'id'
+  const rowKey = tableProps.rowKey || 'id'
   const updateRowKeys: DataTableProps['onUpdate:checkedRowKeys'] = (_rowKeys, _rows, meta) => {
     if (meta.action === 'checkAll') {
       const data = [...tableData.value]
-      const keys = data.map((dataRow: any) => dataRow[tableProps.rowKey||'id'])
+      const keys = data.map((dataRow: any) => dataRow[tableProps.rowKey || 'id'])
       changeRowKeys(keys)
     } else if (meta.action === 'uncheckAll') {
       changeRowKeys([])
@@ -62,9 +64,7 @@ function useTableSelect({tableData,tableProps,checkedRowKeys }: tableSelectType)
     deep: false,
   })
 
-  const selectToggleRow = (row: RowData) => {
-    console.log(row);
-    
+  const selectToggleRow: selectToggleRowType = (row) => {
     if (!checkedRowKeys.value) return
     const isInIndex = checkedRowKeys.value.findIndex(key => key === row[rowKey])
     let _checkedRowKeys = [...checkedRowKeys.value]

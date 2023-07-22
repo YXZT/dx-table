@@ -98,7 +98,7 @@ const { tableRowKey, localColums } = init()
 const {
   startListening,
   stopListening,
-} = useKeyboardControl({ dataTable, tableData, setCurrentFocusRow, currentFocusRowIndex })
+} = useKeyboardControl({ dataTable, tableData, setCurrentFocusRow, currentFocusRowIndex,selectToggleRow })
 
 watch(loadFlag, (val) => {
   if (val) {

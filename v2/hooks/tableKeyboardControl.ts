@@ -5,15 +5,17 @@ import type { DataTableProps, NDataTable } from 'naive-ui'
 import type { ColumnsProps, requestFnType } from '@/interface'
 import type { setCurrentFocusRowType } from './tableRow'
 import type { RowData } from 'naive-ui/es/data-table/src/interface'
+import type { selectToggleRowType } from './tableSelect'
 
 type optionsType = {
   currentFocusRowIndex: Readonly<Ref<number | null>>,
   setCurrentFocusRow: setCurrentFocusRowType,
   dataTable: Readonly<Ref<InstanceType<typeof NDataTable> | null>>,
   tableData: Readonly<Ref<any[]>>,
+  selectToggleRow: selectToggleRowType
 }
 function useKeyboardControl(options: optionsType) {
-  const {  dataTable, tableData, currentFocusRowIndex, setCurrentFocusRow } = options
+  const { dataTable, tableData, currentFocusRowIndex, setCurrentFocusRow, selectToggleRow } = options
 
 
   function handleKeyDown(event: KeyboardEvent) {
@@ -27,7 +29,8 @@ function useKeyboardControl(options: optionsType) {
       scrollToRow()
     } else if (event.key === 'Enter') {
       event.preventDefault();
-      // pressEnter.value()
+      if (currentFocusRowIndex.value==null) return
+      selectToggleRow(tableData.value[currentFocusRowIndex.value])
     }
   }
   function scrollToRow() {
