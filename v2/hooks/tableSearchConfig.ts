@@ -24,7 +24,6 @@ function useTableSearchConfig({ tableSearchProps }: tableSearchConfigType) {
     )
     return arr
   })
-
   function initColums() {
     let columsResult: searchFormSetting[] = searchColumns.map((col, index) => {
       const newCol: searchFormSetting = {
@@ -84,10 +83,19 @@ function useTableSearchConfig({ tableSearchProps }: tableSearchConfigType) {
     // todo 去掉当前搜索项
     storageString && setConf()
   }
+  function showSearchColumns(prop:string){
+    const curColIndex = localColums.value.findIndex(col => col?.prop === prop)
+    if (curColIndex > -1) {
+      localColums.value[curColIndex].isShow = true
+    }
+    // todo 去掉当前搜索项
+    storageString && setConf()
+  }
   return {
     init,
     tableSearchColumns,
-    removeSearchColumns
+    removeSearchColumns,
+    showSearchColumns
   }
 }
 export default useTableSearchConfig

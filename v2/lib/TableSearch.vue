@@ -1,8 +1,8 @@
 <script setup lang='ts'>
 import type { searchFormType } from '@/interface';
 import SearchFormItem from './SearchFormItem.vue';
-import { NFormItem, NButton, NConfigProvider, type GlobalThemeOverrides, NSpace, NIconWrapper, NIcon } from 'naive-ui'
-import { CloseSharp } from '@vicons/ionicons5'
+import { NFormItem, NButton, NConfigProvider, type GlobalThemeOverrides, NSpace, NIconWrapper, NIcon,NPopselect } from 'naive-ui'
+import { CloseSharp, AddSharp } from '@vicons/ionicons5'
 import { computed } from 'vue';
 import useTableSearchConfig from '../hooks/tableSearchConfig'
 
@@ -27,11 +27,25 @@ const props = withDefaults(defineProps<tableSearchProps>(), {
 const {
   init,
   tableSearchColumns,
-  removeSearchColumns
+  removeSearchColumns,
+  showSearchColumns
 } = useTableSearchConfig({ tableSearchProps: props })
 
+const {
+  localColums
+} = init()
 
-init()
+const hiddenColumsOptions = computed(() => {
+  const arr = localColums.value.filter(
+    col => !col.isShow,
+  ).map(ele=>{
+    return {
+      label: ele.label,
+      value: ele.prop,
+    }
+  })
+  return arr
+})
 </script>
 
 <template>
@@ -44,6 +58,14 @@ init()
         <n-icon :size="18" :component="CloseSharp" />
       </n-icon-wrapper>
     </div>
+    <n-popselect :options="hiddenColumsOptions" size="medium" scrollable :on-update:value="showSearchColumns" v-if="hiddenColumsOptions.length">
+      <n-button quaternary size="small" class="search-button">
+        <template #icon>
+          <n-icon :component="AddSharp"></n-icon>
+        </template>
+      </n-button>
+    </n-popselect>
+
   </div>
 </template>
 
@@ -55,7 +77,10 @@ init()
   display: flex;
   flex-wrap: wrap;
 }
-
+.search-button {
+  margin-bottom: 4px;
+  margin-left: 6px;
+}
 .item-box {
   position: relative;
   margin-bottom: 4px;
