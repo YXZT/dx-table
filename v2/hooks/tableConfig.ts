@@ -50,7 +50,7 @@ function useTableConfig({ tableProps,loadDataFn }: pageChangeType) {
   })
   function initNeedStorage() {
     if (tableProps.needStore) {
-      storageString = tableProps.storeName || 'default'
+      storageString = 'page_' + tableProps.storeName || 'default' + '_table'
     } else {
       storageString = null
     }
@@ -63,7 +63,7 @@ function useTableConfig({ tableProps,loadDataFn }: pageChangeType) {
     } : undefined
     return tableRowKey
   }
-  function ExtractConfiguration(colums: columnsSetting, columsConfig: columnsSetting) {
+  function extractConfiguration(colums: columnsSetting, columsConfig: columnsSetting) {
     const columsContent: Array<columnSetting | undefined> = [...colums]
     const columsResult: columnsSetting = []
     columsConfig.forEach(record => {
@@ -102,7 +102,7 @@ function useTableConfig({ tableProps,loadDataFn }: pageChangeType) {
       return newCol
     })
     const setting = storageString && getStore(storageString)
-    columsResult = setting ? ExtractConfiguration(columsResult, setting) : columsResult
+    columsResult = setting ? extractConfiguration(columsResult, setting) : columsResult
     localColums.value = columsResult
     return localColums
   }
@@ -123,7 +123,7 @@ function useTableConfig({ tableProps,loadDataFn }: pageChangeType) {
     }
   }
   function setConf() {
-    setStore(tableProps.storeName as string, localColums.value)
+    setStore(storageString as string, localColums.value)
   }
   const localSearchSort = computed(() => {
     if (!localColums.value.length) return []

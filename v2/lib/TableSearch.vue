@@ -14,16 +14,22 @@ type tableSearchProps = {
   searchData: any,
   searchColumns: searchFormType[],
   needMore?: boolean,
+  needStore?: boolean,
+  storeName?: string,
 }
 
 const props = withDefaults(defineProps<tableSearchProps>(), {
   needMore: false,
+  needStore: true,
+  storeName: 'default',
 })
 
 const {
   init,
-  tableSearchColumns
-} = useTableSearchConfig({ searchColumns: props.searchColumns })
+  tableSearchColumns,
+  removeSearchColumns
+} = useTableSearchConfig({ tableSearchProps: props })
+
 
 init()
 </script>
@@ -34,7 +40,7 @@ init()
       <n-form-item :label="`${item.label} :`" size="small" :show-feedback="false" label-placement="left">
         <SearchFormItem :column="item" :search-param="searchData" />
       </n-form-item>
-      <n-icon-wrapper :size="18" class="close-btn" color="#ccc" :border-radius="18">
+      <n-icon-wrapper :size="18" class="close-btn" color="#ccc" :border-radius="18" @click="removeSearchColumns(item)">
         <n-icon :size="18" :component="CloseSharp" />
       </n-icon-wrapper>
     </div>
