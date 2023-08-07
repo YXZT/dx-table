@@ -1,7 +1,7 @@
 <script setup lang='ts'>
 defineOptions({ name: 'DxTable' })
 import TableConfig from './TableConfig.vue'
-import { NDataTable } from 'naive-ui'
+import { NDataTable,NDropdown } from 'naive-ui'
 import type { DataTableProps } from 'naive-ui'
 import type { ColumnsProps, columnSetting, columnsSetting, requestFnType } from "@/interface/index";
 import useTableRequest from '../hooks/tableRequest'
@@ -10,9 +10,9 @@ import useTableConfig from '../hooks/tableConfig'
 import useTableRow from '../hooks/tableRow'
 import useKeyboardControl from '../hooks/tableKeyboardControl'
 import useTableSelect from '../hooks/tableSelect'
+import { useDropDown } from '@/hooks/tableDropdown'
 
-import { computed, ref, watch } from 'vue';
-import type { TableColumn } from 'naive-ui/es/data-table/src/interface';
+import { ref, watch } from 'vue';
 interface tablePropType extends /* @vue-ignore */ Omit<DataTableProps, 'columns' | 'rowKey'> {
   columns: ColumnsProps,
   request?: requestFnType,
@@ -73,7 +73,6 @@ const { currentFocusRow,
   tableRowClass,
   clickRowFn } = useTableRow({ tableProps: props, tableData })
 
-
 const checkedRowKeysRef = props.checkedRowKeys ? ref(props.checkedRowKeys) : ref([])
 
 const checkedRowsRef = ref([])
@@ -84,7 +83,7 @@ clickRowFn.value = selectToggleRow
 
 loadDataCb.value = () => {
   setTableCurrent()
-  if(tableCheck.value === 'radio'){
+  if (tableCheck.value === 'radio') {
     currentFocusRow.value && selectToggleRow(currentFocusRow.value)
   }
 }
@@ -97,7 +96,48 @@ updateCheckedRows.value = (rowKeys) => {
   emits('update:checkedRows', rowKeys)
 }
 
+
 const { tableRowKey, localColums } = init()
+
+let { renderDropDown, handleContextMenu, setOptions } = useDropDown()
+
+setOptions.value = ({ curSelection }) => {
+  return [
+    {
+      label: '复制',
+      key: 'copy',
+      disabled: !curSelection,
+      fn: () => {
+        navigator.clipboard.writeText(curSelection);
+      }
+    },
+    {
+      label: '搜索(仅当前)',
+      key: 'search',
+      fn: () => {
+      }
+    },
+    {
+      label: '刷新',
+      key: 'refresh',
+      fn: () => {
+      }
+    },
+    {
+      label: '导出到excel(仅当前)',
+      key: 'exportCurent',
+      fn: () => {
+      }
+    },
+    {
+      label: '导出到excel(所有)',
+      key: 'exportAll',
+      fn: () => {
+      }
+    }
+  ]
+}
+
 
 const {
   startListening,
@@ -127,7 +167,8 @@ watch(loadFlag, (val) => {
     ref="dataTable" :loading="loadFlag" v-bind:style="{ 'overflow-x': 'hidden' }" virtual-scroll :pagination="pagination"
     remote @update:page-size="handleSizeChange" @update:page="handlePageChange" :row-key="tableRowKey"
     @update:sorter="handleSorterChange" @scroll="scroll" :on-update-drag-end="columDragEnd" :row-props="tableRowProps"
-    :row-class-name="tableRowClass" :checkedRowKeys="checkedRowKeysRef" @update-checked-row-keys="updateRowKeys" />
+    :row-class-name="tableRowClass" :checkedRowKeys="checkedRowKeysRef" @update-checked-row-keys="updateRowKeys" @contextmenu="handleContextMenu($event)"/>
+    <renderDropDown></renderDropDown>
 </template>
 
 <style scoped lang='scss'>
