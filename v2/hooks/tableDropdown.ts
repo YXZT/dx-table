@@ -1,17 +1,22 @@
 
 import { NDropdown } from 'naive-ui';
+import type { RowData } from 'naive-ui/es/data-table/src/interface';
 import { h, nextTick, reactive, ref, toRefs } from 'vue';
 // import { useRoute } from 'vue-router';
 
 export function useDropDown() {
   // const route = useRoute();
   const curSelection = ref()
+  const curRow = ref()
+  const curTableIndex = ref()
   // 等naiveui完善类型
   type setOptionsType = (arg: {
     /**
      * 当前光标选择
      */
-    curSelection: string
+    curSelection: string,
+    row: RowData,
+    index: number,
   }) => any[]
   const setOptions = ref<setOptionsType>(() => {
     return []
@@ -36,7 +41,7 @@ export function useDropDown() {
     if (opt) opt?.fn()
     state.showDropdown = false;
   };
-  function handleContextMenu(e: MouseEvent) {
+  function handleContextMenu(e: MouseEvent, row: RowData, index: number) {
     e.preventDefault();
     nextTick().then(() => {
       state.showDropdown = true;
@@ -44,7 +49,9 @@ export function useDropDown() {
       state.dropdownY = e.clientY;
     });
     curSelection.value = window.getSelection();
-    state.TabsMenuOptions = setOptions.value({ curSelection:curSelection.value?.toString() })
+    curRow.value = row;
+    curTableIndex.value = index;
+    state.TabsMenuOptions = setOptions.value({ curSelection: curSelection.value?.toString(), row: curRow.value, index: curTableIndex.value })
   }
   function renderDropDown() {
     return h(NDropdown, {

@@ -1,7 +1,7 @@
 <script setup lang='ts'>
 defineOptions({ name: 'DxTable' })
 import TableConfig from './TableConfig.vue'
-import { NDataTable,NDropdown } from 'naive-ui'
+import { NDataTable, NDropdown } from 'naive-ui'
 import type { DataTableProps } from 'naive-ui'
 import type { ColumnsProps, columnSetting, columnsSetting, requestFnType } from "@/interface/index";
 import useTableRequest from '../hooks/tableRequest'
@@ -13,6 +13,7 @@ import useTableSelect from '../hooks/tableSelect'
 import { useDropDown } from '@/hooks/tableDropdown'
 
 import { ref, watch } from 'vue';
+import type { RowData } from 'naive-ui/es/data-table/src/interface';
 interface tablePropType extends /* @vue-ignore */ Omit<DataTableProps, 'columns' | 'rowKey'> {
   columns: ColumnsProps,
   request?: requestFnType,
@@ -101,7 +102,7 @@ const { tableRowKey, localColums } = init()
 
 let { renderDropDown, handleContextMenu, setOptions } = useDropDown()
 
-setOptions.value = ({ curSelection }) => {
+setOptions.value = ({ curSelection, row, index }) => {
   return [
     {
       label: '复制',
@@ -115,13 +116,13 @@ setOptions.value = ({ curSelection }) => {
       label: '搜索(仅当前)',
       key: 'search',
       fn: () => {
+        console.log(row, index);
       }
     },
     {
       label: '刷新',
       key: 'refresh',
-      fn: () => {
-      }
+      fn: ()=>refresh(true)
     },
     {
       label: '导出到excel(仅当前)',
@@ -138,6 +139,17 @@ setOptions.value = ({ curSelection }) => {
   ]
 }
 
+const localTableRowProps = (row: RowData, index: number) => {
+  const higherOrder = (row: RowData, index: number) => {
+    return function (e: any) {
+      handleContextMenu(e, row, index)
+    }
+  }
+  return {
+    ...tableRowProps(row, index),
+    onContextmenu: higherOrder(row, index)
+  }
+}
 
 const {
   startListening,
@@ -166,9 +178,10 @@ watch(loadFlag, (val) => {
   <n-data-table v-bind="$attrs" size="small" :single-line="false" :data="tableData" :columns="TableColumns"
     ref="dataTable" :loading="loadFlag" v-bind:style="{ 'overflow-x': 'hidden' }" virtual-scroll :pagination="pagination"
     remote @update:page-size="handleSizeChange" @update:page="handlePageChange" :row-key="tableRowKey"
-    @update:sorter="handleSorterChange" @scroll="scroll" :on-update-drag-end="columDragEnd" :row-props="tableRowProps"
-    :row-class-name="tableRowClass" :checkedRowKeys="checkedRowKeysRef" @update-checked-row-keys="updateRowKeys" @contextmenu="handleContextMenu($event)"/>
-    <renderDropDown></renderDropDown>
+    @update:sorter="handleSorterChange" @scroll="scroll" :on-update-drag-end="columDragEnd"
+    :row-props="localTableRowProps" :row-class-name="tableRowClass" :checkedRowKeys="checkedRowKeysRef"
+    @update-checked-row-keys="updateRowKeys" />
+  <renderDropDown></renderDropDown>
 </template>
 
 <style scoped lang='scss'>
