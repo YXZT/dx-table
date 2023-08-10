@@ -1,5 +1,5 @@
 import type { ColumnsProps,paginationType, requestFnType } from "@/interface"
-import type { DataTableProps } from "naive-ui";
+import type { DataTableProps, NDataTable } from "naive-ui";
 import { ref, type Ref } from "vue";
 interface tablePropType extends /* @vue-ignore */ Omit<DataTableProps, 'columns' | 'rowKey'> {
   columns: ColumnsProps,
@@ -16,9 +16,10 @@ type requestType = {
   loadFlag: Ref<boolean>,
   localPagination: Ref<paginationType>,
   tableData: Ref<any[]>,
-  tableProps: Readonly<tablePropType>
+  tableProps: Readonly<tablePropType>,
+  dataTable: Readonly<Ref<InstanceType<typeof NDataTable> | null>>,
 }
-function useTableRequest({ loadFlag, localPagination, tableData, tableProps }: requestType) {
+function useTableRequest({ loadFlag, localPagination, tableData, tableProps,dataTable }: requestType) {
   const loadDataCb = ref(()=>{})
   function loadTbData(request: requestFnType, isAppend: boolean) {
 
@@ -40,10 +41,12 @@ function useTableRequest({ loadFlag, localPagination, tableData, tableProps }: r
       }
       const records = res.data?.records
       if (Array.isArray(records) && records.length) {
+        
         if (isAppend) {
           tableData.value.push(...records)
         } else {
           tableData.value = records
+          dataTable?.value?.scrollTo(0,0)
         }
       }
       loadFlag.value = false

@@ -2,10 +2,10 @@
   <div>
     <n-tabs v-model:value="type">
       <n-tab-pane :name="1" tab="简单数据">
-        <table-search :searchData="searchData" :search-columns="searchColumns"></table-search>
+        <table-search :searchData="searchData" :search-columns="searchColumns" :tableRef="table1"></table-search>
         <DxTable :columns="columns" :data="data" virtual-scroll storeName="test_table1" flex-height
           :style="{ height: `400px` }" :scroll-x="1400" row-key="key1" v-model:checked-row-keys="checkedRowKeys"
-          v-model:checkedRows="checkedRows"></DxTable>
+          v-model:checkedRows="checkedRows" ref="table1"></DxTable>
         <n-card embedded :bordered="false">
           基于Naive UI的数据表格Data
           Table组件，使用属性透传保留了原本的有的功能，在此基础上做了一些功能扩展。增加了列顺序、列显隐、列固定的自定义配置，为了让程序正确识别，需要在colums中设置列的key，不能重复。
@@ -50,7 +50,6 @@ const request = ref()
 
 const checkedRowKeys = ref<Array<string | number>>([])
 const checkedRows = ref<Array<any>>([])
-
 watch(type, (val) => {
   if (val === 1) {
     data.value = simpleData
@@ -71,7 +70,9 @@ watch(type, (val) => {
 const searchColumns: searchFormType[] = [{
   prop: "username",
   label: "用户姓名",
-  search: { el: "input" },
+  search: {
+    el: "input"
+  },
 },
 {
   prop: "gender",
@@ -84,8 +85,8 @@ const searchColumns: searchFormType[] = [{
       }, {
         label: '女',
         value: '女'
-      }]
-    }
+      }],
+    },
   },
 },
 {
@@ -136,6 +137,8 @@ const searchData = ref({
   userStatus: null,
   createTime: null,
 })
+
+const table1 = ref()
 </script>
 
 <style scoped></style>

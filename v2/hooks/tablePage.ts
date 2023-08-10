@@ -56,7 +56,9 @@ function useTablePage({ loadFlag, localPagination, changFn, tableProps }: pageCh
     const clientHeight = dom.clientHeight;
     const scrollTop = dom.scrollTop;
     const scrollHeight = dom.scrollHeight;
-    if (clientHeight + scrollTop === scrollHeight) {
+
+    // 会有一点差异
+    if (Math.abs(clientHeight + scrollTop - scrollHeight) < 5) {
       const num = Math.ceil(
         localPagination.value.total / localPagination.value.pageSize
       );

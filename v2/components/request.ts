@@ -86,17 +86,19 @@ const generateData = (
         return rowData
       },
       {
-        id: `${prefix}${rowIndex}`,
+        id: `${prefix}${startIndex + rowIndex}`,
         parentId: null,
-        key: rowIndex,
+        key: startIndex + rowIndex,
       }
     )
   })
-const columns = [{
-  type: 'selection',
-  fixed: 'left',
-  key: 'selection',
-}, ...generateColumns(10)]
+// const columns = [{
+//   type: 'selection',
+//   fixed: 'left',
+//   key: 'selection',
+// }, ...generateColumns(10)]
+const columns = [...generateColumns(10)]
+
 const mockRequest = ({ pageNum, pageSize }:{ pageNum:number, pageSize:number }) => {
   const list = generateData(columns, pageSize, 'row-', (pageNum - 1) * pageSize)
   const res = new Promise((resolve) => {

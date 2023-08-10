@@ -3,14 +3,16 @@ import type { searchFormType } from '@/interface';
 import SearchFormItem from './SearchFormItem.vue';
 import { NFormItem, NButton, NConfigProvider, type GlobalThemeOverrides, NSpace, NIconWrapper, NIcon,NPopselect } from 'naive-ui'
 import { CloseSharp, AddSharp } from '@vicons/ionicons5'
-import { computed } from 'vue';
+import { computed, type Ref } from 'vue';
 import useTableSearchConfig from '../hooks/tableSearchConfig'
+import DxTable from './DxTable.vue'
 
 
 defineOptions({ name: 'TableSearch' })
 
 
 type tableSearchProps = {
+  tableRef?: InstanceType<typeof DxTable>,
   searchData: any,
   searchColumns: searchFormType[],
   needMore?: boolean,
@@ -46,13 +48,17 @@ const hiddenColumsOptions = computed(() => {
   })
   return arr
 })
+
+const refreshTable = ()=>{
+  props.tableRef?.refresh(true)
+}
 </script>
 
 <template>
   <div class="search">
     <div v-for="(item) in tableSearchColumns" :key="item.prop" class="item-box">
       <n-form-item :label="`${item.label} :`" size="small" :show-feedback="false" label-placement="left">
-        <SearchFormItem :column="item" :search-param="searchData" />
+        <SearchFormItem :column="item" :search-param="searchData" @value-change="refreshTable"/>
       </n-form-item>
       <n-icon-wrapper :size="18" class="close-btn" color="#ccc" :border-radius="18" @click="removeSearchColumns(item)">
         <n-icon :size="18" :component="CloseSharp" />

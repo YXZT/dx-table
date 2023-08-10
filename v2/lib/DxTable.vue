@@ -47,7 +47,7 @@ let localPagination = ref({ total: 0, pageSize: 30, pageNum: 1 })
 
 const dataTable = ref<InstanceType<typeof NDataTable> | null>(null)
 
-const { loadData, loadDataCb } = useTableRequest({ loadFlag, localPagination, tableData: tableData, tableProps: props })
+const { loadData, loadDataCb } = useTableRequest({ loadFlag, localPagination, tableData: tableData, tableProps: props, dataTable })
 
 function refresh(reset?: boolean) {
   if (reset) {
@@ -122,7 +122,7 @@ setOptions.value = ({ curSelection, row, index }) => {
     {
       label: '刷新',
       key: 'refresh',
-      fn: ()=>refresh(true)
+      fn: () => refresh(true)
     },
     {
       label: '导出到excel(仅当前)',
@@ -165,7 +165,9 @@ watch(loadFlag, (val) => {
 }, {
   immediate: true
 })
-
+defineExpose({
+  refresh
+})
 </script>
 <template>
   <TableConfig :tableRef="dataTable" :dataSetting="localColums" :sortData="localSearchSort" @change-show="changeCol"

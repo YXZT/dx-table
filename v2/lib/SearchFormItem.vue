@@ -16,7 +16,7 @@ interface SearchFormItem {
   searchParam: { [key: string]: any };
 }
 const props = defineProps<SearchFormItem>();
-
+const eimts = defineEmits(['value-change'])
 // 判断 fieldNames 设置 label && value && children 的 key 值
 const fieldNames = computed(() => {
   return {
@@ -42,6 +42,20 @@ const handleSearchProps = computed(() => {
   // if (searchEl === "cascader") {
   //   searchProps = { ...searchProps, props: { ...searchProps.props, label, value, children } };
   // }
+  if (searchEl === "input") {
+    const changeEvent = searchProps['change']
+    searchProps['on-change'] = (e: string | [string, string]) => {
+      changeEvent && changeEvent(e)
+      eimts('value-change')
+    }
+  }
+  if (searchEl === "select") {
+    const changeEvent = searchProps['change']
+    searchProps['onUpdateValue'] = (e: any[] | string | number | null, option: any) => {
+      changeEvent && changeEvent(e,option)
+      eimts('value-change')
+    }
+  }
   return searchProps
 });
 
