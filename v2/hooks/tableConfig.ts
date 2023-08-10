@@ -2,7 +2,8 @@ import type { ColumnsProps, columnSetting, columnsSetting, paginationType, reque
 import type { DataTableProps } from "naive-ui";
 import { setStore, getStore } from "@/utils/store";
 import { moveElement } from "@/utils/index";
-import { computed, ref, type Ref } from "vue";
+import { computed, ref, useSlots, type Ref } from "vue";
+import type { RowData } from "naive-ui/es/data-table/src/interface";
 interface tablePropType extends /* @vue-ignore */ Omit<DataTableProps, 'columns' | 'rowKey'> {
   columns: ColumnsProps,
   request?: requestFnType,
@@ -20,6 +21,9 @@ type pageChangeType = {
   loadDataFn: Function
 }
 function useTableConfig({ tableProps,loadDataFn }: pageChangeType) {
+  const slots = useSlots()
+  const slotKeys = Object.keys(slots) // 获取表格的插槽
+
   let storageString: string | null
   let tableRowKey: DataTableProps['rowKey']
   const localColums = ref<columnsSetting>([])
@@ -30,6 +34,10 @@ function useTableConfig({ tableProps,loadDataFn }: pageChangeType) {
     ).map(col => {
       const _col: any = { ...col }
       if (_col.fixed === 'none') _col.fixed = undefined
+      //渲染插槽
+      if (slotKeys.includes(_col.key as string)) { 
+        _col.render = (row:RowData, index:number) => (slots as any)[_col.key]({ row, index, column: col })
+      }
       return _col
     })
     arr.unshift({

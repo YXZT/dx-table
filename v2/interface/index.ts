@@ -27,7 +27,7 @@ export type ColumnProps = Omit<NonNullable<TableColumn>,'sorter'|'sortOrder'|'fi
   fixed?: "left" | "right" | "none",
   order?: number,
   sorter: boolean | Function | 'default',
-  sortOrder: 'descend' | 'ascend' | false
+  sortOrder: 'descend' | 'ascend' | false,
 }
 export type ColumnsProps = Array<ColumnProps>
 export type columnSetting = Omit<NonNullable<TableColumn>,'sorter'|'sortOrder'|'fixed'> & {

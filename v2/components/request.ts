@@ -53,6 +53,13 @@ const simpleColumns = [
       return tags
     },
   },
+  {
+    title: '分数',
+    key: 'num',
+    render:()=>{
+      return '123'
+    }
+  }
 ]
 const simpleData = Mock.mock({
   'list|100': [{
@@ -60,7 +67,8 @@ const simpleData = Mock.mock({
     'name': "@cname",
     "age|1-100": 1,
     "address": "@province" + "@city" + "@county",
-    "tags|1-3": ["@ctitle(2,5)"]
+    "tags|1-3": ["@ctitle(2,5)"],
+    "num": "@natural(1,9000)"
   }]
 }
 ).list

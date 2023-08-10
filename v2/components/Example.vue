@@ -2,10 +2,20 @@
   <div>
     <n-tabs v-model:value="type">
       <n-tab-pane :name="1" tab="简单数据">
-        <table-search :searchData="searchData" :search-columns="searchColumns" :tableRef="table1" :more-search="showMoreSearch"></table-search>
+        <table-search :searchData="searchData" :search-columns="searchColumns" :tableRef="table1"
+          :more-search="showMoreSearch"></table-search>
         <DxTable :columns="columns" :data="data" virtual-scroll storeName="test_table1" flex-height
           :style="{ height: `400px` }" :scroll-x="1400" row-key="key1" v-model:checked-row-keys="checkedRowKeys"
-          v-model:checkedRows="checkedRows" ref="table1"></DxTable>
+          v-model:checkedRows="checkedRows" ref="table1">
+          <template #num="{ row }">
+            <n-input-number
+              :value="row.num"
+              clearable 
+              :precision="2"
+            />
+          </template>
+        </DxTable>
+        {{ checkedRows }}
         <n-card embedded :bordered="false">
           基于Naive UI的数据表格Data
           Table组件，使用属性透传保留了原本的有的功能，在此基础上做了一些功能扩展。增加了列顺序、列显隐、列固定的自定义配置，为了让程序正确识别，需要在colums中设置列的key，不能重复。
@@ -21,7 +31,8 @@
       </n-tab-pane>
       <n-tab-pane :name="4" tab="无限滚动">
         <dx-table :columns="columns" virtual-scroll :style="{ height: `400px` }" flex-height :scroll-x="1400"
-          storeName="test_table4" :request="request" needInfinite />
+          storeName="test_table4" :request="request" needInfinite>
+        </dx-table>
         <n-card embedded :bordered="false">
           无限滚动也是常见的需求，添加needInfinite就可以自动监测滚动和发送的请求啦。或许可以把监测的时间提前，这样提前请求，加上去掉load动画，用户体验会更好点。
         </n-card>
@@ -34,7 +45,7 @@
 import { ref, watch } from 'vue';
 import DxTable from "../lib/DxTable.vue";
 import TableSearch from "../lib/TableSearch.vue";
-import { NTabs, NTabPane, NCard } from 'naive-ui'
+import { NTabs, NTabPane, NCard,NInputNumber } from 'naive-ui'
 import {
   simpleColumns,
   simpleData,
@@ -43,7 +54,6 @@ import {
 } from "./request";
 import type { searchFormType } from '@/interface';
 let type = ref(1)
-
 const data = ref<any[]>([])
 const columns = ref()
 const request = ref()
@@ -58,11 +68,19 @@ watch(type, (val) => {
   } else if (val === 3) {
     data.value = []
     request.value = mockRequest
-    columns.value = mockColumns
+    columns.value = [{
+      type: 'selection',
+      fixed: 'left',
+      key: 'selection',
+    }, ...mockColumns]
   } else if (val === 4) {
     data.value = []
     request.value = mockRequest
-    columns.value = mockColumns
+    columns.value = [{
+      type: 'selection',
+      fixed: 'left',
+      key: 'selection',
+    }, ...mockColumns]
   }
 }, {
   immediate: true
@@ -140,7 +158,7 @@ const searchData = ref({
 
 const table1 = ref()
 
-const showMoreSearch = ()=>{
+const showMoreSearch = () => {
   console.log('查看更多');
 }
 </script>
