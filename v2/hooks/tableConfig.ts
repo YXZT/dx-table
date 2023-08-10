@@ -1,6 +1,7 @@
 import type { ColumnsProps, columnSetting, columnsSetting, paginationType, requestFnType } from "@/interface"
 import type { DataTableProps } from "naive-ui";
 import { setStore, getStore } from "@/utils/store";
+import { moveElement } from "@/utils/index";
 import { computed, ref, type Ref } from "vue";
 interface tablePropType extends /* @vue-ignore */ Omit<DataTableProps, 'columns' | 'rowKey'> {
   columns: ColumnsProps,
@@ -139,9 +140,10 @@ function useTableConfig({ tableProps,loadDataFn }: pageChangeType) {
     storageString && setConf()
   }
   function changeSequence(oldIndex: number, newIndex: number) {
-    const temp = localColums.value[oldIndex];
-    localColums.value[oldIndex] = localColums.value[newIndex];
-    localColums.value[newIndex] = temp;
+    // const temp = localColums.value[oldIndex];
+    // localColums.value[oldIndex] = localColums.value[newIndex];
+    // localColums.value[newIndex] = temp;
+    moveElement(localColums.value,oldIndex,newIndex)
     storageString && setConf()
   }
   function changeSortOrder(oldIndex: number, newIndex: number) {

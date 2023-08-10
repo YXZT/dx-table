@@ -128,7 +128,6 @@ const collapsed = ref(false);
 
 .item-box:hover {
   // border: 1px solid #aaa;
-  // box-shadow: 2px 2px 2px rgba(0,0,0,0.3),-2px -2px 2px rgba(255,255,255,0.7);
 }
 
 .close-btn {

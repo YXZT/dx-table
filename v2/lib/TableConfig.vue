@@ -149,6 +149,7 @@ function columnDrop() {
   const el2 = sortDataTable?.value?.$el
   if (!el2) return
   const wrapperTr2 = el2.querySelector(".n-data-table-tbody");
+  if (!wrapperTr2) return
   Sortable.create(wrapperTr2, {
     animation: 180,
     delay: 0,
