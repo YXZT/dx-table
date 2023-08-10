@@ -2,7 +2,7 @@
   <div>
     <n-tabs v-model:value="type">
       <n-tab-pane :name="1" tab="简单数据">
-        <table-search :searchData="searchData" :search-columns="searchColumns" :tableRef="table1"></table-search>
+        <table-search :searchData="searchData" :search-columns="searchColumns" :tableRef="table1" :more-search="showMoreSearch"></table-search>
         <DxTable :columns="columns" :data="data" virtual-scroll storeName="test_table1" flex-height
           :style="{ height: `400px` }" :scroll-x="1400" row-key="key1" v-model:checked-row-keys="checkedRowKeys"
           v-model:checkedRows="checkedRows" ref="table1"></DxTable>
@@ -139,6 +139,10 @@ const searchData = ref({
 })
 
 const table1 = ref()
+
+const showMoreSearch = ()=>{
+  console.log('查看更多');
+}
 </script>
 
 <style scoped></style>
