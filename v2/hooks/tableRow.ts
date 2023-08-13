@@ -86,8 +86,6 @@ function useTableRow({ tableData, tableProps }: tableRowFocusType) {
         break;
       }
       target = (target as HTMLElement).parentElement
-      console.log(target);
-      
     }
     // 判断target是否在td标签中
     if (isInvalidDom) {
@@ -95,7 +93,7 @@ function useTableRow({ tableData, tableProps }: tableRowFocusType) {
     }
     clickRowFn.value(row)
   }
-  
+
   const tableRowProps = (row: RowData, index: number) => {
     return {
       style: 'cursor: pointer;',
