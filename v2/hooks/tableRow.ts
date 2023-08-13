@@ -1,7 +1,7 @@
 import type { ColumnsProps, paginationType, requestFnType } from "@/interface"
 import type { DataTableProps } from "naive-ui";
 import type { RowData } from "naive-ui/es/data-table/src/interface";
-import { ref, type Ref } from "vue";
+import { ref, type HtmlHTMLAttributes, type Ref } from "vue";
 interface tablePropType extends /* @vue-ignore */ Omit<DataTableProps, 'columns' | 'rowKey'> {
   columns: ColumnsProps,
   request?: requestFnType,
@@ -30,7 +30,7 @@ function useTableRow({ tableData, tableProps }: tableRowFocusType) {
   const currentFocusRowKey = ref<number | null>()
   const currentFocusRowIndex = ref<number | null>(null)
   const rowKey = tableProps.rowKey || 'id'
-  const clickRowFn = ref<(row: RowData)=>void>(()=>{})
+  const clickRowFn = ref<(row: RowData) => void>(() => { })
 
   const setCurrentFocusRow: setCurrentFocusRowType = ({ setKey, index }) => {
     let rowIndex = -1
@@ -66,15 +66,41 @@ function useTableRow({ tableData, tableProps }: tableRowFocusType) {
       isInIndex > -1 ? setCurrentFocusRow({ index: isInIndex }) : setCurrentFocusRow({ index: 0 })
     }
   }
-  const toggleRow = (row: RowData) => {
+  const toggleRow = (row: RowData, e: Event) => {
     setCurrentFocusRow({ setKey: row[rowKey] })
+    // target逐级向上递归，直到递归到td标签
+    let target = e.target
+    let isInvalidDom = false
+
+    function isInputOrSelect(element: HTMLElement): element is HTMLInputElement | HTMLSelectElement {
+      return element instanceof HTMLInputElement || element instanceof HTMLSelectElement;
+    }
+
+    function isImage(element: HTMLElement): element is HTMLImageElement {
+      return element instanceof HTMLImageElement;
+    }
+
+    while (target && (target as HTMLElement).tagName !== 'TD') {
+      if (isInputOrSelect(target as HTMLElement) || isImage(target as HTMLElement)) {
+        isInvalidDom = true;
+        break;
+      }
+      target = (target as HTMLElement).parentElement
+      console.log(target);
+      
+    }
+    // 判断target是否在td标签中
+    if (isInvalidDom) {
+      return
+    }
     clickRowFn.value(row)
   }
+  
   const tableRowProps = (row: RowData, index: number) => {
     return {
       style: 'cursor: pointer;',
       // class: rowClass.value(row,index),
-      onClick: () => toggleRow(row)
+      onClick: (e: Event) => toggleRow(row, e)
     }
   }
   const tableRowClass = (row: RowData) => {

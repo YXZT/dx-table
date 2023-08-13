@@ -10,8 +10,10 @@
           <template #num="{ row }">
             <n-input-number
               :value="row.num"
-              clearable 
               :precision="2"
+              size="small"
+              :show-button="false"
+              :clearable="false"
             />
           </template>
         </DxTable>
