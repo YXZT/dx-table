@@ -8,16 +8,8 @@
           :style="{ height: `400px` }" :scroll-x="1400" row-key="key1" v-model:checked-row-keys="checkedRowKeys"
           v-model:checkedRows="checkedRows" ref="table1">
           <template #num="{ row,index }">
-            <n-input-number
-              :value="row.num"
-              @updateValue="updateValue($event,index)"
-              :precision="2"
-              size="small"
-              :show-button="false"
-              :clearable="false"
-              placeholder=""
-              :format="format"
-            />
+              <s-input :value="row.num" :on-update-value="($event)=>updateValue($event,index)" :precision="2" size="small"
+              :show-button="false" :clearable="false" placeholder="" :format="format"></s-input>
           </template>
         </DxTable>
         {{ checkedRows }}
@@ -47,136 +39,151 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { ref, watch } from "vue";
 import DxTable from "../lib/DxTable.vue";
 import TableSearch from "../lib/TableSearch.vue";
-import { NTabs, NTabPane, NCard,NInputNumber } from 'naive-ui'
-import {
-  simpleColumns,
-  simpleData,
-  mockRequest,
-  mockColumns
-} from "./request";
-import type { searchFormType } from '@/interface';
-let type = ref(1)
-const data = ref<any[]>([])
-const columns = ref()
-const request = ref()
+import SInput from "../lib/SInput.vue";
+import { NTabs, NTabPane, NCard, NInputNumber } from "naive-ui";
+import { simpleColumns, simpleData, mockRequest, mockColumns } from "./request";
+import type { searchFormType } from "@/interface";
 
-const checkedRowKeys = ref<Array<string | number>>([])
-const checkedRows = ref<Array<any>>([])
-watch(type, (val) => {
-  if (val === 1) {
-    data.value = simpleData
-    request.value = null
-    columns.value = simpleColumns
-  } else if (val === 3) {
-    data.value = []
-    request.value = mockRequest
-    columns.value = [{
-      type: 'selection',
-      fixed: 'left',
-      key: 'selection',
-    }, ...mockColumns]
-  } else if (val === 4) {
-    data.value = []
-    request.value = mockRequest
-    columns.value = [{
-      type: 'selection',
-      fixed: 'left',
-      key: 'selection',
-    }, ...mockColumns]
-  }
-}, {
-  immediate: true
-})
-const searchColumns: searchFormType[] = [{
-  prop: "username",
-  label: "用户姓名",
-  search: {
-    el: "input"
+let type = ref(1);
+const data = ref<any[]>([]);
+const columns = ref();
+const request = ref();
+
+const checkedRowKeys = ref<Array<string | number>>([]);
+const checkedRows = ref<Array<any>>([]);
+watch(
+  type,
+  (val) => {
+    if (val === 1) {
+      data.value = simpleData;
+      request.value = null;
+      columns.value = simpleColumns;
+    } else if (val === 3) {
+      data.value = [];
+      request.value = mockRequest;
+      columns.value = [
+        {
+          type: "selection",
+          fixed: "left",
+          key: "selection",
+        },
+        ...mockColumns,
+      ];
+    } else if (val === 4) {
+      data.value = [];
+      request.value = mockRequest;
+      columns.value = [
+        {
+          type: "selection",
+          fixed: "left",
+          key: "selection",
+        },
+        ...mockColumns,
+      ];
+    }
   },
-},
-{
-  prop: "gender",
-  label: "性别",
-  search: {
-    el: "select", props: {
-      options: [{
-        label: '男',
-        value: '男'
-      }, {
-        label: '女',
-        value: '女'
-      }],
+  {
+    immediate: true,
+  }
+);
+const searchColumns: searchFormType[] = [
+  {
+    prop: "username",
+    label: "用户姓名",
+    search: {
+      el: "input",
     },
   },
-},
-{
-  prop: "idCard", label: "身份证号", search: { el: "input" },
-},
-{
-  prop: "email", label: "邮箱", search: {
-    el: "input",
+  {
+    prop: "gender",
+    label: "性别",
+    search: {
+      el: "select",
+      props: {
+        options: [
+          {
+            label: "男",
+            value: "男",
+          },
+          {
+            label: "女",
+            value: "女",
+          },
+        ],
+      },
+    },
   },
-},
-{
-  prop: "userStatus",
-  label: "用户状态",
-  search: {
-    el: "select",
+  {
+    prop: "idCard",
+    label: "身份证号",
+    search: { el: "input" },
   },
-  // 自定义 search 显示内容
-  // render: ({searchParam}) => {
-  //   return (
-  //     <div class="flex-center">
-  //       {searchParam.gender}
-  //     </div>
-  //   )
-  // }
-},
-{
-  prop: "createTime",
-  label: "创建时间",
-  search: {
-    el: "date-picker",
+  {
+    prop: "email",
+    label: "邮箱",
+    search: {
+      el: "input",
+    },
   },
-},
-{
-  prop: "date",
-  label: "时间范围",
-  search: {
-    el: "date-picker",
-    props: { type: 'daterange' }
+  {
+    prop: "userStatus",
+    label: "用户状态",
+    search: {
+      el: "select",
+    },
+    // 自定义 search 显示内容
+    // render: ({searchParam}) => {
+    //   return (
+    //     <div class="flex-center">
+    //       {searchParam.gender}
+    //     </div>
+    //   )
+    // }
   },
-}
-]
+  {
+    prop: "createTime",
+    label: "创建时间",
+    search: {
+      el: "date-picker",
+    },
+  },
+  {
+    prop: "date",
+    label: "时间范围",
+    search: {
+      el: "date-picker",
+      props: { type: "daterange" },
+    },
+  },
+];
 
 const searchData = ref({
-  username: '',
+  username: "",
   gender: null,
   idCard: null,
   email: null,
   userStatus: null,
   createTime: null,
-})
+});
 
-const table1 = ref()
+const table1 = ref();
 
 const showMoreSearch = () => {
-  console.log('查看更多');
-}
+  console.log("查看更多");
+};
 
-const updateValue = (e:number|null,index:number)=>{
-  data.value[index].num = e
-}
+const updateValue = (e: number | null, index: number) => {
+  data.value[index].num = e;
+};
 // todo封装表格内input, 金额显示可配置
-const format= (value: number | null) => {
-  if (value === null) return ''
+const format = (value: number | null) => {
+  if (value === null) return "";
   // return value.toLocaleString('en-US')
-  return value + ''
-}
-
+  return value + "";
+};
 </script>
 
 <style scoped></style>
