@@ -12,7 +12,7 @@ import useKeyboardControl from '../hooks/tableKeyboardControl'
 import useTableSelect from '../hooks/tableSelect'
 import { useDropDown } from '@/hooks/tableDropdown'
 
-import { ref, watch } from 'vue';
+import { inject, ref, watch } from 'vue';
 import type { RowData } from 'naive-ui/es/data-table/src/interface';
 interface tablePropType extends /* @vue-ignore */ Omit<DataTableProps, 'columns' | 'rowKey'> {
   columns: ColumnsProps,
@@ -98,7 +98,10 @@ updateCheckedRows.value = (rowKeys) => {
 }
 
 
-const { tableRowKey, localColums } = init()
+const { tableRowKey, localColums, tableConfig } = init()
+
+// 注入
+inject('tableConfig', tableConfig)
 
 let { renderDropDown, handleContextMenu, setOptions } = useDropDown()
 
@@ -172,7 +175,7 @@ defineExpose({
 <template>
   <TableConfig :tableRef="dataTable" :dataSetting="localColums" :sortData="localSearchSort" @change-show="changeCol"
     @change-sequence="changeSequence" @change-sort-order="changeSortOrder" @reset-conf="resetConf"
-    @change-fixed="changeCol">
+    @change-fixed="changeCol" :tableConfig="tableConfig">
     <slot name="title">123
       <!-- <div v-show="checkedRowKeysRef?.length">已经选择：{{ checkedRowKeysRef?.length }} 条</div> -->
     </slot>

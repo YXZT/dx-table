@@ -91,3 +91,9 @@ export type SearchType =
   | "select"
   | "switch"
   | "mention"
+
+
+export type tableConfigType = {
+  // 金额逗号分隔
+  moneySplit?: boolean;
+}

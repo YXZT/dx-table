@@ -7,9 +7,8 @@
         <DxTable :columns="columns" :data="data" virtual-scroll storeName="test_table1" flex-height
           :style="{ height: `400px` }" :scroll-x="1400" row-key="key1" v-model:checked-row-keys="checkedRowKeys"
           v-model:checkedRows="checkedRows" ref="table1">
-          <template #num="{ row,index }">
-              <s-input :value="row.num" :on-update-value="($event)=>updateValue($event,index)" :precision="2" size="small"
-              :show-button="false" :clearable="false" placeholder="" :format="format"></s-input>
+          <template #num="{ row, index }">
+            <s-input :value="row.num" :on-update-value="($event) => updateValue($event, index)"></s-input>
           </template>
         </DxTable>
         {{ checkedRows }}
@@ -178,12 +177,7 @@ const showMoreSearch = () => {
 const updateValue = (e: number | null, index: number) => {
   data.value[index].num = e;
 };
-// todo封装表格内input, 金额显示可配置
-const format = (value: number | null) => {
-  if (value === null) return "";
-  // return value.toLocaleString('en-US')
-  return value + "";
-};
+
 </script>
 
 <style scoped></style>

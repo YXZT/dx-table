@@ -1,4 +1,4 @@
-import type { ColumnsProps, columnSetting, columnsSetting, paginationType, requestFnType } from "@/interface"
+import type { ColumnsProps, columnSetting, columnsSetting, paginationType, requestFnType, tableConfigType } from "@/interface"
 import type { DataTableProps } from "naive-ui";
 import { setStore, getStore } from "@/utils/store";
 import { moveElement } from "@/utils/index";
@@ -120,15 +120,21 @@ function useTableConfig({ tableProps,loadDataFn }: pageChangeType) {
       loadDataFn()
     }
   }
+  function initTableConfig():tableConfigType{
+    const setting = storageString && getStore(storageString+'_config')
+    return setting || {}
+  }
   function init() {
     const storageString = initNeedStorage()
     const tableRowKey = initRowKey()
     const localColums = initColums()
+    const tableConfig = initTableConfig()
     initLoadData()
     return {
       storageString,
       tableRowKey,
       localColums,
+      tableConfig
     }
   }
   function setConf() {

@@ -24,6 +24,21 @@
             <n-data-table ref="sortDataTable" :bordered="false" :single-line="false" :columns="columnsSortSetting"
               :data="sortData" :rowProps="rowProps" size="small" />
           </n-tab-pane>
+          <n-tab-pane name="其他设置" tab="其他设置" display-directive="show">
+            <n-form
+              label-placement="left"
+              label-width="auto"
+            >
+              <n-form-item label="">
+                <n-checkbox :checked="tableConfig.moneySplit">
+                  金额是否以逗号分隔
+                </n-checkbox>
+              </n-form-item>
+            </n-form>
+            <i style="margin-top:20px">
+              以上配置需刷新页面后生效
+            </i>
+          </n-tab-pane>
           <template #suffix>
             <!-- 尽量不要在处理单据时修改表格配置，因为可能会造成未保存的数据丢失的情况 -->
             <n-button size="small" @click="resetConf">
@@ -38,16 +53,19 @@
 <script setup lang="ts">
 import { ArchiveSettings16Regular } from '@vicons/fluent'
 import { ref, computed, h, nextTick } from 'vue'
-import { NDataTable, NDrawer, NDrawerContent, NButton, NIcon, NSwitch, NRadioGroup, NRadioButton, NTabs, NTabPane } from "naive-ui";
-import type { columnSetting, columnsSetting } from "@/interface";
+import { NDataTable, NDrawer, NDrawerContent, NButton, NIcon, NSwitch, NRadioGroup, NRadioButton, NTabs, NTabPane,NForm,NFormItem,NCheckbox } from "naive-ui";
+import type { columnSetting, columnsSetting, tableConfigType } from "@/interface";
 import Sortable from "sortablejs";
 
 interface propsType {
   tableRef: InstanceType<typeof NDataTable> | null,
   dataSetting: columnsSetting,
   sortData: columnsSetting,
+  tableConfig: tableConfigType
 }
 const props = defineProps<propsType>()
+
+
 // const emits = defineEmits(['change-show', 'change-sequence','change-sort-order', 'change-fixed', 'reset-conf'])
 const emits = defineEmits<{
   'change-show': [col: columnSetting],
