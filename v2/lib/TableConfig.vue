@@ -25,12 +25,9 @@
               :data="sortData" :rowProps="rowProps" size="small" />
           </n-tab-pane>
           <n-tab-pane name="其他设置" tab="其他设置" display-directive="show">
-            <n-form
-              label-placement="left"
-              label-width="auto"
-            >
+            <n-form label-placement="left" label-width="auto">
               <n-form-item label="">
-                <n-checkbox :checked="tableConfig.moneySplit">
+                <n-checkbox :checked="tableConfig.moneySplit" :on-update-checked="updateMoneySplit">
                   金额是否以逗号分隔
                 </n-checkbox>
               </n-form-item>
@@ -52,8 +49,8 @@
 </template>
 <script setup lang="ts">
 import { ArchiveSettings16Regular } from '@vicons/fluent'
-import { ref, computed, h, nextTick } from 'vue'
-import { NDataTable, NDrawer, NDrawerContent, NButton, NIcon, NSwitch, NRadioGroup, NRadioButton, NTabs, NTabPane,NForm,NFormItem,NCheckbox } from "naive-ui";
+import { ref, computed, h, nextTick, inject, type Ref } from 'vue'
+import { NDataTable, NDrawer, NDrawerContent, NButton, NIcon, NSwitch, NRadioGroup, NRadioButton, NTabs, NTabPane, NForm, NFormItem, NCheckbox } from "naive-ui";
 import type { columnSetting, columnsSetting, tableConfigType } from "@/interface";
 import Sortable from "sortablejs";
 
@@ -61,8 +58,12 @@ interface propsType {
   tableRef: InstanceType<typeof NDataTable> | null,
   dataSetting: columnsSetting,
   sortData: columnsSetting,
-  tableConfig: tableConfigType
 }
+
+// 接收注入tableConfig
+let tableConfig:Ref<tableConfigType> = ref(inject('tableConfig') || {})
+const setTableConfig = inject('setTableConfig') as (data: any) => void
+
 const props = defineProps<propsType>()
 
 
@@ -72,7 +73,7 @@ const emits = defineEmits<{
   'change-sequence': [oldIndex: number, newIndex: number],
   'change-sort-order': [oldIndex: number, newIndex: number],
   'change-fixed': [col: columnSetting],
-  'reset-conf': []
+  'reset-conf': [],
 }>()
 const columnsSettingColumns = ref([{
   title: '列名',
@@ -193,6 +194,12 @@ const rowProps = () => {
 function resetConf() {
   isActive.value = false
   emits('reset-conf')
+  tableConfig.value = {}
+  setTableConfig({})
+}
+function updateMoneySplit(val:boolean) {
+  tableConfig.value.moneySplit = val
+  setTableConfig(tableConfig)
 }
 </script>
 <style scoped lang="scss">

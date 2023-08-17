@@ -10,20 +10,25 @@ const attrs = useAttrs()
 
 defineProps<myPropType>()
 
-type otherPropsType = Pick<myPropType, 'precision' | 'size' | 'showButton' | 'clearable' | 'placeholder' | 'format'>
+type otherPropsType = Pick<myPropType, 'precision' | 'size' | 'showButton' | 'clearable' | 'placeholder' | 'format' | 'parse'>
 
 // 接收注入tableConfig
-const tableConfig:tableConfigType = inject('tableConfig') || {}
+const tableConfig: tableConfigType = inject('tableConfig') || {}
 
 const format = (value: number | null) => {
   if (value === null) return "";
-  if(tableConfig.moneySplit){
+  if (tableConfig.moneySplit) {
     return value.toLocaleString('en-US')
-  }else{
+  } else {
     return value + "";
   }
 };
 
+const parse = (input: string) => {
+  const nums = input.replace(/,/g, '').trim()
+  if (/^\d+(\.(\d+)?)?$/.test(nums)) return Number(nums)
+  return nums === '' ? null : Number.NaN
+}
 
 const otherProps: otherPropsType = {
   precision: 2,
@@ -31,7 +36,8 @@ const otherProps: otherPropsType = {
   showButton: false,
   clearable: false,
   placeholder: '',
-  format
+  format,
+  parse
 }
 
 </script>

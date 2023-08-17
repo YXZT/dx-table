@@ -20,14 +20,14 @@ type pageChangeType = {
   tableProps: Readonly<tablePropType>,
   loadDataFn: Function
 }
-function useTableConfig({ tableProps,loadDataFn }: pageChangeType) {
+function useTableConfig({ tableProps, loadDataFn }: pageChangeType) {
   const slots = useSlots()
   const slotKeys = Object.keys(slots) // 获取表格的插槽
 
   let storageString: string | null
   let tableRowKey: DataTableProps['rowKey']
   const localColums = ref<columnsSetting>([])
-  
+
   const TableColumns = computed(() => {
     const arr = localColums.value.filter(
       col => col.isShow,
@@ -35,8 +35,8 @@ function useTableConfig({ tableProps,loadDataFn }: pageChangeType) {
       const _col: any = { ...col }
       if (_col.fixed === 'none') _col.fixed = undefined
       //渲染插槽
-      if (slotKeys.includes(_col.key as string)) { 
-        _col.render = (row:RowData, index:number) => (slots as any)[_col.key]({ row, index, column: col })
+      if (slotKeys.includes(_col.key as string)) {
+        _col.render = (row: RowData, index: number) => (slots as any)[_col.key]({ row, index, column: col })
       }
       return _col
     })
@@ -67,7 +67,7 @@ function useTableConfig({ tableProps,loadDataFn }: pageChangeType) {
   }
   function initRowKey() {
     const rowKey = tableProps.rowKey || 'key'
-     tableRowKey = tableProps.rowKey ? (row: any) => {
+    tableRowKey = tableProps.rowKey ? (row: any) => {
       return row[rowKey]
     } : undefined
     return tableRowKey
@@ -115,26 +115,34 @@ function useTableConfig({ tableProps,loadDataFn }: pageChangeType) {
     localColums.value = columsResult
     return localColums
   }
-  function initLoadData(){
+  function initLoadData() {
     if (tableProps.immediateRequest !== false) {
       loadDataFn()
     }
   }
-  function initTableConfig():tableConfigType{
-    const setting = storageString && getStore(storageString+'_config')
-    return setting || {}
+  function initTableConfig() {
+    const setting:tableConfigType = storageString && getStore(storageString + '_config')
+
+    function setTableConfig(data: any) {
+      setStore(storageString + '_config', data)
+    }
+    return {
+      tableConfig: setting || {},
+      setTableConfig
+    }
   }
   function init() {
     const storageString = initNeedStorage()
     const tableRowKey = initRowKey()
     const localColums = initColums()
-    const tableConfig = initTableConfig()
+    const { tableConfig, setTableConfig } = initTableConfig()
     initLoadData()
     return {
       storageString,
       tableRowKey,
       localColums,
-      tableConfig
+      tableConfig,
+      setTableConfig
     }
   }
   function setConf() {
@@ -157,7 +165,7 @@ function useTableConfig({ tableProps,loadDataFn }: pageChangeType) {
     // const temp = localColums.value[oldIndex];
     // localColums.value[oldIndex] = localColums.value[newIndex];
     // localColums.value[newIndex] = temp;
-    moveElement(localColums.value,oldIndex,newIndex)
+    moveElement(localColums.value, oldIndex, newIndex)
     storageString && setConf()
   }
   function changeSortOrder(oldIndex: number, newIndex: number) {
@@ -192,12 +200,12 @@ function useTableConfig({ tableProps,loadDataFn }: pageChangeType) {
   }
 
   const columDragEnd = (resizedWidth: number, limitedWidth: number, column: any) => {
-    const index = localColums.value.findIndex(ele=>ele.key === column.key)
+    const index = localColums.value.findIndex(ele => ele.key === column.key)
     localColums.value[index].width = limitedWidth
     storageString && setConf()
   }
 
-  
+
   return {
     init,
     initNeedStorage,
