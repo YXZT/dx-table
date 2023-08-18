@@ -39,11 +39,27 @@ const otherProps: otherPropsType = {
   format,
   parse
 }
-
+const themeOverrides = {
+  Input:{
+    heightSmall : '100%',
+    lineHeight : '100%'
+  }
+}
 </script>
 
 <template>
-  <NInputNumber v-bind="{ ...otherProps, ...attrs }" />
+  <n-config-provider :theme-overrides="themeOverrides">
+    <NInputNumber v-bind="{ ...otherProps, ...attrs }" class="all-ground"/>
+  </n-config-provider>
 </template>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.all-ground {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 100%;
+}
+</style>

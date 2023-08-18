@@ -10,6 +10,9 @@
           <template #num="{ row, index }">
             <s-input :value="row.num" :on-update-value="($event) => updateValue($event, index)"></s-input>
           </template>
+          <template #role="{ row }">
+            <n-select :value="row.role" :options="roleOptions" size="small" class="all-ground" placeholder=""></n-select>
+          </template>
         </DxTable>
         {{ checkedRows }}
         <n-card embedded :bordered="false">
@@ -42,8 +45,8 @@ import { ref, watch } from "vue";
 import DxTable from "../lib/DxTable.vue";
 import TableSearch from "../lib/TableSearch.vue";
 import SInput from "../lib/SInput.vue";
-import { NTabs, NTabPane, NCard, NInputNumber } from "naive-ui";
-import { simpleColumns, simpleData, mockRequest, mockColumns } from "./request";
+import { NTabs, NTabPane, NCard, NButton, NSelect } from "naive-ui";
+import { simpleColumns, simpleData, mockRequest, mockColumns, roleOptions } from "./request";
 import type { searchFormType } from "@/interface";
 
 let type = ref(1);
@@ -180,5 +183,24 @@ const updateValue = (e: number | null, index: number) => {
 
 </script>
 
-<style scoped></style>
+<style scoped lang="scss">
+.all-ground {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 100%;
+}
+:deep(.all-ground .n-base-selection){
+  height: 100%;
+}
+:deep(.all-ground .n-base-selection-label){
+  height: 100%;
+}
+:deep(.all-ground .n-input){
+  height: 100%;
+}
+
+</style>
 

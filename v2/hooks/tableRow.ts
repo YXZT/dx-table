@@ -79,7 +79,7 @@ function useTableRow({ tableData, tableProps }: tableRowFocusType) {
     function isImage(element: HTMLElement): element is HTMLImageElement {
       return element instanceof HTMLImageElement;
     }
-
+    // todo 不要按钮
     while (target && (target as HTMLElement).tagName !== 'TD') {
       if (isInputOrSelect(target as HTMLElement) || isImage(target as HTMLElement)) {
         isInvalidDom = true;

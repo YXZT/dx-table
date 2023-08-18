@@ -56,10 +56,11 @@ const simpleColumns = [
   {
     title: '分数',
     key: 'num',
-    render:()=>{
-      return '123'
-    }
-  }
+  },
+  {
+    title: '角色',
+    key: 'role',
+  },
 ]
 const simpleData = Mock.mock({
   'list|100': [{
@@ -125,9 +126,64 @@ const mockRequest = ({ pageNum, pageSize }:{ pageNum:number, pageSize:number }) 
   })
   return res
 }
+
+const roleOptions = [
+  {
+    label: 'Drive My Car',
+    value: 'Drive My Car'
+  },
+  {
+    label: 'Norwegian Wood',
+    value: 'Norwegian Wood'
+  },
+  {
+    label: "You Won't See",
+    value: "You Won't See",
+    disabled: true
+  },
+  {
+    label: 'Nowhere Man',
+    value: 'Nowhere Man'
+  },
+  {
+    label: 'Think For Yourself',
+    value: 'Think For Yourself'
+  },
+  {
+    label: 'The Word',
+    value: 'The Word'
+  },
+  {
+    label: 'Michelle',
+    value: 'Michelle',
+    disabled: true
+  },
+  {
+    label: 'What goes on',
+    value: 'What goes on'
+  },
+  {
+    label: 'Girl',
+    value: 'Girl'
+  },
+  {
+    label: "I'm looking through you",
+    value: "I'm looking through you"
+  },
+  {
+    label: 'In My Life',
+    value: 'In My Life'
+  },
+  {
+    label: 'Wait',
+    value: 'Wait'
+  }
+]
+
 export {
   simpleColumns,
   simpleData,
   columns as mockColumns,
-  mockRequest
+  mockRequest,
+  roleOptions
 }

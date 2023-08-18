@@ -198,5 +198,9 @@ defineExpose({
 :deep(.n-data-table-tr:not(.n-data-table-tr--summary):hover) {
   box-shadow: 0 0 10px 0px #aaa;
   position: relative;
+  z-index: 1;
+}
+:deep(.n-data-table-td) {
+  position: relative;
 }
 </style>
