@@ -11,7 +11,7 @@
             <s-input :value="row.num" :on-update-value="($event) => updateValue($event, index)"></s-input>
           </template>
           <template #role="{ row }">
-            <n-select :value="row.role" :options="roleOptions" size="small" class="all-ground" placeholder=""></n-select>
+            <n-select :value="row.role" :options="roleOptions" size="small" class="all-ground" placeholder="" filterable></n-select>
           </template>
         </DxTable>
         {{ checkedRows }}
@@ -180,7 +180,9 @@ const showMoreSearch = () => {
 const updateValue = (e: number | null, index: number) => {
   data.value[index].num = e;
 };
-
+// todo select封装 
+// todo 增加配置 是否省略某一列
+// todo 增加配置 切换到该页面时，自动刷新表格
 </script>
 
 <style scoped lang="scss">
@@ -196,6 +198,9 @@ const updateValue = (e: number | null, index: number) => {
   height: 100%;
 }
 :deep(.all-ground .n-base-selection-label){
+  height: 100%;
+}
+:deep(.all-ground .n-base-selection-label input){
   height: 100%;
 }
 :deep(.all-ground .n-input){
