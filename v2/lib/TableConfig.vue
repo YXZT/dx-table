@@ -55,7 +55,7 @@
 <script setup lang="ts">
 import { ArchiveSettings16Regular } from '@vicons/fluent'
 import { ref, computed, h, nextTick, inject, type Ref } from 'vue'
-import { NDataTable, NDrawer, NDrawerContent, NButton, NIcon, NSwitch, NRadioGroup, NRadioButton, NTabs, NTabPane, NForm, NFormItem, NCheckbox } from "naive-ui";
+import { NDataTable, NDrawer, NDrawerContent, NButton, NIcon, NSwitch, NRadioGroup, NRadioButton, NTabs, NTabPane, NForm, NFormItem, NCheckbox, NTooltip, NGradientText } from "naive-ui";
 import type { columnSetting, columnsSetting, tableConfigType } from "@/interface";
 import Sortable from "sortablejs";
 
@@ -66,7 +66,7 @@ interface propsType {
 }
 
 // 接收注入tableConfig
-let tableConfig:Ref<tableConfigType> = ref(inject('tableConfig') || {})
+let tableConfig: Ref<tableConfigType> = ref(inject('tableConfig') || {})
 const setTableConfig = inject('setTableConfig') as (data: any) => void
 
 const props = defineProps<propsType>()
@@ -81,19 +81,45 @@ const emits = defineEmits<{
   'change-ellipsis': [col: columnSetting],
   'reset-conf': [],
 }>()
+
+const renderTooltip = (trigger, content) => {
+  return h(NTooltip, null, {
+    trigger: () => trigger,
+    default: () => content
+  })
+}
+
 const columnsSettingColumns = ref([{
   title: '列名',
   key: 'title'
 }, {
-  title: '显示',
   key: 'isShow',
+  title() {
+    return renderTooltip(
+      h(
+        NGradientText,
+        {},
+        { default: () => '显示' }
+      ),
+      '控制是否显示该列，注意列没有显示有可能是因为缺少了某些权限'
+    )
+  },
   render: (row: columnSetting) => {
     const isShow = row.isShow
     return h(NSwitch, { value: isShow, 'onUpdate:value': ((e: any) => changeColShow(e, row)), size: 'small' })
   }
 }, {
-  title: '固定',
   key: 'fixed',
+  title() {
+    return renderTooltip(
+      h(
+        NGradientText,
+        {},
+        { default: () => '固定' }
+      ),
+      '当宽度不足时，是否固定在左侧或右侧，不建议一个表格中设置多个'
+    )
+  },
   render: (row: columnSetting) => {
     const fixed = row.fixed || 'none'
     const buttons = () => [
@@ -104,8 +130,17 @@ const columnsSettingColumns = ref([{
     return h(NRadioGroup, { value: fixed, 'onUpdate:value': (e: any) => changeColFixed(e, row), size: 'small' }, buttons)
   }
 }, {
-  title: '省略',
   key: 'ellipsis',
+  title() {
+    return renderTooltip(
+      h(
+        NGradientText,
+        {},
+        { default: () => '省略' }
+      ),
+      '当宽度不足时，是否用省略号代替'
+    )
+  },
   render: (row: columnSetting) => {
     const isEllipsis = row.ellipsis as boolean
     return h(NSwitch, { value: isEllipsis, 'onUpdate:value': ((e: any) => changeEllipsis(e, row)), size: 'small' })
@@ -123,8 +158,17 @@ const columnsSortSetting = ref([
     title: '列名',
     key: 'title'
   }, {
-    title: '次序',
     key: 'fixed',
+    title() {
+      return renderTooltip(
+        h(
+          NGradientText,
+          {},
+          { default: () => '次序' }
+        ),
+        '排序的方式，不建议同时设置多个'
+      )
+    },
     render: (row: columnSetting) => {
       const sortOrder = row.sortOrder || false
       const buttons = () => [
@@ -216,11 +260,11 @@ function resetConf() {
   tableConfig.value = {}
   setTableConfig({})
 }
-function updateMoneySplit(val:boolean) {
+function updateMoneySplit(val: boolean) {
   tableConfig.value.moneySplit = val
   setTableConfig(tableConfig)
 }
-function updateMoneyInplutFocus(val:boolean) {
+function updateMoneyInplutFocus(val: boolean) {
   tableConfig.value.inplutFocusSelectAll = val
   setTableConfig(tableConfig)
 }
