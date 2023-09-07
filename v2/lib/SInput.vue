@@ -2,9 +2,10 @@
 import type { tableConfigType } from '@/interface';
 import { NInputNumber } from 'naive-ui'
 import type { InputNumberProps } from 'naive-ui'
-import { computed, useAttrs, type Ref, inject } from 'vue';
+import { computed, useAttrs, type Ref, inject, nextTick } from 'vue';
 
 interface myPropType extends  /* @vue-ignore */ InputNumberProps {
+  isEdit?: boolean,
 }
 const attrs = useAttrs()
 
@@ -37,12 +38,28 @@ const otherProps: otherPropsType = {
   clearable: false,
   placeholder: '',
   format,
-  parse
+  parse,
 }
+const thisAttrs = computed(() => {
+  return {
+      ...otherProps,
+      ...attrs,
+      onClick: (e: any) => {
+        if(!tableConfig.inplutFocusSelectAll) return
+        // 不加nextTick，鼠标mouseup的时候会取消选择
+        nextTick(()=>{
+          e.target.select()
+        })
+      }
+    }
+})
 </script>
 
 <template>
-  <NInputNumber v-bind="{ ...otherProps, ...attrs }" class="all-ground"/>
+  <div>
+    <NInputNumber v-bind="thisAttrs" class="all-ground input-style" v-if="isEdit"/>
+    <div v-else class="input-style">{{ attrs.value }}</div>
+  </div>
 </template>
 
 <style lang="scss" scoped>
@@ -54,9 +71,13 @@ const otherProps: otherPropsType = {
   bottom: 0;
   height: 100%;
 
-  :deep(.n-input__input-el){
+  :deep(.n-input__input-el) {
     height: 100%;
     line-height: 100%;
   }
+}
+
+.input-style {
+  text-align: right;
 }
 </style>

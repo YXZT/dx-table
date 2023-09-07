@@ -96,4 +96,6 @@ export type SearchType =
 export type tableConfigType = {
   // 金额逗号分隔
   moneySplit?: boolean;
+  // 点击输入框后直接全选内容
+  inplutFocusSelectAll?: boolean;
 }

@@ -31,6 +31,11 @@
                   金额是否以逗号分隔
                 </n-checkbox>
               </n-form-item>
+              <n-form-item label="">
+                <n-checkbox :checked="tableConfig.inplutFocusSelectAll" :on-update-checked="updateMoneyInplutFocus">
+                  点击输入框后直接全选内容
+                </n-checkbox>
+              </n-form-item>
             </n-form>
             <i style="margin-top:20px">
               以上配置需刷新页面后生效
@@ -199,6 +204,10 @@ function resetConf() {
 }
 function updateMoneySplit(val:boolean) {
   tableConfig.value.moneySplit = val
+  setTableConfig(tableConfig)
+}
+function updateMoneyInplutFocus(val:boolean) {
+  tableConfig.value.inplutFocusSelectAll = val
   setTableConfig(tableConfig)
 }
 </script>

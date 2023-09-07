@@ -8,13 +8,14 @@
           :style="{ height: `400px` }" :scroll-x="1400" row-key="key1" v-model:checked-row-keys="checkedRowKeys"
           v-model:checkedRows="checkedRows" ref="table1">
           <template #num="{ row, index }">
-            <s-input :value="row.num" :on-update-value="($event) => updateValue($event, index)"></s-input>
+            <s-input :value="row.num" :on-update-value="($event) => updateValue($event, index)" :isEdit="isEdit"></s-input>
           </template>
           <template #role="{ row }">
             <n-select :value="row.role" :options="roleOptions" size="small" class="all-ground" placeholder="" filterable></n-select>
           </template>
         </DxTable>
         {{ checkedRows }}
+        <n-button @click="isEdit = !isEdit">切换</n-button>
         <n-card embedded :bordered="false">
           基于Naive UI的数据表格Data
           Table组件，使用属性透传保留了原本的有的功能，在此基础上做了一些功能扩展。增加了列顺序、列显隐、列固定的自定义配置，为了让程序正确识别，需要在colums中设置列的key，不能重复。
@@ -180,6 +181,9 @@ const showMoreSearch = () => {
 const updateValue = (e: number | null, index: number) => {
   data.value[index].num = e;
 };
+
+const isEdit = ref(true);
+
 // todo select封装 
 // todo 增加配置 是否省略某一列
 // todo 增加配置 切换到该页面时，自动刷新表格

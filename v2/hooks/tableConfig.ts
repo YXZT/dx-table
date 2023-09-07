@@ -2,7 +2,7 @@ import type { ColumnsProps, columnSetting, columnsSetting, paginationType, reque
 import type { DataTableProps } from "naive-ui";
 import { setStore, getStore } from "@/utils/store";
 import { moveElement } from "@/utils/index";
-import { computed, ref, useSlots, type Ref } from "vue";
+import { computed, ref, useSlots, type Ref, toValue } from "vue";
 import type { RowData } from "naive-ui/es/data-table/src/interface";
 interface tablePropType extends /* @vue-ignore */ Omit<DataTableProps, 'columns' | 'rowKey'> {
   columns: ColumnsProps,
@@ -124,7 +124,7 @@ function useTableConfig({ tableProps, loadDataFn }: pageChangeType) {
     const setting:tableConfigType = storageString && getStore(storageString + '_config')
 
     function setTableConfig(data: any) {
-      setStore(storageString + '_config', data)
+      setStore(storageString + '_config', toValue(data))
     }
     return {
       tableConfig: setting || {},
