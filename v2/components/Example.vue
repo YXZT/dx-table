@@ -8,10 +8,12 @@
           :style="{ height: `400px` }" :scroll-x="1400" row-key="key1" v-model:checked-row-keys="checkedRowKeys"
           v-model:checkedRows="checkedRows" ref="table1">
           <template #num="{ row, index }">
-            <s-input :value="row.num" :on-update-value="($event) => updateValue($event, index)" :isEdit="isEdit"></s-input>
+            <s-input :value="row.num" :on-update-value="($event) => updateValueNum($event, index)"
+              :isEdit="isEdit"></s-input>
           </template>
-          <template #role="{ row }">
-            <n-select :value="row.role" :options="roleOptions" size="small" class="all-ground" placeholder="" filterable></n-select>
+          <template #role="{ row, index }">
+            <s-select :value="row.role" :on-update-value="(value, option) => updateValueRole(value, option, index)"
+              :options="roleOptions" :isEdit="isEdit" :label="row.roleName"></s-select>
           </template>
         </DxTable>
         {{ checkedRows }}
@@ -46,7 +48,8 @@ import { ref, watch } from "vue";
 import DxTable from "../lib/DxTable.vue";
 import TableSearch from "../lib/TableSearch.vue";
 import SInput from "../lib/SInput.vue";
-import { NTabs, NTabPane, NCard, NButton, NSelect } from "naive-ui";
+import SSelect from "../lib/SSelect.vue";
+import { NTabs, NTabPane, NCard, NButton } from "naive-ui";
 import { simpleColumns, simpleData, mockRequest, mockColumns, roleOptions } from "./request";
 import type { searchFormType } from "@/interface";
 
@@ -178,13 +181,16 @@ const showMoreSearch = () => {
   console.log("查看更多");
 };
 
-const updateValue = (e: number | null, index: number) => {
+const updateValueNum = (e: number | null, index: number) => {
   data.value[index].num = e;
 };
-
+const updateValueRole = (e: Array<any> | string | number | null, option: any, index: number) => {
+  data.value[index].role = e;
+  data.value[index].roleName = option.label;
+};
 const isEdit = ref(true);
 
-// todo select封装 
+// todo select封装
 // todo 增加配置 是否省略某一列
 // todo 增加配置 切换到该页面时，自动刷新表格
 </script>
@@ -198,18 +204,20 @@ const isEdit = ref(true);
   bottom: 0;
   height: 100%;
 }
-:deep(.all-ground .n-base-selection){
-  height: 100%;
-}
-:deep(.all-ground .n-base-selection-label){
-  height: 100%;
-}
-:deep(.all-ground .n-base-selection-label input){
-  height: 100%;
-}
-:deep(.all-ground .n-input){
+
+:deep(.all-ground .n-base-selection) {
   height: 100%;
 }
 
-</style>
+:deep(.all-ground .n-base-selection-label) {
+  height: 100%;
+}
+
+:deep(.all-ground .n-base-selection-label input) {
+  height: 100%;
+}
+
+:deep(.all-ground .n-input) {
+  height: 100%;
+}</style>
 

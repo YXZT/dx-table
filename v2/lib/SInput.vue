@@ -2,7 +2,7 @@
 import type { tableConfigType } from '@/interface';
 import { NInputNumber } from 'naive-ui'
 import type { InputNumberProps } from 'naive-ui'
-import { computed, useAttrs, type Ref, inject, nextTick } from 'vue';
+import { computed, useAttrs,inject, nextTick } from 'vue';
 
 interface myPropType extends  /* @vue-ignore */ InputNumberProps {
   isEdit?: boolean,
@@ -56,10 +56,8 @@ const thisAttrs = computed(() => {
 </script>
 
 <template>
-  <div>
-    <NInputNumber v-bind="thisAttrs" class="all-ground input-style" v-if="isEdit"/>
-    <div v-else class="input-style">{{ attrs.value }}</div>
-  </div>
+  <NInputNumber v-bind="thisAttrs" class="all-ground input-style" v-if="isEdit" />
+  <div v-else class="input-style">{{ attrs.value }}</div>
 </template>
 
 <style lang="scss" scoped>

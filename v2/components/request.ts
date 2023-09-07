@@ -69,7 +69,9 @@ const simpleData = Mock.mock({
     "age|1-100": 1,
     "address": "@province" + "@city" + "@county",
     "tags|1-3": ["@ctitle(2,5)"],
-    "num": "@natural(1,9000)"
+    "num": "@natural(1,9000)",
+    "role": null,
+    "roleName": null
   }]
 }
 ).list
@@ -130,53 +132,53 @@ const mockRequest = ({ pageNum, pageSize }:{ pageNum:number, pageSize:number }) 
 const roleOptions = [
   {
     label: 'Drive My Car',
-    value: 'Drive My Car'
+    value: 'id_Drive My Car'
   },
   {
     label: 'Norwegian Wood',
-    value: 'Norwegian Wood'
+    value: 'id_Norwegian Wood'
   },
   {
     label: "You Won't See",
-    value: "You Won't See",
+    value: "id_You Won't See",
     disabled: true
   },
   {
     label: 'Nowhere Man',
-    value: 'Nowhere Man'
+    value: 'id_Nowhere Man'
   },
   {
     label: 'Think For Yourself',
-    value: 'Think For Yourself'
+    value: 'id_Think For Yourself'
   },
   {
     label: 'The Word',
-    value: 'The Word'
+    value: 'id_The Word'
   },
   {
     label: 'Michelle',
-    value: 'Michelle',
+    value: 'id_Michelle',
     disabled: true
   },
   {
     label: 'What goes on',
-    value: 'What goes on'
+    value: 'id_What goes on'
   },
   {
     label: 'Girl',
-    value: 'Girl'
+    value: 'id_Girl'
   },
   {
     label: "I'm looking through you",
-    value: "I'm looking through you"
+    value: "id_I'm looking through you"
   },
   {
     label: 'In My Life',
-    value: 'In My Life'
+    value: 'id_In My Life'
   },
   {
     label: 'Wait',
-    value: 'Wait'
+    value: 'id_Wait'
   }
 ]
 
