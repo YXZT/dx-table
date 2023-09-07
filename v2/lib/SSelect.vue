@@ -26,7 +26,7 @@ const thisAttrs = computed(() => {
 </script>
 <template>
   <n-select v-bind="thisAttrs" class="all-ground" v-if="isEdit"></n-select>
-  <div v-else>{{ label }}</div>
+  <div v-else class="ellipsis-area">{{ label }}</div>
 </template>
 
 <style scoped lang='scss'></style>

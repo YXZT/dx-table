@@ -203,4 +203,9 @@ defineExpose({
 :deep(.n-data-table-td) {
   position: relative;
 }
+:deep(.n-ellipsis .ellipsis-area) {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
 </style>

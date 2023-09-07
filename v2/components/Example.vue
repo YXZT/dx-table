@@ -189,7 +189,6 @@ const updateValueRole = (e: Array<any> | string | number | null, option: any, in
   data.value[index].roleName = option.label;
 };
 const isEdit = ref(true);
-// todo 两个自定义组件的省略时的效果
 // todo 增加配置 切换到该页面时，自动刷新表格
 </script>
 
@@ -217,5 +216,7 @@ const isEdit = ref(true);
 
 :deep(.all-ground .n-input) {
   height: 100%;
-}</style>
+}
+
+</style>
 
