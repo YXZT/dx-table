@@ -78,6 +78,7 @@ const emits = defineEmits<{
   'change-sequence': [oldIndex: number, newIndex: number],
   'change-sort-order': [oldIndex: number, newIndex: number],
   'change-fixed': [col: columnSetting],
+  'change-ellipsis': [col: columnSetting],
   'reset-conf': [],
 }>()
 const columnsSettingColumns = ref([{
@@ -101,6 +102,13 @@ const columnsSettingColumns = ref([{
       h(NRadioButton, { value: 'right', label: '右' }),
     ]
     return h(NRadioGroup, { value: fixed, 'onUpdate:value': (e: any) => changeColFixed(e, row), size: 'small' }, buttons)
+  }
+}, {
+  title: '省略',
+  key: 'ellipsis',
+  render: (row: columnSetting) => {
+    const isEllipsis = row.ellipsis as boolean
+    return h(NSwitch, { value: isEllipsis, 'onUpdate:value': ((e: any) => changeEllipsis(e, row)), size: 'small' })
   }
 }])
 const columnsSortSetting = ref([
@@ -144,11 +152,17 @@ function changeColShow(e: any, col: columnSetting) {
   newCol.isShow = e
   emits('change-show', newCol)
 }
+function changeEllipsis(e: any, col: columnSetting) {
+  const newCol = { ...col }
+  newCol.ellipsis = e
+  emits('change-ellipsis', newCol)
+}
 function changeColFixed(e: 'left' | 'none' | 'right', col: columnSetting) {
   const newCol = { ...col }
   newCol.fixed = e
   emits('change-fixed', newCol)
 }
+
 function changeColSort(e: any, col: columnSetting) {
   const newCol = { ...col }
   newCol.sortOrder = e

@@ -174,7 +174,7 @@ defineExpose({
 })
 </script>
 <template>
-  <TableConfig :tableRef="dataTable" :dataSetting="localColums" :sortData="localSearchSort" @change-show="changeCol"
+  <TableConfig :tableRef="dataTable" :dataSetting="localColums" :sortData="localSearchSort" @change-show="changeCol"  @change-ellipsis="changeCol"
     @change-sequence="changeSequence" @change-sort-order="changeSortOrder" @reset-conf="resetConf"
     @change-fixed="changeCol">
     <slot name="title">123

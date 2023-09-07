@@ -34,6 +34,7 @@ function useTableConfig({ tableProps, loadDataFn }: pageChangeType) {
     ).map(col => {
       const _col: any = { ...col }
       if (_col.fixed === 'none') _col.fixed = undefined
+      if (_col.ellipsis) _col.ellipsis = { tooltip: true }
       //渲染插槽
       if (slotKeys.includes(_col.key as string)) {
         _col.render = (row: RowData, index: number) => (slots as any)[_col.key]({ row, index, column: col })
@@ -84,6 +85,7 @@ function useTableConfig({ tableProps, loadDataFn }: pageChangeType) {
           fixed: record.fixed,
           order: record.order,
           sorter: record.sorter,
+          ellipsis: record.ellipsis ?? false,
         }
         columsResult.push(Object.assign({}, columsContent[curColIndex], conf))
         columsContent[curColIndex] = undefined
@@ -107,6 +109,7 @@ function useTableConfig({ tableProps, loadDataFn }: pageChangeType) {
         sortOrder: col.sortOrder ?? false,
         titleAlign: col.titleAlign ?? 'center',
         width: col.width ?? undefined,
+        ellipsis: col.ellipsis ?? false,
       }
       return newCol
     })
@@ -121,7 +124,7 @@ function useTableConfig({ tableProps, loadDataFn }: pageChangeType) {
     }
   }
   function initTableConfig() {
-    const setting:tableConfigType = storageString && getStore(storageString + '_config')
+    const setting: tableConfigType = storageString && getStore(storageString + '_config')
 
     function setTableConfig(data: any) {
       setStore(storageString + '_config', toValue(data))
