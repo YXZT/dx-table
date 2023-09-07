@@ -190,6 +190,7 @@ const updateValueRole = (e: Array<any> | string | number | null, option: any, in
 };
 const isEdit = ref(true);
 // todo 增加配置 切换到该页面时，自动刷新表格
+// 表格头部提示的封装
 </script>
 
 <style scoped lang="scss">
