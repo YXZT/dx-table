@@ -36,6 +36,11 @@
                   点击输入框后直接全选内容
                 </n-checkbox>
               </n-form-item>
+              <n-form-item label="" v-if="loadType==='request'">
+                <n-checkbox :checked="tableConfig.refreshTableWhileActive" :on-update-checked="updateRefreshTable">
+                  重新进入该页面时自动刷新表格
+                </n-checkbox>
+              </n-form-item>
             </n-form>
             <i style="margin-top:20px">
               以上配置需刷新页面后生效
@@ -69,6 +74,8 @@ interface propsType {
 let tableConfig: Ref<tableConfigType> = ref(inject('tableConfig') || {})
 const setTableConfig = inject('setTableConfig') as (data: any) => void
 
+const loadType = inject('loadType') as 'data'|'request'
+
 const props = defineProps<propsType>()
 
 
@@ -82,7 +89,8 @@ const emits = defineEmits<{
   'reset-conf': [],
 }>()
 
-const renderTooltip = (trigger, content) => {
+
+const renderTooltip = (trigger:any, content:any) => {
   return h(NTooltip, null, {
     trigger: () => trigger,
     default: () => content
@@ -266,6 +274,10 @@ function updateMoneySplit(val: boolean) {
 }
 function updateMoneyInplutFocus(val: boolean) {
   tableConfig.value.inplutFocusSelectAll = val
+  setTableConfig(tableConfig)
+}
+function updateRefreshTable(val: boolean){
+  tableConfig.value.refreshTableWhileActive = val
   setTableConfig(tableConfig)
 }
 </script>

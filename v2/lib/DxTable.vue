@@ -12,7 +12,7 @@ import useKeyboardControl from '../hooks/tableKeyboardControl'
 import useTableSelect from '../hooks/tableSelect'
 import { useDropDown } from '@/hooks/tableDropdown'
 
-import { inject, provide, ref, watch } from 'vue';
+import { inject, onActivated, provide, ref, watch } from 'vue';
 import type { RowData } from 'naive-ui/es/data-table/src/interface';
 interface tablePropType extends /* @vue-ignore */ Omit<DataTableProps, 'columns' | 'rowKey'> {
   columns: ColumnsProps,
@@ -47,7 +47,7 @@ let localPagination = ref({ total: 0, pageSize: 30, pageNum: 1 })
 
 const dataTable = ref<InstanceType<typeof NDataTable> | null>(null)
 
-const { loadData, loadDataCb } = useTableRequest({ loadFlag, localPagination, tableData: tableData, tableProps: props, dataTable })
+const { loadData, loadDataCb, loadType } = useTableRequest({ loadFlag, localPagination, tableData: tableData, tableProps: props, dataTable })
 
 function refresh(reset?: boolean) {
   if (reset) {
@@ -101,6 +101,8 @@ updateCheckedRows.value = (rowKeys) => {
 const { tableRowKey, localColums, tableConfig, setTableConfig } = init()
 
 // 注入
+provide('loadType', loadType)
+
 provide('tableConfig', tableConfig)
 provide('setTableConfig', setTableConfig)
 
@@ -169,14 +171,21 @@ watch(loadFlag, (val) => {
 }, {
   immediate: true
 })
+
+onActivated(()=>{
+  if(tableConfig.refreshTableWhileActive){
+    refresh()
+  }
+})
+
 defineExpose({
   refresh
 })
 </script>
 <template>
-  <TableConfig :tableRef="dataTable" :dataSetting="localColums" :sortData="localSearchSort" @change-show="changeCol"  @change-ellipsis="changeCol"
-    @change-sequence="changeSequence" @change-sort-order="changeSortOrder" @reset-conf="resetConf"
-    @change-fixed="changeCol">
+  <TableConfig :tableRef="dataTable" :dataSetting="localColums" :sortData="localSearchSort" @change-show="changeCol"
+    @change-ellipsis="changeCol" @change-sequence="changeSequence" @change-sort-order="changeSortOrder"
+    @reset-conf="resetConf" @change-fixed="changeCol">
     <slot name="title">123
       <!-- <div v-show="checkedRowKeysRef?.length">已经选择：{{ checkedRowKeysRef?.length }} 条</div> -->
     </slot>
@@ -200,9 +209,11 @@ defineExpose({
   position: relative;
   z-index: 1;
 }
+
 :deep(.n-data-table-td) {
   position: relative;
 }
+
 :deep(.n-ellipsis .ellipsis-area) {
   overflow: hidden;
   white-space: nowrap;

@@ -98,4 +98,6 @@ export type tableConfigType = {
   moneySplit?: boolean;
   // 点击输入框后直接全选内容
   inplutFocusSelectAll?: boolean;
+  // 重新进入该页面时自动刷新表格
+  refreshTableWhileActive?: boolean;
 }
