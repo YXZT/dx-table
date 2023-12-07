@@ -16,6 +16,15 @@ type optionsType = {
   tableCheck: Ref<tableCheckType>,
   listenFlag: ()=>Boolean
 }
+
+export function getParentTD(dom:any,vueRef?:any){
+  if(dom.nodeName === 'TD') return {dom,vueRef}
+  else if(dom.parentNode){
+    const ref = dom.__vue__ || dom.parentNode.__vue__ || null
+    return getParentTD(dom.parentNode,ref || vueRef)
+  }else return false
+}
+
 function useKeyboardControl(options: optionsType) {
   const { dataTable, tableData, currentFocusRowIndex, setCurrentFocusRow, selectToggleRow,tableCheck,listenFlag } = options
 
@@ -24,6 +33,10 @@ function useKeyboardControl(options: optionsType) {
     if(!listenFlag()){
       return
     }
+    const dom = event.target
+    console.log(getParentTD(dom));
+    // console.log(dom?.__vue__ || dom?.parentNode.__vue__ || null);
+    
     if (event.key === 'ArrowUp') {
       event.preventDefault();
       setCurRow('up')
