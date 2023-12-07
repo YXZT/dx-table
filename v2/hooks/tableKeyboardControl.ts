@@ -13,13 +13,17 @@ type optionsType = {
   dataTable: Readonly<Ref<InstanceType<typeof NDataTable> | null>>,
   tableData: Readonly<Ref<any[]>>,
   selectToggleRow: selectToggleRowType,
-  tableCheck: Ref<tableCheckType>
+  tableCheck: Ref<tableCheckType>,
+  listenFlag: ()=>Boolean
 }
 function useKeyboardControl(options: optionsType) {
-  const { dataTable, tableData, currentFocusRowIndex, setCurrentFocusRow, selectToggleRow,tableCheck } = options
+  const { dataTable, tableData, currentFocusRowIndex, setCurrentFocusRow, selectToggleRow,tableCheck,listenFlag } = options
 
 
   function handleKeyDown(event: KeyboardEvent) {
+    if(!listenFlag()){
+      return
+    }
     if (event.key === 'ArrowUp') {
       event.preventDefault();
       setCurRow('up')

@@ -326,7 +326,7 @@ const options = { checkedRowKeys: checkedRowKeysRef, checkedRows: checkedRowsRef
 let { updateRowKeys, tableRowProps, toggleRow, rowClass } = useTableSelect(options)
 
 rowClass.value = (row) => {
-  const classList = []
+  const classList:any[] = []
   if (Object.keys(curRowRef.value).length) {
     if (row[rowKey] === curRowRef.value[rowKey]) {
       classList.push('cur-selected-row')

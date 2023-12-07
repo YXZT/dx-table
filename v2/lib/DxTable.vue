@@ -1,7 +1,7 @@
 <script setup lang='ts'>
 defineOptions({ name: 'DxTable' })
 import TableConfig from './TableConfig.vue'
-import { NDataTable, NDropdown } from 'naive-ui'
+import { NDataTable } from 'naive-ui'
 import type { DataTableProps } from 'naive-ui'
 import type { ColumnsProps, columnSetting, columnsSetting, requestFnType } from "@/interface/index";
 import useTableRequest from '../hooks/tableRequest'
@@ -10,10 +10,15 @@ import useTableConfig from '../hooks/tableConfig'
 import useTableRow from '../hooks/tableRow'
 import useKeyboardControl from '../hooks/tableKeyboardControl'
 import useTableSelect from '../hooks/tableSelect'
+import useTableFocus from '../hooks/tableFocus'
 import { useDropDown } from '@/hooks/tableDropdown'
 
-import { inject, onActivated, provide, ref, watch } from 'vue';
+import { computed, inject, onActivated, provide, ref, watch } from 'vue';
 import type { RowData } from 'naive-ui/es/data-table/src/interface';
+
+
+// todo 光标在input中就不要触发上下键了
+// todo 在表格中上下键还需要能跳转光标
 interface tablePropType extends /* @vue-ignore */ Omit<DataTableProps, 'columns' | 'rowKey'> {
   columns: ColumnsProps,
   request?: requestFnType,
@@ -34,7 +39,7 @@ const props = withDefaults(defineProps<tablePropType>(), {
   immediateRequest: true,
   needInfinite: false,
   isPagination: true,
-  storeName: 'default'
+  storeName: 'default',
 })
 const emits = defineEmits(['refreshed', 'update:checkedRowKeys', 'update:checkedRows'])
 
@@ -157,10 +162,21 @@ const localTableRowProps = (row: RowData, index: number) => {
   }
 }
 
+const { isFocus, handleFocus, toggleFocus } = useTableFocus()
+
+const listenFlag = () => {
+  // 如果有打开中的弹出框，则不监听键盘
+  if (isFocus.value) {
+    return true
+  } else {
+    return false
+  }
+}
+
 const {
   startListening,
   stopListening,
-} = useKeyboardControl({ dataTable, tableData, setCurrentFocusRow, currentFocusRowIndex, selectToggleRow, tableCheck })
+} = useKeyboardControl({ dataTable, tableData, setCurrentFocusRow, currentFocusRowIndex, selectToggleRow, tableCheck, listenFlag })
 
 watch(loadFlag, (val) => {
   if (val) {
@@ -172,8 +188,8 @@ watch(loadFlag, (val) => {
   immediate: true
 })
 
-onActivated(()=>{
-  if(tableConfig.refreshTableWhileActive){
+onActivated(() => {
+  if (tableConfig.refreshTableWhileActive) {
     refresh()
   }
 })
@@ -183,19 +199,22 @@ defineExpose({
 })
 </script>
 <template>
-  <TableConfig :tableRef="dataTable" :dataSetting="localColums" :sortData="localSearchSort" @change-show="changeCol"
-    @change-ellipsis="changeCol" @change-sequence="changeSequence" @change-sort-order="changeSortOrder"
-    @reset-conf="resetConf" @change-fixed="changeCol">
-    <slot name="title">123
-      <!-- <div v-show="checkedRowKeysRef?.length">已经选择：{{ checkedRowKeysRef?.length }} 条</div> -->
-    </slot>
-  </TableConfig>
-  <n-data-table v-bind="$attrs" size="small" :single-line="false" :data="tableData" :columns="TableColumns"
-    ref="dataTable" :loading="loadFlag" v-bind:style="{ 'overflow-x': 'hidden' }" virtual-scroll :pagination="pagination"
-    remote @update:page-size="handleSizeChange" @update:page="handlePageChange" :row-key="tableRowKey"
-    @update:sorter="handleSorterChange" @scroll="scroll" :on-update-drag-end="columDragEnd"
-    :row-props="localTableRowProps" :row-class-name="tableRowClass" :checkedRowKeys="checkedRowKeysRef"
-    @update-checked-row-keys="updateRowKeys" />
+  <div @click="toggleFocus">切换focus</div>
+  <div :class="{ 'bg-focus': isFocus }" @click="handleFocus">
+    <TableConfig :tableRef="dataTable" :dataSetting="localColums" :sortData="localSearchSort" @change-show="changeCol"
+      @change-ellipsis="changeCol" @change-sequence="changeSequence" @change-sort-order="changeSortOrder"
+      @reset-conf="resetConf" @change-fixed="changeCol">
+      <slot name="title">
+        <div v-show="checkedRowKeysRef?.length">已经选择：{{ checkedRowKeysRef?.length }} 条</div>
+      </slot>
+    </TableConfig>
+    <n-data-table v-bind="$attrs" size="small" :single-line="false" :data="tableData" :columns="TableColumns"
+      ref="dataTable" :loading="loadFlag" v-bind:style="{ 'overflow-x': 'hidden' }" virtual-scroll
+      :pagination="pagination" remote @update:page-size="handleSizeChange" @update:page="handlePageChange"
+      :row-key="tableRowKey" @update:sorter="handleSorterChange" @scroll="scroll" :on-update-drag-end="columDragEnd"
+      :row-props="localTableRowProps" :row-class-name="tableRowClass" :checkedRowKeys="checkedRowKeysRef"
+      @update-checked-row-keys="updateRowKeys" />
+  </div>
   <renderDropDown></renderDropDown>
 </template>
 
@@ -218,5 +237,9 @@ defineExpose({
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+}
+
+.bg-focus {
+  box-shadow: 2px 2px 2px #cfe8fb;
 }
 </style>
