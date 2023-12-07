@@ -21,7 +21,7 @@ type requestType = {
 }
 function useTableRequest({ loadFlag, localPagination, tableData, tableProps,dataTable }: requestType) {
   const loadDataCb = ref(()=>{})
-  const loadType = ref<'data'|'request'>()
+  const loadType = tableProps.request ? 'request' : (Array.isArray(tableProps.data) ? 'data' : '')
   function loadTbData(request: requestFnType, isAppend: boolean) {
 
     loadFlag.value = true
@@ -67,16 +67,14 @@ function useTableRequest({ loadFlag, localPagination, tableData, tableProps,data
     // 是否开始加载
     if (tableProps.request) {
       loadTbData(tableProps.request, isAppend)
-      loadType.value = 'request'
     } else if (Array.isArray(tableProps.data)) {
       loadDataDirect(tableProps.data)
-      loadType.value = 'data'
     }
   }
   return {
     loadData,
     loadDataCb,
-    loadType:loadType.value
+    loadType:loadType
   }
 }
 export default useTableRequest

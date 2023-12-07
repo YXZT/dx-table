@@ -1,6 +1,13 @@
 import { h } from 'vue';
-import { NTag } from 'naive-ui'
+import { NTag, NTooltip } from 'naive-ui'
 import Mock from "mockjs";
+
+const renderTooltip = (trigger:any, content:any) => {
+  return h(NTooltip, null, {
+    trigger: () => trigger,
+    default: () => content
+  })
+}
 
 export type simpleDataType = {
   key: number,
@@ -22,7 +29,17 @@ const simpleColumns = [
     sorter: true,
   },
   {
-    title: 'Age',
+    title(){
+      return renderTooltip(
+        h(
+          'div',
+          {},
+          'age'
+        ),
+        '随便写点什么'
+      )
+    },
+    titleString:'age',
     key: 'age',
     sorter: true,
   },

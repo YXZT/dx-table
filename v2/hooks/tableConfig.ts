@@ -111,6 +111,8 @@ function useTableConfig({ tableProps, loadDataFn }: pageChangeType) {
         width: col.width ?? undefined,
         ellipsis: col.ellipsis ?? false,
       }
+      newCol.titleString = col.titleString || col.title
+
       return newCol
     })
     const setting = storageString && getStore(storageString)

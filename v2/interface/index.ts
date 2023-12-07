@@ -28,6 +28,8 @@ export type ColumnProps = Omit<NonNullable<TableColumn>,'sorter'|'sortOrder'|'fi
   order?: number,
   sorter: boolean | Function | 'default',
   sortOrder: 'descend' | 'ascend' | false,
+  titleString?:'string',
+  title?: any
 }
 export type ColumnsProps = Array<ColumnProps>
 export type columnSetting = Omit<NonNullable<TableColumn>,'sorter'|'sortOrder'|'fixed'> & {
@@ -38,6 +40,8 @@ export type columnSetting = Omit<NonNullable<TableColumn>,'sorter'|'sortOrder'|'
   sorter: boolean | Function | 'default',
   sortOrder: 'descend' | 'ascend' | false
   titleAlign: 'left' | 'right' | 'center',
+  titleString?:'string',
+  title?: any
 }
 export type columnsSetting = Array<columnSetting>
 

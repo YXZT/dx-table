@@ -36,7 +36,7 @@
                   点击输入框后直接全选内容
                 </n-checkbox>
               </n-form-item>
-              <n-form-item label="" v-if="loadType==='request'">
+              <n-form-item label="" v-if="loadType === 'request'">
                 <n-checkbox :checked="tableConfig.refreshTableWhileActive" :on-update-checked="updateRefreshTable">
                   重新进入该页面时自动刷新表格
                 </n-checkbox>
@@ -60,7 +60,7 @@
 <script setup lang="ts">
 import { ArchiveSettings16Regular } from '@vicons/fluent'
 import { ref, computed, h, nextTick, inject, type Ref } from 'vue'
-import { NDataTable, NDrawer, NDrawerContent, NButton, NIcon, NSwitch, NRadioGroup, NRadioButton, NTabs, NTabPane, NForm, NFormItem, NCheckbox, NTooltip, NGradientText } from "naive-ui";
+import { NDataTable, NDrawer, NDrawerContent, NButton, NIcon, NSwitch, NRadioGroup, NRadioButton, NTabs, NTabPane, NForm, NFormItem, NCheckbox, NTooltip } from "naive-ui";
 import type { columnSetting, columnsSetting, tableConfigType } from "@/interface";
 import Sortable from "sortablejs";
 
@@ -74,7 +74,7 @@ interface propsType {
 let tableConfig: Ref<tableConfigType> = ref(inject('tableConfig') || {})
 const setTableConfig = inject('setTableConfig') as (data: any) => void
 
-const loadType = inject('loadType') as 'data'|'request'
+const loadType = inject('loadType') as 'data' | 'request'
 
 const props = defineProps<propsType>()
 
@@ -90,7 +90,7 @@ const emits = defineEmits<{
 }>()
 
 
-const renderTooltip = (trigger:any, content:any) => {
+const renderTooltip = (trigger: any, content: any) => {
   return h(NTooltip, null, {
     trigger: () => trigger,
     default: () => content
@@ -99,15 +99,15 @@ const renderTooltip = (trigger:any, content:any) => {
 
 const columnsSettingColumns = ref([{
   title: '列名',
-  key: 'title'
+  key: 'titleString'
 }, {
   key: 'isShow',
   title() {
     return renderTooltip(
       h(
-        NGradientText,
+        'div',
         {},
-        { default: () => '显示' }
+        '显示'
       ),
       '控制是否显示该列，注意列没有显示有可能是因为缺少了某些权限'
     )
@@ -121,9 +121,9 @@ const columnsSettingColumns = ref([{
   title() {
     return renderTooltip(
       h(
-        NGradientText,
+        'div',
         {},
-        { default: () => '固定' }
+        '固定'
       ),
       '当宽度不足时，是否固定在左侧或右侧，不建议一个表格中设置多个'
     )
@@ -142,9 +142,9 @@ const columnsSettingColumns = ref([{
   title() {
     return renderTooltip(
       h(
-        NGradientText,
+        'div',
         {},
-        { default: () => '省略' }
+        '省略'
       ),
       '当宽度不足时，是否用省略号代替'
     )
@@ -164,15 +164,15 @@ const columnsSortSetting = ref([
   },
   {
     title: '列名',
-    key: 'title'
+    key: 'titleString'
   }, {
     key: 'fixed',
     title() {
       return renderTooltip(
         h(
-          NGradientText,
+          'div',
           {},
-          { default: () => '次序' }
+          '次序'
         ),
         '排序的方式，不建议同时设置多个'
       )
@@ -276,7 +276,7 @@ function updateMoneyInplutFocus(val: boolean) {
   tableConfig.value.inplutFocusSelectAll = val
   setTableConfig(tableConfig)
 }
-function updateRefreshTable(val: boolean){
+function updateRefreshTable(val: boolean) {
   tableConfig.value.refreshTableWhileActive = val
   setTableConfig(tableConfig)
 }
