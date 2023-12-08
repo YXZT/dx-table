@@ -23,6 +23,7 @@ type tableRowFocusType = {
 export type setCurrentFocusRowType = (opt: {
   setKey?: number | undefined;
   index?: number | undefined;
+  curentTd?:Element | null;
 }) => void
 
 function useTableRow({ tableData, tableProps }: tableRowFocusType) {
@@ -32,7 +33,7 @@ function useTableRow({ tableData, tableProps }: tableRowFocusType) {
   const rowKey = tableProps.rowKey || 'id'
   const clickRowFn = ref<(row: RowData) => void>(() => { })
 
-  const setCurrentFocusRow: setCurrentFocusRowType = ({ setKey, index }) => {
+  const setCurrentFocusRow: setCurrentFocusRowType = ({ setKey, index , curentTd}) => {
     let rowIndex = -1
     if (index != null) {
       rowIndex = index
@@ -41,7 +42,6 @@ function useTableRow({ tableData, tableProps }: tableRowFocusType) {
         return ele[rowKey] === setKey
       })
     }
-
     if (rowIndex > -1) {
       currentFocusRow.value = tableData.value[rowIndex]
       currentFocusRowKey.value = tableData.value[rowIndex][rowKey]
@@ -50,6 +50,9 @@ function useTableRow({ tableData, tableProps }: tableRowFocusType) {
       currentFocusRow.value = {}
       currentFocusRowKey.value = null
       currentFocusRowIndex.value = null
+    }
+    if(curentTd){
+      curentTd.querySelector('input')?.focus()
     }
   }
   /**

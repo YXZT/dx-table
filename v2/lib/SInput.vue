@@ -11,7 +11,7 @@ const attrs = useAttrs()
 
 defineProps<myPropType>()
 
-type otherPropsType = Pick<myPropType, 'precision' | 'size' | 'showButton' | 'clearable' | 'placeholder' | 'format' | 'parse'>
+type otherPropsType = Pick<myPropType, 'precision' | 'size' | 'showButton' | 'clearable' | 'placeholder' | 'format' | 'parse' | 'keyboard'>
 
 // 接收注入tableConfig
 const tableConfig: tableConfigType = inject('tableConfig') || {}
@@ -36,6 +36,7 @@ const otherProps: otherPropsType = {
   size: 'small',
   showButton: false,
   clearable: false,
+  keyboard: { ArrowUp:false, ArrowDown:false },
   placeholder: '',
   format,
   parse,
