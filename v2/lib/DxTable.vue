@@ -233,11 +233,6 @@ defineExpose({
   position: relative;
 }
 
-:deep(.n-ellipsis .ellipsis-area) {
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
 
 .bg-focus {
   box-shadow: 2px 2px 2px #cfe8fb;

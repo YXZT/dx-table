@@ -11,7 +11,7 @@ const themeOverrides = {
   },
   DataTable:{
     thPaddingSmall: '2px 12px 2px 4px',
-    tdPaddingSmall: '4px',
+    tdPaddingSmall: '4px 8px',
     borderColor: '#D2D2D2',
     thIconColorActive: '#055FE0',
   }

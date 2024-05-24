@@ -41,6 +41,7 @@ const simpleColumns = [
     },
     titleString:'age',
     key: 'age',
+    align: 'right',
     sorter: true,
   },
   {
@@ -73,6 +74,7 @@ const simpleColumns = [
   {
     title: '分数',
     key: 'num',
+    align: 'right'
   },
   {
     title: '角色',

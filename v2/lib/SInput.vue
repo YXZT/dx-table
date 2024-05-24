@@ -58,7 +58,9 @@ const thisAttrs = computed(() => {
 
 <template>
   <NInputNumber v-bind="thisAttrs" class="all-ground input-style" v-if="isEdit" />
-  <div v-else class="input-style ellipsis-area">{{ attrs.value }}</div>
+  <template v-else>
+    {{ attrs.value }}
+  </template>
 </template>
 
 <style lang="scss" scoped>
@@ -76,7 +78,4 @@ const thisAttrs = computed(() => {
   }
 }
 
-.input-style {
-  text-align: right;
-}
 </style>
