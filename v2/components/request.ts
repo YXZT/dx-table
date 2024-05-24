@@ -20,7 +20,8 @@ const simpleColumns = [
   {
     type: 'selection',
     key: 'selection',
-    sorter: true,
+    titleString:'[勾选框]',
+    // sorter: true,
     // multiple: false,
   },
   {

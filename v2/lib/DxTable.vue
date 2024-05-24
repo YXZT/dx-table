@@ -16,9 +16,6 @@ import { useDropDown } from '@/hooks/tableDropdown'
 import { computed, inject, onActivated, provide, ref, watch } from 'vue';
 import type { RowData } from 'naive-ui/es/data-table/src/interface';
 
-
-// todo 光标在input中就不要触发上下键了
-// todo 在表格中上下键还需要能跳转光标
 interface tablePropType extends /* @vue-ignore */ Omit<DataTableProps, 'columns' | 'rowKey'> {
   columns: ColumnsProps,
   request?: requestFnType,
