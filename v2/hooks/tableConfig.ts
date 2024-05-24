@@ -190,7 +190,10 @@ function useTableConfig({ tableProps, loadDataFn }: pageChangeType) {
         sorter: col.sorter ?? false,
         sortOrder: col.sortOrder ?? false,
         titleAlign: col.titleAlign ?? 'center',
+        width: col.width ?? undefined,
+        ellipsis: col.ellipsis ?? false,
       }
+      newCol.titleString = col.titleString || col.title
       return newCol
     })
     localColums.value = columsResult
