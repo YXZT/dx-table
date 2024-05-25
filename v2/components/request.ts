@@ -163,11 +163,18 @@ const simpleColumns = [
   {
     title: '分数',
     key: 'num',
-    align: 'right'
+    align: 'right',
+    width: 150,
   },
   {
     title: '角色',
     key: 'role',
+    width: 150,
+  },
+  {
+    title: '邮箱',
+    key: 'email',
+    width: 150,
   },
 ]
 const simpleData = Mock.mock({
@@ -179,7 +186,8 @@ const simpleData = Mock.mock({
     "tags|1-3": ["@ctitle(2,5)"],
     "num": "@natural(1,9000)",
     "role": null,
-    "roleName": null
+    "roleName": null,
+    "email": null
   }]
 }
 ).list
