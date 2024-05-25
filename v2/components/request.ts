@@ -1,8 +1,9 @@
 import { h } from 'vue';
-import { NTag, NTooltip } from 'naive-ui'
+import { NButton, NIcon, NTag, NTooltip } from 'naive-ui'
+import { Delete48Filled, Add24Regular } from '@vicons/fluent'
 import Mock from "mockjs";
 
-const renderTooltip = (trigger:any, content:any) => {
+const renderTooltip = (trigger: any, content: any) => {
   return h(NTooltip, null, {
     trigger: () => trigger,
     default: () => content
@@ -18,9 +19,96 @@ export type simpleDataType = {
 }
 const simpleColumns = [
   {
+    key: 'delete',
+    titleString: '[行操作]',
+    fixed: 'left',
+    width: '50',
+    title: h('div',
+      {
+        class: 's-flex-center2',
+        style:{
+          margin: '-2px -12px -2px -4px'
+        }
+      },
+      h(
+        NButton,
+        {
+          quaternary: true,
+          size: 'tiny',
+          onClick: () => {
+            console.log('clear all')
+          },
+        },
+        {
+          default: () => h(
+            NIcon,
+            {
+              component: Delete48Filled,
+              size: "22",
+              color: '#f97c7c',
+            }
+          ),
+        }
+      ),
+    ),
+    resizable: false,
+    render(row: any) {
+      return h('div',
+        {
+          class: 's-flex-around',
+          style: {
+            margin: '-4px -8px', // 抵销td的padding
+          }
+        },
+        [
+          h(
+            NButton,
+            {
+              quaternary: true,
+              size: 'tiny',
+              onClick: () => {
+                console.log(row)
+              },
+            },
+            {
+              default: () => h(
+                NIcon,
+                {
+                  component: Delete48Filled,
+                  size: "22",
+                  color: '#f97c7c',
+                }
+              ),
+            }
+          ),
+          // h(
+          //   NButton,
+          //   {
+          //     quaternary: true,
+          //     size: 'tiny',
+          //     onClick: () => {
+          //       console.log(row)
+          //     },
+          //   },
+          //   {
+          //     default: () => h(
+          //       NIcon,
+          //       {
+          //         component: Add24Regular,
+          //         size: "22",
+          //         color: '#3686b7',
+          //       }
+          //     )
+          //   }
+          // ),
+        ]
+      )
+    }
+  },
+  {
     type: 'selection',
     key: 'selection',
-    titleString:'[勾选框]',
+    titleString: '[勾选框]',
     // sorter: true,
     // multiple: false,
   },
@@ -30,7 +118,7 @@ const simpleColumns = [
     sorter: true,
   },
   {
-    title(){
+    title() {
       return renderTooltip(
         h(
           'div',
@@ -40,7 +128,7 @@ const simpleColumns = [
         '随便写点什么'
       )
     },
-    titleString:'age',
+    titleString: 'age',
     key: 'age',
     align: 'right',
     sorter: true,
@@ -130,7 +218,7 @@ const generateData = (
 // }, ...generateColumns(10)]
 const columns = [...generateColumns(10)]
 
-const mockRequest = ({ pageNum, pageSize }:{ pageNum:number, pageSize:number }) => {
+const mockRequest = ({ pageNum, pageSize }: { pageNum: number, pageSize: number }) => {
   const list = generateData(columns, pageSize, 'row-', (pageNum - 1) * pageSize)
   const res = new Promise((resolve) => {
     setTimeout(() => {
