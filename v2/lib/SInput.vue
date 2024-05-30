@@ -57,7 +57,7 @@ const thisAttrs = computed(() => {
 </script>
 
 <template>
-  <NInputNumber v-bind="thisAttrs" class="all-ground input-style" v-if="isEdit" />
+  <NInputNumber v-bind="thisAttrs" class="all-ground" v-if="isEdit" />
   <template v-else>
     {{ attrs.value }}
   </template>

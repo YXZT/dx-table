@@ -15,7 +15,14 @@
             <s-select :value="row.role" :on-update-value="(value, option) => updateValueRole(value, option, index)"
               :options="roleOptions" :isEdit="isEdit" :label="row.roleName"></s-select>
           </template>
+          <template #email="{ row }">
+            <n-input @focus="showModal" v-model="row.email" class="all-ground"></n-input>
+          </template>
         </DxTable>
+        <s-modal v-model:show-modal-select="showModalSelect" :showModalSelectLeft="showModalSelectLeft"
+          :show-modal-select-top="showModalSelectTop">
+          <n-select v-model:value="value" disabled :options="options" />
+        </s-modal>
         {{ checkedRows }}
         <n-button @click="isEdit = !isEdit">切换</n-button>
         <n-card embedded :bordered="false">
@@ -49,9 +56,11 @@ import DxTable from "../lib/DxTable.vue";
 import TableSearch from "../lib/TableSearch.vue";
 import SInput from "../lib/SInput.vue";
 import SSelect from "../lib/SSelect.vue";
-import { NTabs, NTabPane, NCard, NButton } from "naive-ui";
+import SModal from "../lib/SModal.vue";
+import { NTabs, NTabPane, NCard, NButton, NSelect} from "naive-ui";
 import { simpleColumns, simpleData, mockRequest, mockColumns, roleOptions } from "./request";
 import type { searchFormType } from "@/interface";
+import useTableModal from '../hooks/tableModal'
 
 let type = ref(1);
 const data = ref<any[]>([]);
@@ -189,7 +198,74 @@ const updateValueRole = (e: Array<any> | string | number | null, option: any, in
   data.value[index].roleName = option.label;
 };
 const isEdit = ref(true);
-// 表格头部提示的封装
+
+
+const {
+  showModalSelect,
+  showModalSelectLeft,
+  showModalSelectTop,
+  showModal,
+  NInput
+} = useTableModal()
+
+const value = ref(null)
+const options = [
+  {
+    label: "Everybody's Got Something to Hide Except Me and My Monkey",
+    value: 'song0',
+    disabled: true
+  },
+  {
+    label: 'Drive My Car',
+    value: 'song1'
+  },
+  {
+    label: 'Norwegian Wood',
+    value: 'song2'
+  },
+  {
+    label: "You Won't See",
+    value: 'song3',
+    disabled: true
+  },
+  {
+    label: 'Nowhere Man',
+    value: 'song4'
+  },
+  {
+    label: 'Think For Yourself',
+    value: 'song5'
+  },
+  {
+    label: 'The Word',
+    value: 'song6'
+  },
+  {
+    label: 'Michelle',
+    value: 'song7',
+    disabled: true
+  },
+  {
+    label: 'What goes on',
+    value: 'song8'
+  },
+  {
+    label: 'Girl',
+    value: 'song9'
+  },
+  {
+    label: "I'm looking through you",
+    value: 'song10'
+  },
+  {
+    label: 'In My Life',
+    value: 'song11'
+  },
+  {
+    label: 'Wait',
+    value: 'song12'
+  }
+]
 </script>
 
 <style scoped lang="scss">
@@ -200,6 +276,11 @@ const isEdit = ref(true);
   right: 0;
   bottom: 0;
   height: 100%;
+
+  :deep(.n-input__input-el) {
+    height: 100%;
+    line-height: 100%;
+  }
 }
 
 :deep(.all-ground .n-base-selection) {
@@ -217,6 +298,4 @@ const isEdit = ref(true);
 :deep(.all-ground .n-input) {
   height: 100%;
 }
-
 </style>
-

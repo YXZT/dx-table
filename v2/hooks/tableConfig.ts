@@ -153,7 +153,7 @@ function useTableConfig({ tableProps, loadDataFn }: pageChangeType) {
   function setConf() {
     setStore(storageString as string, localColums.value.map(col => {
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { render, ...colCopy } = col as any
+      const { render, title, ...colCopy } = col as any
       return colCopy
     }))
   }
