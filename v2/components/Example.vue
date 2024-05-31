@@ -16,12 +16,12 @@
               :options="roleOptions" :isEdit="isEdit" :label="row.roleName"></s-select>
           </template>
           <template #email="{ row }">
-            <n-input @focus="showModal" v-model="row.email" class="all-ground"></n-input>
+            <n-input @click="showModal" :value="row.email" class="all-ground"></n-input>
           </template>
         </DxTable>
-        <s-modal v-model:show-modal-select="showModalSelect" :showModalSelectLeft="showModalSelectLeft"
-          :show-modal-select-top="showModalSelectTop">
-          <n-select v-model:value="value" :options="options" />
+        <s-modal v-model:show-modal-select="showModalSelect" v-model:show-modal-select-left="showModalSelectLeft"
+          v-model:show-modal-select-top="showModalSelectTop">
+          <n-select v-model:value="value" :options="options" show-on-focus filterable/>
         </s-modal>
         {{ checkedRows }}
         <n-button @click="isEdit = !isEdit">切换</n-button>
@@ -57,7 +57,7 @@ import TableSearch from "../lib/TableSearch.vue";
 import SInput from "../lib/SInput.vue";
 import SSelect from "../lib/SSelect.vue";
 import SModal from "../lib/SModal.vue";
-import { NTabs, NTabPane, NCard, NButton, NSelect} from "naive-ui";
+import { NTabs, NTabPane, NCard, NButton, NSelect } from "naive-ui";
 import { simpleColumns, simpleData, mockRequest, mockColumns, roleOptions } from "./request";
 import type { searchFormType } from "@/interface";
 import useTableModal from '../hooks/tableModal'
@@ -205,6 +205,7 @@ const {
   showModalSelectLeft,
   showModalSelectTop,
   showModal,
+  closeModal,
   NInput
 } = useTableModal()
 

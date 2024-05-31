@@ -1,7 +1,7 @@
 <script setup lang='ts'>
-import { nextTick, ref, watch } from 'vue';
+import { nextTick, ref, toRef, watch } from 'vue';
 import { onClickOutside } from '@vueuse/core'
-
+import { setPageModalCount } from '../utils/globalStore.ts'
 const props = defineProps({
   showModalSelect: {
     type: Boolean,
@@ -22,27 +22,49 @@ const props = defineProps({
 })
 
 
+const emit = defineEmits(['update:showModalSelect', 'update:showModalSelectLeft', 'update:showModalSelectTop'])
 
-const emit = defineEmits(['update:showModalSelect'])
+const target = ref<HTMLDivElement>()
 
-const target = ref(null)
+// 重新计算宽高
+function recalculateSize() {
+  const targetRect = target.value?.getBoundingClientRect()
+  if (!targetRect) return
+  const windowWidth = window.innerWidth
+  const windowHeight = window.innerHeight
+  const left = Math.min(Math.max(0, props.showModalSelectLeft), windowWidth - targetRect.width)
+  const top = Math.min(Math.max(0, props.showModalSelectTop), windowHeight - targetRect.height)
+  emit('update:showModalSelectLeft', left)
+  emit('update:showModalSelectTop', top)
+}
 
-// onClickOutside(target, (event) => {
-//   console.log(props.showModalSelect)
-//   emit('update:showModalSelect', false)
-// },{
-//   ignore:[props.ignoreRef.value]
-// })
+// 自动focus该dom下第一个可focus的元素
+function autoFocus() {
+  const focusableElements = target.value?.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])')
+  if (!focusableElements) return
+  const firstFocusableElement = focusableElements[0] as HTMLElement
+  firstFocusableElement.focus()
+}
+
 onClickOutside(target, (event) => {
-  console.log(props.showModalSelect)
-  // emit('update:showModalSelect', false)
+  console.log(event)
+  emit('update:showModalSelect', false)
 })
+
+watch(() => props.showModalSelect, (newVal) => {
+  if (newVal) {
+    nextTick((): void => {
+      recalculateSize()
+      autoFocus()
+    })
+  }
+})
+setPageModalCount(toRef(props.showModalSelect))
 
 </script>
 
 <template>
-  <div class="s-modal"
-    v-if="showModalSelect"
+  <div class="s-modal" v-if="showModalSelect"
     :style="{ left: showModalSelectLeft + 'px', top: (showModalSelectTop) + 'px', 'width': width }" ref="target">
     <slot />
   </div>
