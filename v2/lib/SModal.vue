@@ -1,6 +1,6 @@
 <script setup lang='ts'>
-import { ref, watch } from 'vue';
-
+import { nextTick, ref, watch } from 'vue';
+import { onClickOutside } from '@vueuse/core'
 
 const props = defineProps({
   showModalSelect: {
@@ -18,33 +18,32 @@ const props = defineProps({
   width: {
     type: String,
     default: '200px'
-  }
+  },
 })
-let display = ref(false)
 
-watch(() => props.showModalSelect, (newVal) => {
-  display.value = newVal
-})
-watch(() => display.value, (newVal) => {
-  if (newVal) {
-    // document.body.addEventListener('click', () => {
-    //   display.value = false
-    //   emit('update:showModalSelect', false)
-    // })
-  }
-})
 
 
 const emit = defineEmits(['update:showModalSelect'])
 
+const target = ref(null)
+
+// onClickOutside(target, (event) => {
+//   console.log(props.showModalSelect)
+//   emit('update:showModalSelect', false)
+// },{
+//   ignore:[props.ignoreRef.value]
+// })
+onClickOutside(target, (event) => {
+  console.log(props.showModalSelect)
+  // emit('update:showModalSelect', false)
+})
+
 </script>
 
 <template>
-  <div
-    class="s-modal"
-    v-show="display"
-    :style="{ left: showModalSelectLeft + 'px', top: (showModalSelectTop) + 'px' ,'width':width}"
-  >
+  <div class="s-modal"
+    v-if="showModalSelect"
+    :style="{ left: showModalSelectLeft + 'px', top: (showModalSelectTop) + 'px', 'width': width }" ref="target">
     <slot />
   </div>
 </template>
@@ -58,5 +57,4 @@ const emit = defineEmits(['update:showModalSelect'])
   box-shadow: 0 0 10px #ccc;
   padding: 10px;
 }
-
 </style>

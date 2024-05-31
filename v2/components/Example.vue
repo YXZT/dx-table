@@ -21,7 +21,7 @@
         </DxTable>
         <s-modal v-model:show-modal-select="showModalSelect" :showModalSelectLeft="showModalSelectLeft"
           :show-modal-select-top="showModalSelectTop">
-          <n-select v-model:value="value" disabled :options="options" />
+          <n-select v-model:value="value" :options="options" />
         </s-modal>
         {{ checkedRows }}
         <n-button @click="isEdit = !isEdit">切换</n-button>

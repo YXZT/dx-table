@@ -5,7 +5,6 @@ function useTableModal() {
   const showModalSelect = ref(false)
   const showModalSelectLeft = ref(0)
   const showModalSelectTop = ref(0)
-
   function showModal(e: any) {
     const pos = e.target.parentNode.parentNode.getBoundingClientRect()
     showModalSelect.value = true
@@ -17,7 +16,7 @@ function useTableModal() {
     showModalSelectLeft,
     showModalSelectTop,
     showModal,
-    NInput
+    NInput,
   }
 }
 
