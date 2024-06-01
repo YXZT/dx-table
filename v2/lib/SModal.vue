@@ -1,7 +1,7 @@
 <script setup lang='ts'>
 import { nextTick, ref, toRef, watch } from 'vue';
 import { onClickOutside } from '@vueuse/core'
-import { setPageModalCount } from '../utils/globalStore.ts'
+import { setPageModalCount } from '../utils/globalStore'
 const props = defineProps({
   showModalSelect: {
     type: Boolean,
@@ -59,7 +59,7 @@ watch(() => props.showModalSelect, (newVal) => {
     })
   }
 })
-setPageModalCount(toRef(props.showModalSelect))
+setPageModalCount(()=>props.showModalSelect)
 
 </script>
 

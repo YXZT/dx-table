@@ -1,20 +1,18 @@
 import { watch } from "vue";
-import type { Ref } from "vue";
 
-const globalModalCount = new WeakMap();
+const globalModalCount:Array<() => boolean> = []
 
 export function getPageModalCount() {
-  return globalModalCount;
+  return globalModalCount.length;
 }
 
-export function setPageModalCount(visible: Ref<boolean>) {
+export function setPageModalCount(visible: () => boolean) {
   watch(visible, (newValue) => {
     // 更新全局计数器
     if (newValue) {
-      globalModalCount.set(visible, globalModalCount.get(visible) + 1);
+      globalModalCount.push(visible);
     } else {
-      globalModalCount.set(visible, globalModalCount.get(visible) - 1);
+      globalModalCount.splice(globalModalCount.indexOf(visible), 1);
     }
-  }
-  )
+  })
 }

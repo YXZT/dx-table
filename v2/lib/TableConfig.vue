@@ -63,6 +63,7 @@ import { ref, computed, h, nextTick, inject, type Ref } from 'vue'
 import { NDataTable, NDrawer, NDrawerContent, NButton, NIcon, NSwitch, NRadioGroup, NRadioButton, NTabs, NTabPane, NForm, NFormItem, NCheckbox, NTooltip } from "naive-ui";
 import type { columnSetting, columnsSetting, tableConfigType } from "@/interface";
 import Sortable from "sortablejs";
+import { setPageModalCount } from '../utils/globalStore'
 
 interface propsType {
   tableRef: InstanceType<typeof NDataTable> | null,
@@ -88,7 +89,6 @@ const emits = defineEmits<{
   'change-ellipsis': [col: columnSetting],
   'reset-conf': [],
 }>()
-
 
 const renderTooltip = (trigger: any, content: any) => {
   return h(NTooltip, null, {
@@ -268,6 +268,8 @@ function resetConf() {
   tableConfig.value = {}
   setTableConfig({})
 }
+setPageModalCount(()=>isActive.value)
+
 function updateMoneySplit(val: boolean) {
   tableConfig.value.moneySplit = val
   setTableConfig(tableConfig)

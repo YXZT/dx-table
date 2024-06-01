@@ -12,6 +12,7 @@ import useKeyboardControl from '../hooks/tableKeyboardControl'
 import useTableSelect from '../hooks/tableSelect'
 import useTableFocus from '../hooks/tableFocus'
 import { useDropDown } from '@/hooks/tableDropdown'
+import { getPageModalCount } from '../utils/globalStore'
 
 import { computed, inject, onActivated, provide, ref, watch } from 'vue';
 import type { RowData } from 'naive-ui/es/data-table/src/interface';
@@ -163,6 +164,11 @@ const { isFocus, handleFocus, toggleFocus } = useTableFocus()
 
 const listenFlag = () => {
   // 如果有打开中的弹出框，则不监听键盘
+  let num = getPageModalCount()
+  if (num > 0) {
+    return false
+  }
+  // 操作的是否是当前表格
   if (isFocus.value) {
     return true
   } else {
