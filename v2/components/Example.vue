@@ -15,13 +15,13 @@
             <s-select :value="row.role" :on-update-value="(value, option) => updateValueRole(value, option, index)"
               :options="roleOptions" :isEdit="isEdit" :label="row.roleName"></s-select>
           </template>
-          <template #email="{ row }">
-            <n-input @click="showModal" :value="row.email" class="all-ground"></n-input>
+          <template #email="{ row,index }">
+            <n-input @click="showModal($event, row, index)" :value="row.email" class="all-ground"></n-input>
           </template>
         </DxTable>
         <s-modal v-model:show-modal-select="showModalSelect" v-model:show-modal-select-left="showModalSelectLeft"
           v-model:show-modal-select-top="showModalSelectTop">
-          <n-select v-model:value="value" :options="options" show-on-focus filterable/>
+          <n-select v-model:value="value" :options="options" show-on-focus filterable :on-update:value="setTableValue"/>
         </s-modal>
         {{ checkedRows }}
         <n-button @click="isEdit = !isEdit">切换</n-button>
@@ -267,6 +267,11 @@ const options = [
     value: 'song12'
   }
 ]
+function setTableValue(val:any) {
+  closeModal(({row,index}) => {
+    row.email = val
+  })
+}
 </script>
 
 <style scoped lang="scss">

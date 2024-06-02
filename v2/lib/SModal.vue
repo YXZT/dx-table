@@ -47,7 +47,6 @@ function autoFocus() {
 }
 
 onClickOutside(target, (event) => {
-  console.log(event)
   emit('update:showModalSelect', false)
 })
 
