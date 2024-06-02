@@ -15,7 +15,7 @@ function useTableModal() {
     showModalSelect.value = true
     // 记录
     trigger.value = e.target
-    tableOriginRow.value = row
+    tableOriginRow.value = toRaw(row)
     tableOriginIndex.value = index
 
     const pos = e.target.parentNode.parentNode.getBoundingClientRect()
@@ -26,7 +26,7 @@ function useTableModal() {
     showModalSelect.value = false
     trigger.value && trigger.value.focus()
     fn && fn({
-      row: tableOriginRow.value,
+      row: toRaw(tableOriginRow.value),
       index: tableOriginIndex.value,
     })
   }

@@ -268,8 +268,9 @@ const options = [
   }
 ]
 function setTableValue(val:any) {
-  closeModal(({row,index}) => {
-    row.email = val
+  closeModal(({ row, index }) => {
+    if(index=== undefined || !data.value[index]) return
+    data.value[index].email = val
   })
 }
 </script>
