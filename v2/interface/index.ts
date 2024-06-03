@@ -104,4 +104,6 @@ export type tableConfigType = {
   inplutFocusSelectAll?: boolean;
   // 重新进入该页面时自动刷新表格
   refreshTableWhileActive?: boolean;
+  // 高级设置
+  isAdvancedSetting?: boolean;
 }

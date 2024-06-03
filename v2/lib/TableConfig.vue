@@ -1,4 +1,4 @@
-<template >
+<template>
   <div>
     <div class="table-title">
       <div class="table-info">
@@ -12,13 +12,25 @@
         </template>
       </n-button>
     </div>
-    <n-drawer v-model:show="isActive" :width="500" placement="right" :trap-focus="false" :block-scroll="false"
+    <n-drawer v-model:show="isActive" :width="900" placement="right" :trap-focus="false" :block-scroll="false"
       :to="tableEl">
       <n-drawer-content>
         <n-tabs type="line" animated>
           <n-tab-pane name="表格列设置" tab="表格列设置" display-directive="show">
             <n-data-table ref="dataTable" :bordered="false" :single-line="false" :columns="columnsSettingColumns"
-              :data="dataSetting" :rowProps="rowProps" size="small" />
+              :data="dataSetting" :rowProps="rowProps" size="small" v-if="tableConfig.isAdvancedSetting" />
+            <div v-else class="simple-table-order">
+              <div hoverable v-for="(item, index) in dataSetting" :key="index" class="simple-table-order-item">
+                <n-checkbox v-model:checked="item.isShow">{{ item.titleString }}</n-checkbox>
+                <n-button dashed>
+                  <template #icon>
+                    <n-icon>
+                      <Drag24Filled />
+                    </n-icon>
+                  </template>
+                </n-button>
+              </div>
+            </div>
           </n-tab-pane>
           <n-tab-pane name="排序设置" tab="排序设置" display-directive="show">
             <n-data-table ref="sortDataTable" :bordered="false" :single-line="false" :columns="columnsSortSetting"
@@ -47,6 +59,9 @@
             </i>
           </n-tab-pane>
           <template #suffix>
+            <n-checkbox :checked="tableConfig.isAdvancedSetting" :on-update-checked="updateIsAdvancedSetting">
+              高级设置
+            </n-checkbox>
             <!-- 尽量不要在处理单据时修改表格配置，因为可能会造成未保存的数据丢失的情况 -->
             <n-button size="small" @click="resetConf">
               重置
@@ -58,9 +73,9 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ArchiveSettings16Regular } from '@vicons/fluent'
+import { ArchiveSettings16Regular, Drag24Filled } from '@vicons/fluent'
 import { ref, computed, h, nextTick, inject, type Ref } from 'vue'
-import { NDataTable, NDrawer, NDrawerContent, NButton, NIcon, NSwitch, NRadioGroup, NRadioButton, NTabs, NTabPane, NForm, NFormItem, NCheckbox, NTooltip } from "naive-ui";
+import { NDataTable, NDrawer, NDrawerContent, NButton, NIcon, NSwitch, NRadioGroup, NRadioButton, NTabs, NTabPane, NForm, NFormItem, NCheckbox, NTooltip, NCard } from "naive-ui";
 import type { columnSetting, columnsSetting, tableConfigType } from "@/interface";
 import Sortable from "sortablejs";
 import { setPageModalCount } from '../utils/globalStore'
@@ -268,7 +283,7 @@ function resetConf() {
   tableConfig.value = {}
   setTableConfig({})
 }
-setPageModalCount(()=>isActive.value)
+setPageModalCount(() => isActive.value)
 
 function updateMoneySplit(val: boolean) {
   tableConfig.value.moneySplit = val
@@ -282,6 +297,11 @@ function updateRefreshTable(val: boolean) {
   tableConfig.value.refreshTableWhileActive = val
   setTableConfig(tableConfig)
 }
+function updateIsAdvancedSetting(val: boolean) {
+  tableConfig.value.isAdvancedSetting = val
+  setTableConfig(tableConfig)
+}
+
 </script>
 <style scoped lang="scss">
 .table-title {
@@ -292,5 +312,24 @@ function updateRefreshTable(val: boolean) {
 
 .table-info {
   width: 100%;
+}
+
+.simple-table-order {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  padding: 5px;
+
+  .simple-table-order-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-left: 2px;
+    box-shadow: 2px 2px 5px 0px rgba(0, 0, 0, 0.1);
+  }
+
+  .simple-table-order-item:hover {
+    box-shadow: 2px 2px 5px 0px rgba(0, 0, 0, 0.3);
+  }
 }
 </style>
