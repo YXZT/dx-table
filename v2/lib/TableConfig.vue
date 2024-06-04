@@ -18,17 +18,10 @@
         <n-tabs type="line" animated>
           <n-tab-pane name="表格列设置" tab="表格列设置" display-directive="show">
             <n-data-table ref="dataTable" :bordered="false" :single-line="false" :columns="columnsSettingColumns"
-              :data="dataSetting" :rowProps="rowProps" size="small" v-if="tableConfig.isAdvancedSetting" />
-            <div v-else class="simple-table-order">
-              <div hoverable v-for="(item, index) in dataSetting" :key="index" class="simple-table-order-item">
-                <n-checkbox v-model:checked="item.isShow">{{ item.titleString }}</n-checkbox>
-                <n-button dashed>
-                  <template #icon>
-                    <n-icon>
-                      <Drag24Filled />
-                    </n-icon>
-                  </template>
-                </n-button>
+              :data="dataSetting" :rowProps="rowProps" size="small" v-show="tableConfig.isAdvancedSetting" />
+            <div v-show="!tableConfig.isAdvancedSetting"  class="simple-table-sequence" ref="simpleTableSequence">
+              <div v-for="(item) in dataSetting" :key="item.titleString" class="simple-table-sequence-item">
+                <n-checkbox :checked="item.isShow" :on-update:checked="(e: any) => changeColShow(e, item)">{{ item.titleString }}</n-checkbox>
               </div>
             </div>
           </n-tab-pane>
@@ -215,6 +208,8 @@ const tableEl = computed(() => {
 })
 // todo完善类型
 function changeColShow(e: any, col: columnSetting) {
+  console.log(e,col);
+  
   const newCol = { ...col }
   newCol.isShow = e
   emits('change-show', newCol)
@@ -237,6 +232,7 @@ function changeColSort(e: any, col: columnSetting) {
 }
 const dataTable = ref<InstanceType<typeof NDataTable>>()
 const sortDataTable = ref<InstanceType<typeof NDataTable>>()
+const simpleTableSequence = ref()
 function columnDrop() {
   const el = dataTable?.value?.$el
   const wrapperTr = el.querySelector(".n-data-table-tbody");
@@ -269,6 +265,18 @@ function columnDrop() {
       const _newIndex = props.dataSetting.findIndex(ele => ele.key === newKey)
 
       emits('change-sort-order', _oldIndex, _newIndex)
+    }
+  });
+  const el3 = simpleTableSequence?.value
+  
+  Sortable.create(el3, {
+    animation: 180,
+    delay: 0,
+    onEnd: (evt) => {
+      const oldIndex = evt.oldIndex;
+      const newIndex = evt.newIndex;
+      if (oldIndex === undefined || newIndex === undefined) return
+      emits('change-sequence', oldIndex, newIndex)
     }
   });
 }
@@ -314,21 +322,21 @@ function updateIsAdvancedSetting(val: boolean) {
   width: 100%;
 }
 
-.simple-table-order {
+.simple-table-sequence {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 10px;
   padding: 5px;
 
-  .simple-table-order-item {
+  .simple-table-sequence-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding-left: 2px;
+    padding: 8px 0 8px 5px;
     box-shadow: 2px 2px 5px 0px rgba(0, 0, 0, 0.1);
   }
 
-  .simple-table-order-item:hover {
+  .simple-table-sequence-item:hover {
     box-shadow: 2px 2px 5px 0px rgba(0, 0, 0, 0.3);
   }
 }
