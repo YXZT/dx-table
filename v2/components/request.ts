@@ -132,6 +132,7 @@ const simpleColumns = [
     key: 'age',
     align: 'right',
     sorter: true,
+    isShow:false,
   },
   {
     title: 'Address',

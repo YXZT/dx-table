@@ -102,6 +102,7 @@ function useTableConfig({ tableProps, loadDataFn }: pageChangeType) {
       const newCol: columnSetting = {
         ...col,
         isShow: col.isShow ?? true,
+        _isShow: col.isShow ?? true,
         fixed: col.fixed ?? 'none',
         resizable: col.resizable ?? true,
         order: col.order ?? index,
@@ -188,6 +189,7 @@ function useTableConfig({ tableProps, loadDataFn }: pageChangeType) {
       const newCol: columnSetting = {
         ...col,
         isShow: col.isShow ?? true,
+        _isShow: col.isShow ?? true,
         fixed: col.fixed ?? 'none',
         resizable: col.resizable ?? true,
         order: col.order ?? index,

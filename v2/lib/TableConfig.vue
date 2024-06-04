@@ -17,11 +17,28 @@
       <n-drawer-content>
         <n-tabs type="line" animated>
           <n-tab-pane name="表格列设置" tab="表格列设置" display-directive="show">
+            <div class="s-flex-between">
+              <div>
+                <n-button quaternary type="info" @click="colShowDefault">
+                  默认设置
+                </n-button>|
+                <n-button quaternary type="info" @click="colShowAll">
+                  全选
+                </n-button>|
+                <n-button quaternary type="info" @click="colNotShowAll">
+                  全不选
+                </n-button>
+              </div>
+              <n-checkbox :checked="tableConfig.isAdvancedSetting" :on-update-checked="updateIsAdvancedSetting">
+                高级设置
+              </n-checkbox>
+            </div>
             <n-data-table ref="dataTable" :bordered="false" :single-line="false" :columns="columnsSettingColumns"
               :data="dataSetting" :rowProps="rowProps" size="small" v-show="tableConfig.isAdvancedSetting" />
-            <div v-show="!tableConfig.isAdvancedSetting"  class="simple-table-sequence" ref="simpleTableSequence">
+            <div v-show="!tableConfig.isAdvancedSetting" class="simple-table-sequence" ref="simpleTableSequence">
               <div v-for="(item) in dataSetting" :key="item.titleString" class="simple-table-sequence-item">
-                <n-checkbox :checked="item.isShow" :on-update:checked="(e: any) => changeColShow(e, item)">{{ item.titleString }}</n-checkbox>
+                <n-checkbox :checked="item.isShow" :on-update:checked="(e: any) => changeColShow(e, item)">{{
+        item.titleString }}</n-checkbox>
               </div>
             </div>
           </n-tab-pane>
@@ -52,9 +69,7 @@
             </i>
           </n-tab-pane>
           <template #suffix>
-            <n-checkbox :checked="tableConfig.isAdvancedSetting" :on-update-checked="updateIsAdvancedSetting">
-              高级设置
-            </n-checkbox>
+
             <!-- 尽量不要在处理单据时修改表格配置，因为可能会造成未保存的数据丢失的情况 -->
             <n-button size="small" @click="resetConf">
               重置
@@ -208,8 +223,6 @@ const tableEl = computed(() => {
 })
 // todo完善类型
 function changeColShow(e: any, col: columnSetting) {
-  console.log(e,col);
-  
   const newCol = { ...col }
   newCol.isShow = e
   emits('change-show', newCol)
@@ -268,7 +281,7 @@ function columnDrop() {
     }
   });
   const el3 = simpleTableSequence?.value
-  
+
   Sortable.create(el3, {
     animation: 180,
     delay: 0,
@@ -309,7 +322,29 @@ function updateIsAdvancedSetting(val: boolean) {
   tableConfig.value.isAdvancedSetting = val
   setTableConfig(tableConfig)
 }
-
+function colShowDefault() {
+  props.dataSetting.forEach(ele => {
+    if (ele._isShow) {
+      ele.isShow = true
+      emits('change-show', ele)
+    } else {
+      ele.isShow = false
+      emits('change-show', ele)
+    }
+  })
+}
+function colShowAll() {
+  props.dataSetting.forEach(ele => {
+    ele.isShow = true
+    emits('change-show', ele)
+  })
+}
+function colNotShowAll() {
+  props.dataSetting.forEach(ele => {
+    ele.isShow = false
+    emits('change-show', ele)
+  })
+}
 </script>
 <style scoped lang="scss">
 .table-title {

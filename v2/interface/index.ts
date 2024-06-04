@@ -34,6 +34,7 @@ export type ColumnProps = Omit<NonNullable<TableColumn>,'sorter'|'sortOrder'|'fi
 export type ColumnsProps = Array<ColumnProps>
 export type columnSetting = Omit<NonNullable<TableColumn>,'sorter'|'sortOrder'|'fixed'> & {
   isShow: boolean,
+  _isShow: boolean, // 默认是否显示
   key: string | number,
   fixed: "left" | "right" | "none",
   order: number,
