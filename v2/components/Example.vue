@@ -8,15 +8,15 @@
           :style="{ height: `400px` }" :scroll-x="1400" row-key="key1" v-model:checked-row-keys="checkedRowKeys"
           v-model:checkedRows="checkedRows" ref="table1">
           <template #num="{ row, index }">
-            <s-input :value="row.num" :on-update-value="($event) => updateValueNum($event, index)"
-              :isEdit="isEdit"></s-input>
+            <s-input-number :value="row.num" :on-update-value="($event) => updateValueNum($event, index)"
+              :isEdit="isEdit"></s-input-number>
           </template>
           <template #role="{ row, index }">
             <s-select :value="row.role" :on-update-value="(value, option) => updateValueRole(value, option, index)"
               :options="roleOptions" :isEdit="isEdit" :label="row.roleName"></s-select>
           </template>
           <template #email="{ row,index }">
-            <n-input @click="showModal($event, row, index)" :value="row.email" class="all-ground"></n-input>
+            <s-input @click="showModal($event, row, index)" :value="row.email" :isEdit="isEdit"/>
           </template>
         </DxTable>
         <s-modal v-model:show-modal-select="showModalSelect" v-model:show-modal-select-left="showModalSelectLeft"
@@ -54,6 +54,7 @@
 import { ref, watch } from "vue";
 import DxTable from "../lib/DxTable.vue";
 import TableSearch from "../lib/TableSearch.vue";
+import SInputNumber from "../lib/SInputNumber.vue";
 import SInput from "../lib/SInput.vue";
 import SSelect from "../lib/SSelect.vue";
 import SModal from "../lib/SModal.vue";

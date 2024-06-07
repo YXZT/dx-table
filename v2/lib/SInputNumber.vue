@@ -1,24 +1,45 @@
 <script setup lang='ts'>
 import type { tableConfigType } from '@/interface';
-import { NInput } from 'naive-ui'
-import type { InputProps } from 'naive-ui'
+import { NInputNumber } from 'naive-ui'
+import type { InputNumberProps } from 'naive-ui'
 import { computed, useAttrs,inject, nextTick } from 'vue';
 
-interface myPropType extends  /* @vue-ignore */ InputProps {
+interface myPropType extends  /* @vue-ignore */ InputNumberProps {
   isEdit?: boolean,
 }
 const attrs = useAttrs()
 
 defineProps<myPropType>()
 
-type otherPropsType = Pick<myPropType, 'size'| 'placeholder'>
+type otherPropsType = Pick<myPropType, 'precision' | 'size' | 'showButton' | 'clearable' | 'placeholder' | 'format' | 'parse' | 'keyboard'>
 
 // 接收注入tableConfig
 const tableConfig: tableConfigType = inject('tableConfig') || {}
 
+const format = (value: number | null) => {
+  if (value === null) return "";
+  if (tableConfig.moneySplit) {
+    return value.toLocaleString('en-US')
+  } else {
+    return value + "";
+  }
+};
+
+const parse = (input: string) => {
+  const nums = input.replace(/,/g, '').trim()
+  if (/^\d+(\.(\d+)?)?$/.test(nums)) return Number(nums)
+  return nums === '' ? null : Number.NaN
+}
+
 const otherProps: otherPropsType = {
+  precision: 2,
   size: 'small',
+  showButton: false,
+  clearable: false,
+  keyboard: { ArrowUp:false, ArrowDown:false },
   placeholder: '',
+  format,
+  parse,
 }
 const thisAttrs = computed(() => {
   return {
@@ -36,7 +57,7 @@ const thisAttrs = computed(() => {
 </script>
 
 <template>
-  <NInput v-bind="thisAttrs" class="all-ground" v-if="isEdit" />
+  <NInputNumber v-bind="thisAttrs" class="all-ground" v-if="isEdit" />
   <template v-else>
     {{ attrs.value }}
   </template>

@@ -6,7 +6,7 @@ interface myPropType extends  /* @vue-ignore */ SelectProps {
   isEdit?: boolean,
   label: any,
 }
-defineProps<myPropType>()
+const props = defineProps<myPropType>()
 
 type otherPropsType = Pick<myPropType, 'size' | 'placeholder' | 'filterable'>
 
@@ -21,6 +21,7 @@ const thisAttrs = computed(() => {
   return {
     ...otherProps,
     ...attrs,
+    label: props.label
   }
 })
 
@@ -28,7 +29,7 @@ const thisAttrs = computed(() => {
 <template>
   <n-select v-bind="thisAttrs" class="all-ground" v-if="isEdit" :persistent="false"></n-select>
   <template v-else>
-    {{ label }}
+    {{ thisAttrs.label }}
   </template>
 </template>
 
