@@ -13,6 +13,7 @@ import useTableSelect from '../hooks/tableSelect'
 import useTableFocus from '../hooks/tableFocus'
 import { useDropDown } from '@/hooks/tableDropdown'
 import { getPageModalCount } from '../utils/globalStore'
+import useTableExport from '../hooks/tableExport'
 
 import { computed, inject, onActivated, provide, ref, watch } from 'vue';
 import type { RowData } from 'naive-ui/es/data-table/src/interface';
@@ -200,9 +201,16 @@ onActivated(() => {
 defineExpose({
   refresh
 })
+
+let { exportExcel } = useTableExport()
+
+function handleExport() {
+  // exportExcel(obj)
+}
 </script>
 <template>
   <div @click="toggleFocus">切换focus</div>
+  <div @click="handleExport">导出</div>
   <div :class="{ 'bg-focus': isFocus }" @click="handleFocus">
     <TableConfig :tableRef="dataTable" :dataSetting="localColums" :sortData="localSearchSort" @change-show="changeCol"
       @change-ellipsis="changeCol" @change-sequence="changeSequence" @change-sort-order="changeSortOrder"

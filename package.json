@@ -21,7 +21,8 @@
     "unplugin-element-plus": "^0.7.1",
     "unplugin-vue-components": "^0.24.1",
     "vue": "^3.3.4",
-    "vue-hooks-plus": "1.6.0-alpha.8"
+    "vue-hooks-plus": "1.6.0-alpha.8",
+    "xlsx": "^0.18.5"
   },
   "devDependencies": {
     "@rushstack/eslint-patch": "^1.2.0",
