@@ -15,14 +15,14 @@
             <s-select :value="row.role" :on-update-value="(value, option) => updateValueRole(value, option, index)"
               :options="roleOptions" :isEdit="isEdit" :label="row.roleName"></s-select>
           </template>
-          <template #email="{ row,index }">
-            <s-input @click="showModal($event, row, index)" :value="row.email" :isEdit="isEdit"/>
+          <template #email="{ row, index }">
+            <s-input @click="showModal($event, row, index)" :value="row.email" :isEdit="isEdit" />
           </template>
         </DxTable>
-        <s-modal v-model:show-modal-select="showModalSelect" v-model:show-modal-select-left="showModalSelectLeft"
-          v-model:show-modal-select-top="showModalSelectTop">
-          <n-select v-model:value="value" :options="options" show-on-focus filterable :on-update:value="setTableValue"/>
-        </s-modal>
+        <table-modal>
+          <n-select v-model:value="value" :options="options" show-on-focus filterable
+            :on-update:value="setTableValue" />
+        </table-modal>
         {{ checkedRows }}
         <n-button @click="isEdit = !isEdit">切换</n-button>
         <n-card embedded :bordered="false">
@@ -57,7 +57,6 @@ import TableSearch from "../lib/TableSearch.vue";
 import SInputNumber from "../lib/SInputNumber.vue";
 import SInput from "../lib/SInput.vue";
 import SSelect from "../lib/SSelect.vue";
-import SModal from "../lib/SModal.vue";
 import { NTabs, NTabPane, NCard, NButton, NSelect } from "naive-ui";
 import { simpleColumns, simpleData, mockRequest, mockColumns, roleOptions } from "./request";
 import type { searchFormType } from "@/interface";
@@ -202,12 +201,9 @@ const isEdit = ref(true);
 
 
 const {
-  showModalSelect,
-  showModalSelectLeft,
-  showModalSelectTop,
   showModal,
   closeModal,
-  NInput
+  tableModal,
 } = useTableModal()
 
 const value = ref(null)
@@ -268,9 +264,9 @@ const options = [
     value: 'song12'
   }
 ]
-function setTableValue(val:any) {
+function setTableValue(val: any) {
   closeModal(({ row, index }) => {
-    if(index=== undefined || !data.value[index]) return
+    if (index === undefined || !data.value[index]) return
     data.value[index].email = val
   })
 }

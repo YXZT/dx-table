@@ -1,5 +1,5 @@
-import { ref, toRaw, unref, watch } from "vue"
-import { NInput } from "naive-ui";
+import { defineComponent, h, ref, toRaw, watch } from "vue"
+import SModal from "../lib/SModal.vue";
 
 function useTableModal() {
   const tableOriginRow = ref()
@@ -11,7 +11,7 @@ function useTableModal() {
   const showModalSelectTop = ref(0)
 
 
-  function showModal(e: any,row:any,index:number) {
+  function showModal(e: any, row: any, index: number) {
     showModalSelect.value = true
     // 记录
     trigger.value = e.target
@@ -35,13 +35,28 @@ function useTableModal() {
       closeModal()
     }
   })
+  const tableModal = defineComponent({
+    setup(props, { slots }) {
+      return () => h(SModal, {
+        'show-modal-select': showModalSelect.value,
+        'show-modal-select-left': showModalSelectLeft.value,
+        'show-modal-select-top': showModalSelectTop.value,
+        'onUpdate:showModalSelect': (val: boolean) => {
+          showModalSelect.value = val
+        },
+        'onUpdate:showModalSelectLeft': (val: number) => {
+          showModalSelectLeft.value = val
+        },
+        'onUpdate:showModalSelectTop': (val: number) => {
+          showModalSelectTop.value = val
+        }
+      }, slots)
+    },
+  })
   return {
-    showModalSelect,
-    showModalSelectLeft,
-    showModalSelectTop,
     showModal,
     closeModal,
-    NInput,
+    tableModal
   }
 }
 
