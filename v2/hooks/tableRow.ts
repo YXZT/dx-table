@@ -53,6 +53,7 @@ function useTableRow({ tableData, tableProps }: tableRowFocusType) {
     }
     if(curentTd){
       curentTd.querySelector('input')?.focus()
+      curentTd.querySelector('input')?.click()
     }
   }
   /**
