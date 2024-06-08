@@ -25,6 +25,7 @@
         </table-modal>
         {{ checkedRows }}
         <n-button @click="isEdit = !isEdit">切换</n-button>
+        <n-button @click="exportExcel">导出</n-button>
         <n-card embedded :bordered="false">
           基于Naive UI的数据表格Data
           Table组件，使用属性透传保留了原本的有的功能，在此基础上做了一些功能扩展。增加了列顺序、列显隐、列固定的自定义配置，为了让程序正确识别，需要在colums中设置列的key，不能重复。
@@ -183,7 +184,7 @@ const searchData = ref({
   userStatus: null,
   createTime: null,
 });
-
+// todo 自定义的组件没有导出type
 const table1 = ref();
 
 const showMoreSearch = () => {
@@ -206,6 +207,10 @@ const {
   closeModal,
   tableModal,
 } = useTableModal()
+
+function exportExcel(){
+  table1.value.handleExport('普通表格')
+}
 
 const value = ref(null)
 const options = [

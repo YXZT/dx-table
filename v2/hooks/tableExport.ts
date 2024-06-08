@@ -2,84 +2,35 @@ import type { Ref } from 'vue';
 import * as XLSX from 'xlsx';
 
 interface excelType {
-  json: object;
-  name: string;
-  titleArr: string[];
-  sheetName: string;
+  data: Array<any>;
+  tHeader: Array<string>;
+  filterVal: Array<any>;
+  filename: string;
 }
 function useTableExport() {
-  
-
-  const exportExcel = (params: excelType) => {
-    const keyArray = [];
-    const data = [];
-    const getLength = function (obj: object) {
-      let count = 0;
-      for (const i in obj) {
-        if (Object.prototype.hasOwnProperty.call(obj, i)) {
-          count++;
-        }
-      }
-      return count;
-    };
-
-
-    for (const key1 in params.json) {
-      if (Object.prototype.hasOwnProperty.call(params.json, key1)) {
-        const element = (params.json as { [key: string]: object })[key1];
-        const rowDataArray = [];
-        for (const key2 in element) {
-          if (Object.prototype.hasOwnProperty.call(element, key2)) {
-            const element2 = (element as { [key: string]: object })[key2];
-            rowDataArray.push(element2);
-            if (keyArray.length < getLength(element)) {
-              keyArray.push(key2);
-            }
-          }
-        }
-        data.push(rowDataArray);
-      }
+  function exportExcel(opt:excelType) {
+    const { data, tHeader, filterVal, filename } = opt;
+    if (!data) {
+      throw new Error("data必须是返回promise的函数或者结果的数组");
     }
-    data.splice(0, 0, keyArray as any, params.titleArr as any);
-    const ws = XLSX.utils.aoa_to_sheet(data);
-    const wb = XLSX.utils.book_new();
-    // 隐藏英文字段表头
-    const wsrows = [{ hidden: true }];
-    /* 设置worksheet每列的最大宽度 */
-    const colWidth = data.map((row) =>
-      row.map((val) => {
-        /* 先判断是否为null/undefined */
-        if (val == null) {
-          return {
-            wch: 20,
-          };
-        } else if (val.toString().charCodeAt(0) > 255) {
-          /* 再判断是否为中文 */
-          return {
-            wch: val.toString().length * 2,
-          };
-        } else {
-          return {
-            wch: val.toString().length * 2,
-          };
-        }
-      })
-    );
-    /* 以第一行为初始值 */
-    const result = colWidth[0];
-    for (let i = 1; i < colWidth.length; i++) {
-      for (let j = 0; j < colWidth[i].length; j++) {
-        if (result[j].wch < colWidth[i][j].wch) {
-          result[j].wch = colWidth[i][j].wch;
-        }
-      }
-    }
-    ws['!cols'] = result;
-    ws['!rows'] = wsrows; // ws - worksheet
-    XLSX.utils.book_append_sheet(wb, ws, params.sheetName);
-    /* generate file and send to client */
-    XLSX.writeFile(wb, `${params.name}.xlsx`);
-  };
+    import("../utils/Export2Excel").then((excel) => {
+      const formatData = formatJson(filterVal, data);
+      excel.export_json_to_excel({
+        header: tHeader, // 表头 必填
+        data: formatData, // 具体数据 必填
+        filename: filename || "excel-list", // 非必填
+        autoWidth: true, // 非必填
+        bookType: "xlsx" // 非必填
+      });
+    });
+  }
+  function formatJson(filterVal: any[], tableData: any[]) {
+    return tableData.map((v: { [x: string]: any; }) => {
+      return filterVal.map((j: string | number) => {
+        return v[j];
+      });
+    });
+  }
   return {
     exportExcel
   }

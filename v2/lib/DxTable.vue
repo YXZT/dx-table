@@ -198,19 +198,29 @@ onActivated(() => {
   }
 })
 
-defineExpose({
-  refresh
-})
 
 let { exportExcel } = useTableExport()
 
-function handleExport() {
-  // exportExcel(obj)
+function handleExport({filename}: {filename: string}) {
+  const obj = {
+    data: tableData.value,
+    tHeader: localColums.value.map(ele=>ele.titleString||''),
+    filterVal: localColums.value.map(ele=>{
+      return ele.key
+    }),
+    filename: filename
+  }
+  return exportExcel(obj)
 }
+
+defineExpose({
+  refresh,
+  handleExport
+})
+
 </script>
 <template>
   <div @click="toggleFocus">切换focus</div>
-  <div @click="handleExport">导出</div>
   <div :class="{ 'bg-focus': isFocus }" @click="handleFocus">
     <TableConfig :tableRef="dataTable" :dataSetting="localColums" :sortData="localSearchSort" @change-show="changeCol"
       @change-ellipsis="changeCol" @change-sequence="changeSequence" @change-sort-order="changeSortOrder"
