@@ -180,6 +180,7 @@ const listenFlag = () => {
 const {
   startListening,
   stopListening,
+  scrollToRow
 } = useKeyboardControl({ dataTable, tableData, setCurrentFocusRow, currentFocusRowIndex, selectToggleRow, tableCheck, listenFlag })
 
 watch(loadFlag, (val) => {
@@ -212,10 +213,17 @@ function handleExport({filename}: {filename: string}) {
   }
   return exportExcel(obj)
 }
+// 高亮并定位某一无效行
+function setInvalidRow(index:number){
+  setCurrentFocusRow({index})
+  scrollToRow()
+}
 
 defineExpose({
   refresh,
-  handleExport
+  handleExport,
+  loadDataCb,
+  setInvalidRow
 })
 
 </script>
