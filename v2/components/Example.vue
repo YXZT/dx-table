@@ -208,7 +208,7 @@ const {
 } = useTableModal()
 
 function exportExcel(){
-  table1.value.handleExport('普通表格')
+  table1.value.handleExport({fileName:'普通表格'})
 }
 // 模态框选择测试
 const value = ref(null)

@@ -202,16 +202,16 @@ onActivated(() => {
 
 let { exportExcel } = useTableExport()
 
-function handleExport({filename}: {filename: string}) {
+function handleExport({fileName}: {fileName: string}) {
   const obj = {
     data: tableData.value,
     tHeader: localColums.value.map(ele=>ele.titleString||''),
     filterVal: localColums.value.map(ele=>{
       return ele.key
     }),
-    filename: filename
+    fileName: fileName
   }
-  return exportExcel(obj)
+  return exportExcel(obj,localColums.value)
 }
 // 高亮并定位某一无效行
 function setInvalidRow(index:number){

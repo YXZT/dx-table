@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import Example from "./components/Example.vue";
-import { NConfigProvider } from "naive-ui";
+import { NConfigProvider,NModalProvider } from "naive-ui";
 const themeOverrides = {
   common: {
     primaryColor: '#238EFE',
@@ -21,7 +21,9 @@ const themeOverrides = {
 
 <template>
   <n-config-provider :theme-overrides="themeOverrides">
-    <Example />
+    <n-modal-provider>
+      <Example />
+    </n-modal-provider>
   </n-config-provider>
 </template>
 
