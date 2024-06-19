@@ -30,7 +30,7 @@ function useTableRow({ tableData, tableProps }: tableRowFocusType) {
   const currentFocusRow = ref<RowData>()
   const currentFocusRowKey = ref<number | null>()
   const currentFocusRowIndex = ref<number | null>(null)
-  const rowKey = tableProps.rowKey || 'id'
+  const rowKey = tableProps.rowKey || '_X_ROW_KEY'
   const clickRowFn = ref<(row: RowData) => void>(() => { })
 
   const setCurrentFocusRow: setCurrentFocusRowType = ({ setKey, index , curentTd}) => {

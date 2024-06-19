@@ -113,6 +113,11 @@ const simpleColumns = [
     // multiple: false,
   },
   {
+    title: '用户编码',
+    key: 'userId',
+    sorter: true,
+  },
+  {
     title: 'Name',
     key: 'name',
     sorter: true,
@@ -181,6 +186,7 @@ const simpleColumns = [
 const simpleData = Mock.mock({
   'list|100': [{
     'key1|+1': 1,
+    'userId|+1': 1001,
     'name': "@cname",
     "age|1-100": 1,
     "address": "@province" + "@city" + "@county",

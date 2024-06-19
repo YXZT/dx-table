@@ -28,12 +28,12 @@ function useTableSelect({ tableData, tableProps, checkedRowKeys }: tableSelectTy
    * 这个表格要的是多选还是单选
    */
   const tableCheck = ref<tableCheckType>('radio')
-  const rowKey = tableProps.rowKey || 'id'
+  const rowKey = tableProps.rowKey || '_X_ROW_KEY'
 
   const updateRowKeys: DataTableProps['onUpdate:checkedRowKeys'] = (_rowKeys, _rows, meta) => {
     if (meta.action === 'checkAll') {
       const data = [...tableData.value]
-      const keys = data.map((dataRow: any) => dataRow[tableProps.rowKey || 'id'])
+      const keys = data.map((dataRow: any) => dataRow[tableProps.rowKey || '_X_ROW_KEY'])
       changeRowKeys(keys)
     } else if (meta.action === 'uncheckAll') {
       changeRowKeys([])

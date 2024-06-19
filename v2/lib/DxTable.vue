@@ -34,7 +34,6 @@ interface tablePropType extends /* @vue-ignore */ Omit<DataTableProps, 'columns'
 }
 
 const props = withDefaults(defineProps<tablePropType>(), {
-  rowKey: 'id',
   needStore: true,
   immediateRequest: true,
   needInfinite: false,
@@ -226,9 +225,9 @@ function autoFillKey() {
   let recordKeyId = 1
   watch(()=>tableData.value.length,()=>{
     for(let i=0;i<tableData.value.length;i++){
-      if(!tableData.value[i].id){
+      if(!tableData.value[i]._X_ROW_KEY){
         // 设置一个key
-        tableData.value[i].id = recordKeyId
+        tableData.value[i]._X_ROW_KEY = recordKeyId
         recordKeyId++
       }
     }

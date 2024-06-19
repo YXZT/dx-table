@@ -70,7 +70,9 @@ function useTableConfig({ tableProps, loadDataFn }: pageChangeType) {
     const rowKey = tableProps.rowKey || 'key'
     tableRowKey = tableProps.rowKey ? (row: any) => {
       return row[rowKey]
-    } : undefined
+    } : (row: any) => {
+      return row['_X_ROW_KEY']
+    }
     return tableRowKey
   }
   function extractConfiguration(colums: columnsSetting, columsConfig: columnsSetting) {
@@ -138,6 +140,7 @@ function useTableConfig({ tableProps, loadDataFn }: pageChangeType) {
     }
   }
   function init() {
+    // todo 新增一列 列配置产生问题
     const storageString = initNeedStorage()
     const tableRowKey = initRowKey()
     const localColums = initColums()
