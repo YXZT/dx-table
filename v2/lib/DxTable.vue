@@ -222,13 +222,17 @@ function setInvalidRow(index:number){
 // 功能 自动填入表格key
 function autoFillKey() {
   if(!props.autoKey) return
-  let recordKeyId = 1
-  watch(()=>tableData.value.length,()=>{
+  let _X_ROW_RECORD = {
+    recordKeyIndex: 1
+  }
+  watch(()=>tableData.value,()=>{
     for(let i=0;i<tableData.value.length;i++){
       if(!tableData.value[i]._X_ROW_KEY){
         // 设置一个key
-        tableData.value[i]._X_ROW_KEY = recordKeyId
-        recordKeyId++
+        tableData.value[i]._X_ROW_KEY = _X_ROW_RECORD.recordKeyIndex
+        // 保存一个引用地址，要改的时候可以所有行一起改
+        tableData.value[i]._X_ROW_RECORD = _X_ROW_RECORD
+        _X_ROW_RECORD.recordKeyIndex ++ 
       }
     }
   },{

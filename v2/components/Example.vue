@@ -35,8 +35,12 @@
       </n-tab-pane>
       <n-tab-pane :name="2" tab="动态编辑">
         <DxTable :columns="columns" :data="data" virtual-scroll storeName="test_table2" flex-height
-          :style="{ height: `400px` }" :scroll-x="1400" ref="table2"
-          v-model:checked-row-keys="checkedRowKeys" v-model:checkedRows="checkedRows" autoKey>
+          :style="{ height: `400px` }" :scroll-x="1400" ref="table2" v-model:checked-row-keys="checkedRowKeys"
+          v-model:checkedRows="checkedRows" autoKey>
+          <template #userId="{ row, index }">
+            <s-input :value="row.userId" :on-update-value="($event) => updateValueId($event, index)" :isEdit="isEdit"
+              @change="updateRow(row, index)" />
+          </template>
           <template #num="{ row, index }">
             <s-input-number :value="row.num" :on-update-value="($event) => updateValueNum($event, index)"
               :isEdit="isEdit"></s-input-number>
@@ -56,7 +60,7 @@
       </n-tab-pane>
       <n-tab-pane :name="3" tab="异步获取">
         <dx-table :columns="columns" :request="request" virtual-scroll :style="{ height: `400px` }" flex-height
-          :scroll-x="1400" storeName="test_table3" is-pagination row-key="id"/>
+          :scroll-x="1400" storeName="test_table3" is-pagination row-key="id" />
         <n-card embedded :bordered="false">
           实际工作中数据往往是异步函数返回的，这时可以传入返回promise的异步函数request来代替原本的data，组件内部会处理返回的请求。节省代码的代价就是失去了自由度，因为返回的格式数据是每个公司不一定的，可以根据实际需要自己修改。
         </n-card>
@@ -91,7 +95,7 @@ const data = ref<any[]>([]);
 const columns = ref();
 const request = ref();
 
-const { generateBlankLine } = useTableRowData({tags:[]})
+const { generateBlankLine, fillRow } = useTableRowData({ tags: [], userId: null })
 
 const checkedRowKeys = ref<Array<string | number>>([]);
 const checkedRows = ref<Array<any>>([]);
@@ -314,6 +318,15 @@ function validTableData() {
     }
   }
 }
+// 动态增加行功能
+function updateRow(row: any, index: number) {
+  fillRow(data.value, index, row)
+}
+const updateValueId = (e: string, index: number) => {
+  data.value[index].userId = e;
+};
+
+
 </script>
 
 <style scoped lang="scss">
