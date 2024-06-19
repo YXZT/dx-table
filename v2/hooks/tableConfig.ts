@@ -218,7 +218,6 @@ function useTableConfig({ tableProps, loadDataFn }: pageChangeType) {
     localColums.value[index].width = limitedWidth
     storageString && setConf()
   }
-
   return {
     init,
     initNeedStorage,

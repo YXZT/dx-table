@@ -33,6 +33,27 @@
           刷新网页后配置就丢失了怎么行！只要给每个表格一个独特的store-name就可以找到啦。
         </n-card>
       </n-tab-pane>
+      <n-tab-pane :name="2" tab="动态编辑">
+        <DxTable :columns="columns" :data="data" virtual-scroll storeName="test_table2" flex-height
+          :style="{ height: `400px` }" :scroll-x="1400" ref="table2"
+          v-model:checked-row-keys="checkedRowKeys" v-model:checkedRows="checkedRows" autoKey>
+          <template #num="{ row, index }">
+            <s-input-number :value="row.num" :on-update-value="($event) => updateValueNum($event, index)"
+              :isEdit="isEdit"></s-input-number>
+          </template>
+          <template #role="{ row, index }">
+            <s-select :value="row.role" :on-update-value="(value, option) => updateValueRole(value, option, index)"
+              :options="roleOptions" :isEdit="isEdit" :label="row.roleName"></s-select>
+          </template>
+          <template #email="{ row, index }">
+            <s-input @click="showModal($event, row, index)" :value="row.email" :isEdit="isEdit" />
+          </template>
+        </DxTable>
+        {{ checkedRows }}
+        <n-card embedded :bordered="false">
+          表格行动态添加
+        </n-card>
+      </n-tab-pane>
       <n-tab-pane :name="3" tab="异步获取">
         <dx-table :columns="columns" :request="request" virtual-scroll :style="{ height: `400px` }" flex-height
           :scroll-x="1400" storeName="test_table3" is-pagination />
@@ -63,11 +84,14 @@ import { NTabs, NTabPane, NCard, NButton, NSelect } from "naive-ui";
 import { simpleColumns, simpleData, mockRequest, mockColumns, roleOptions } from "./request";
 import type { searchFormType } from "@/interface";
 import useTableModal from '../hooks/tableModal'
+import useTableRowData from '../hooks/tableRowData'
 
 let type = ref(1);
 const data = ref<any[]>([]);
 const columns = ref();
 const request = ref();
+
+const { generateBlankLine } = useTableRowData({tags:[]})
 
 const checkedRowKeys = ref<Array<string | number>>([]);
 const checkedRows = ref<Array<any>>([]);
@@ -78,6 +102,10 @@ watch(
       data.value = simpleData;
       request.value = null;
       columns.value = simpleColumns;
+    } if (val === 2) {
+      data.value = generateBlankLine(3)
+      request.value = null;
+      columns.value = simpleColumns.slice(2);
     } else if (val === 3) {
       data.value = [];
       request.value = mockRequest;
@@ -207,8 +235,8 @@ const {
   tableModal,
 } = useTableModal()
 
-function exportExcel(){
-  table1.value.handleExport({fileName:'普通表格'})
+function exportExcel() {
+  table1.value.handleExport({ fileName: '普通表格' })
 }
 // 模态框选择测试
 const value = ref(null)
@@ -276,10 +304,10 @@ function setTableValue(val: any) {
   })
 }
 // 表格验证测试
-function validTableData(){
-  for(let i = 0; i < data.value.length; i++){
+function validTableData() {
+  for (let i = 0; i < data.value.length; i++) {
     const hasSetEmail = data.value[i].email
-    if(!hasSetEmail){
+    if (!hasSetEmail) {
       window.alert(`请设置第${i + 1}行的邮箱`)
       table1.value.setInvalidRow(i)
       break;

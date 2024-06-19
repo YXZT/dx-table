@@ -30,6 +30,7 @@ interface tablePropType extends /* @vue-ignore */ Omit<DataTableProps, 'columns'
   storeName?: string,
   checkedRowKeys?: DataTableProps['checkedRowKeys'],
   checkedRows?: Array<any>,
+  autoKey?: boolean,
 }
 
 const props = withDefaults(defineProps<tablePropType>(), {
@@ -39,6 +40,7 @@ const props = withDefaults(defineProps<tablePropType>(), {
   needInfinite: false,
   isPagination: true,
   storeName: 'default',
+  autoKey: false,
 })
 const emits = defineEmits(['refreshed', 'update:checkedRowKeys', 'update:checkedRows'])
 
@@ -218,12 +220,29 @@ function setInvalidRow(index:number){
   setCurrentFocusRow({index})
   scrollToRow()
 }
+// 功能 自动填入表格key
+function autoFillKey() {
+  if(!props.autoKey) return
+  let recordKeyId = 1
+  watch(()=>tableData.value.length,()=>{
+    for(let i=0;i<tableData.value.length;i++){
+      if(!tableData.value[i].id){
+        // 设置一个key
+        tableData.value[i].id = recordKeyId
+        recordKeyId++
+      }
+    }
+  },{
+    immediate:true
+  })
+}
+autoFillKey()
 
 defineExpose({
   refresh,
   handleExport,
   loadDataCb,
-  setInvalidRow
+  setInvalidRow,
 })
 
 </script>
