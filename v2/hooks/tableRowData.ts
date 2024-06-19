@@ -1,12 +1,14 @@
 import { nextTick, ref } from "vue";
 
 function useTableRowData(rowModel:any) {
+  let leftLineNum = 0
   /**
    * 生成表格所需要的空白行
    * @param {Number} lineNum 行数
    * @return {Array} 数组
   */
   function generateBlankLine(lineNum = 1) {
+    leftLineNum = lineNum
     const arr = []
     for (let index = 0; index < lineNum; index++) {
       arr.push({
@@ -17,22 +19,53 @@ function useTableRowData(rowModel:any) {
     return arr
   }
   function fillRow(data:any[],index:number,rowData: any) {
-    // todo rowData支持数组
-    const row = { ...rowData }
-    const _X_ROW_RECORD = data[index]._X_ROW_RECORD
-    
-    if (row._isBlank) {
-      delete row._isBlank
+    setCurrentRowData(data,index,rowData)
+    const addRows = checkNeedCreateNewLine(data)
+    if (addRows.length) {
+      console.log('addRows',addRows);
     }
-    // rowData可能是从别的表格带过来的，所以它的_X_ROW_RECORD可能引用地址不一样
-    if (row._X_ROW_RECORD && row._X_ROW_RECORD == _X_ROW_RECORD) {
+  }
+  function setCurrentRowData(data:any[],index:number,rowData: any){
+    // todo rowData支持数组
+    if(Array.isArray(rowData)){
       // 
     }else{
-      row._X_ROW_KEY = _X_ROW_RECORD.recordKeyIndex
-      row._X_ROW_RECORD = _X_ROW_RECORD
-      _X_ROW_RECORD.recordKeyIndex ++
+      const row = Object.assign({}, rowData)
+      const _X_ROW_RECORD = data[index]._X_ROW_RECORD
+      
+      if (row._isBlank) {
+        delete row._isBlank
+      }
+      // rowData可能是从别的表格带过来的，所以它的_X_ROW_RECORD可能引用地址不一样
+      if (row._X_ROW_RECORD && row._X_ROW_RECORD == _X_ROW_RECORD) {
+        // 
+      }else{
+        row._X_ROW_KEY = _X_ROW_RECORD.recordKeyIndex
+        row._X_ROW_RECORD = _X_ROW_RECORD
+        _X_ROW_RECORD.recordKeyIndex ++
+      }
+      data.splice(index, 1 , row)
     }
-    data.splice(index, 1 , row)
+  }
+  /**
+   * 获取最后一个空白行位置，如果小于3，则添加新的行
+   * 如果大于3 删除多余的行
+   * @param {Array} 表格数据
+   */
+  function checkNeedCreateNewLine(arr: any[]) {
+    let index = 0;
+    let addRows = []
+    for (let i = arr.length - 1; i >= 0; i--) {
+      if (arr[i]._isBlank) {
+        index++
+      } else {
+        break;
+      }
+    }
+    if (index < 3) {
+      addRows = generateBlankLine()
+    } 
+    return addRows
   }
   return { generateBlankLine,fillRow }
 }
