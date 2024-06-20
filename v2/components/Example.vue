@@ -95,7 +95,7 @@ const data = ref<any[]>([]);
 const columns = ref();
 const request = ref();
 
-const { generateBlankLine, fillRow } = useTableRowData({ tags: [], userId: null })
+const { generateBlankLine, fillRow } = useTableRowData({ tags: [], userId: null },3)
 
 const checkedRowKeys = ref<Array<string | number>>([]);
 const checkedRows = ref<Array<any>>([]);
@@ -107,7 +107,7 @@ watch(
       request.value = null;
       columns.value = simpleColumns;
     } if (val === 2) {
-      data.value = generateBlankLine(3)
+      data.value = generateBlankLine()
       request.value = null;
       columns.value = simpleColumns.slice(2);
     } else if (val === 3) {

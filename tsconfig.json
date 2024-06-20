@@ -1,5 +1,5 @@
 {
-  "extends": "@vue/tsconfig/tsconfig.web.json",
+  "extends": "@vue/tsconfig/tsconfig.json",
   "include": ["env.d.ts", "v2/**/*", "v2/hooks/*.ts","v2/hooks/*.ts", "v2/**/*.vue", "v2/**/*.tsx"],
   "exclude":["src/**/*"],
   "compilerOptions": {
