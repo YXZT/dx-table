@@ -77,6 +77,7 @@ const { currentFocusRow,
   setCurrentFocusRow,
   setTableCurrent,
   tableRowClass,
+  applyClassName,
   clickRowFn } = useTableRow({ tableProps: props, tableData })
 
 const checkedRowKeysRef = props.checkedRowKeys ? ref(props.checkedRowKeys) : ref([])
@@ -223,7 +224,8 @@ function setInvalidRow(index:number){
 function autoFillKey() {
   if(!props.autoKey) return
   let _X_ROW_RECORD = {
-    recordKeyIndex: 1
+    recordKeyIndex: 1,
+    fillKey: []
   }
   watch(()=>tableData.value,()=>{
     for(let i=0;i<tableData.value.length;i++){
@@ -238,6 +240,13 @@ function autoFillKey() {
   },{
     immediate:true
   })
+  applyClassName.value = (row: RowData,className: string) => {
+    if(row._X_ROW_RECORD.fillKey.includes(row._X_ROW_KEY)){
+      return className ? className + ' table-row-fill': 'table-row-fill'
+    }else{
+      return className
+    }
+  }
 }
 autoFillKey()
 
@@ -272,6 +281,17 @@ defineExpose({
 <style scoped lang='scss'>
 :deep(.cur-focus-row .n-data-table-td) {
   background-color: #cfe8fb !important;
+}
+:deep(.table-row-fill) {
+  animation: fillAnimate 1s;
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes fillAnimate
+{
+  from {box-shadow: 0 0 10px 0px #238EFE;}
+  to {box-shadow: unset;}
 }
 
 :deep(.n-data-table-tr:not(.n-data-table-tr--summary):hover) {

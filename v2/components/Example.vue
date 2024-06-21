@@ -43,14 +43,14 @@
           </template>
           <template #num="{ row, index }">
             <s-input-number :value="row.num" :on-update-value="($event) => updateValueNum($event, index)"
-              :isEdit="isEdit"></s-input-number>
+              :isEdit="isEdit&&!row._isBlank"></s-input-number>
           </template>
           <template #role="{ row, index }">
             <s-select :value="row.role" :on-update-value="(value, option) => updateValueRole(value, option, index)"
-              :options="roleOptions" :isEdit="isEdit" :label="row.roleName"></s-select>
+              :options="roleOptions" :isEdit="isEdit&&!row._isBlank" :label="row.roleName"></s-select>
           </template>
           <template #email="{ row, index }">
-            <s-input @click="showModal($event, row, index)" :value="row.email" :isEdit="isEdit" />
+            <s-input @click="showModal($event, row, index)" :value="row.email" :isEdit="isEdit&&!row._isBlank" />
           </template>
         </DxTable>
         {{ checkedRows }}

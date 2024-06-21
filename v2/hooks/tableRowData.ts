@@ -21,12 +21,14 @@ function useTableRowData(rowModel: any, blankLineNum = 3) {
     setCurrentRowData(data, index, rowData)
     const addRows = checkNeedCreateNewLine(data)
     if (addRows.length) {
-      console.log('addRows', addRows);
-      // 添加的行应该也是空的，考虑改造这个函数
-      setCurrentRowData(data, index, addRows, true)
+      addRows.forEach((row) => {
+        const _X_ROW_RECORD = data[index]._X_ROW_RECORD
+        const _row = setRowKey(_X_ROW_RECORD,row)
+        data.push(_row)
+      })
     }
   }
-  function setCurrentRowData(data: any[], index: number, rowData: any, isAdd: boolean = false) {
+  function setCurrentRowData(data: any[], index: number, rowData: any) {
     // todo rowData支持数组
     let arr = []
     if (Array.isArray(rowData)) {
@@ -35,31 +37,27 @@ function useTableRowData(rowModel: any, blankLineNum = 3) {
       arr = [rowData]
     }
     const fillArr = []
+    const _X_ROW_RECORD = data[index]._X_ROW_RECORD
+    // 清空当前填充项
+    _X_ROW_RECORD.fillKey = []
     for (let i = 0; i < arr.length; i++) {
       const row = arr[i]
-      const _X_ROW_RECORD = data[index]._X_ROW_RECORD
+      _X_ROW_RECORD.fillKey.push(1 + index + i)
 
       if (row._isBlank) {
         delete row._isBlank
       }
       // rowData可能是从别的表格带过来的，所以它的_X_ROW_RECORD可能引用地址不一样
       if (row._X_ROW_RECORD && row._X_ROW_RECORD == _X_ROW_RECORD) {
-        const _row = deepCopy(row)
+        const _row = {...row}
         fillArr.push(_row)
       } else {
         // todo 待观察是否深拷贝成功
-        const _row = deepCopy(row)
-        _row._X_ROW_KEY = _X_ROW_RECORD.recordKeyIndex
-        _row._X_ROW_RECORD = _X_ROW_RECORD
-        _X_ROW_RECORD.recordKeyIndex++
+        const _row = setRowKey(_X_ROW_RECORD,row)
         fillArr.push(_row)
       }
     }
-    if (isAdd) {
-      data.push(...fillArr)
-    } else {
-      data.splice(index, 1, ...fillArr)
-    }
+    data.splice(index, 1, ...fillArr)
   }
   /**
    * 获取最后一个空白行位置，如果小于3，则添加新的行
@@ -80,6 +78,20 @@ function useTableRowData(rowModel: any, blankLineNum = 3) {
       addRows = generateBlankLine(blankLineNum - index)
     }
     return addRows
+  }
+  
+  /**
+   * 给该行赋予自动生成的key
+   * @param _X_ROW_RECORD 行信息(会被改变)
+   * @param row 要添加的行
+   */
+  function setRowKey(_X_ROW_RECORD:any,row:any) {
+    const _row = {...row}
+    _row._X_ROW_KEY = _X_ROW_RECORD.recordKeyIndex
+    
+    _row._X_ROW_RECORD = _X_ROW_RECORD
+    _X_ROW_RECORD.recordKeyIndex++
+    return _row
   }
   return { generateBlankLine, fillRow }
 }

@@ -107,11 +107,21 @@ function useTableRow({ tableData, tableProps }: tableRowFocusType) {
       onClick: (e: Event) => toggleRow(row, e)
     }
   }
-  const tableRowClass = (row: RowData) => {
+  const getClassName = (row: RowData) => {
     if (currentFocusRowKey.value && row[rowKey] === currentFocusRowKey.value) {
       return 'cur-focus-row'
     }
     return ''
+  }
+  // 应用类名的函数
+  const applyClassName = ref((row: RowData,className: string) => {
+    return className
+  })
+  // todo 还需改造，用洋葱模型？
+  // 不能让这个函数独占tableRowClass的返回结果
+  const tableRowClass = (row: RowData) => {
+    const className = getClassName(row)
+    return applyClassName.value(row,className)
   }
   return {
     currentFocusRow,
@@ -120,6 +130,7 @@ function useTableRow({ tableData, tableProps }: tableRowFocusType) {
     tableRowProps,
     setCurrentFocusRow,
     tableRowClass,
+    applyClassName,
     setTableCurrent,
     clickRowFn
   }
