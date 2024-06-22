@@ -255,6 +255,7 @@ defineExpose({
   handleExport,
   loadDataCb,
   setInvalidRow,
+  scrollToRow,
 })
 
 </script>

@@ -49,8 +49,8 @@ function useKeyboardControl(options: optionsType) {
       selectToggleRow(tableData.value[currentFocusRowIndex.value])
     }
   }
-  function scrollToRow() {
-    dataTable?.value?.scrollTo({ index: currentFocusRowIndex.value } as any)
+  function scrollToRow(index?: number) {
+    dataTable?.value?.scrollTo({ index: index ?? currentFocusRowIndex.value } as any)
   }
 
   function startListening() {

@@ -1,5 +1,4 @@
 import { deepCopy } from "@/utils";
-import { nextTick, ref } from "vue";
 
 function useTableRowData(rowModel: any, blankLineNum = 3) {
   /**
@@ -18,7 +17,7 @@ function useTableRowData(rowModel: any, blankLineNum = 3) {
     return arr
   }
   function fillRow(data: any[], index: number, rowData: any) {
-    setCurrentRowData(data, index, rowData)
+    const nextIndex = setCurrentRowData(data, index, rowData)
     const addRows = checkNeedCreateNewLine(data)
     if (addRows.length) {
       addRows.forEach((row) => {
@@ -26,6 +25,9 @@ function useTableRowData(rowModel: any, blankLineNum = 3) {
         const _row = setRowKey(_X_ROW_RECORD,row)
         data.push(_row)
       })
+    }
+    return {
+      nextIndex
     }
   }
   function setCurrentRowData(data: any[], index: number, rowData: any) {
@@ -58,6 +60,7 @@ function useTableRowData(rowModel: any, blankLineNum = 3) {
       }
     }
     data.splice(index, 1, ...fillArr)
+    return index + arr.length
   }
   /**
    * 获取最后一个空白行位置，如果小于3，则添加新的行
@@ -93,7 +96,25 @@ function useTableRowData(rowModel: any, blankLineNum = 3) {
     _X_ROW_RECORD.recordKeyIndex++
     return _row
   }
-  return { generateBlankLine, fillRow }
+  /**
+   * 获取表格数据中非空白行
+   * @param data 表格数据
+   * @returns 过滤之后的表格数据（注意是引用地址）
+   */
+  function getTableFillData(data: any[]){
+    return data.filter(item=>!item._isBlank)
+  }
+  /**
+   * 获取第一个空白行
+   * @param {Array} 表格数据
+   * @return {Number} index
+   */
+  function searchInsert(data: any[]) {
+    return data.findIndex((ele) => {
+      return ele._isBlank === true
+    })
+  }
+  return { generateBlankLine, fillRow, getTableFillData, searchInsert }
 }
 
 export default useTableRowData
