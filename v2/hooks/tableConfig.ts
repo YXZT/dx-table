@@ -93,9 +93,8 @@ function useTableConfig({ tableProps, loadDataFn }: pageChangeType) {
         columsContent[curColIndex] = undefined
       }
     });
-
     columsContent.forEach(col => {
-      if (col) columsResult.push(col)
+      if (col) columsResult.push({...col})
     })
     return columsResult
   }

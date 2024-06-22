@@ -369,6 +369,7 @@ function colNotShowAll() {
     align-items: center;
     padding: 8px 0 8px 5px;
     box-shadow: 2px 2px 5px 0px rgba(0, 0, 0, 0.1);
+    cursor: move;
   }
 
   .simple-table-sequence-item:hover {
