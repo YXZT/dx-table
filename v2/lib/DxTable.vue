@@ -52,7 +52,7 @@ let localPagination = ref({ total: 0, pageSize: 30, pageNum: 1 })
 
 const dataTable = ref<InstanceType<typeof NDataTable> | null>(null)
 
-const { loadData, loadDataCb, loadType } = useTableRequest({ loadFlag, localPagination, tableData: tableData, tableProps: props, dataTable })
+const { loadData, beforeLoadData, loadDataCb, loadType } = useTableRequest({ loadFlag, localPagination, tableData: tableData, tableProps: props, dataTable })
 
 function refresh(reset?: boolean) {
   if (reset) {
@@ -84,15 +84,19 @@ const checkedRowKeysRef = props.checkedRowKeys ? ref(props.checkedRowKeys) : ref
 
 const checkedRowsRef = ref([])
 
-const { updateCheckedRowKeys, updateCheckedRows, updateRowKeys, selectToggleRow, tableCheck } = useTableSelect({ tableData, tableProps: props, checkedRowKeys: checkedRowKeysRef })
+const { updateCheckedRowKeys, updateCheckedRows, updateRowKeys, selectToggleRow, tableCheck, clearRowKeys } = useTableSelect({ tableData, tableProps: props, checkedRowKeys: checkedRowKeysRef })
 
 clickRowFn.value = selectToggleRow
+
+beforeLoadData.value = (options) => {
+}
 
 loadDataCb.value = () => {
   setTableCurrent()
   if (tableCheck.value === 'radio') {
     currentFocusRow.value && selectToggleRow(currentFocusRow.value)
   }
+  clearRowKeys()
 }
 
 updateCheckedRowKeys.value = (rowKeys) => {
@@ -204,46 +208,46 @@ onActivated(() => {
 
 let { exportExcel } = useTableExport()
 
-function handleExport({fileName}: {fileName: string}) {
+function handleExport({ fileName }: { fileName: string }) {
   const obj = {
     data: tableData.value,
-    tHeader: localColums.value.map(ele=>ele.titleString||''),
-    filterVal: localColums.value.map(ele=>{
+    tHeader: localColums.value.map(ele => ele.titleString || ''),
+    filterVal: localColums.value.map(ele => {
       return ele.key
     }),
     fileName: fileName
   }
-  return exportExcel(obj,localColums.value)
+  return exportExcel(obj, localColums.value)
 }
 // 高亮并定位某一无效行
-function setInvalidRow(index:number){
-  setCurrentFocusRow({index})
+function setInvalidRow(index: number) {
+  setCurrentFocusRow({ index })
   scrollToRow()
 }
 // 功能 自动填入表格key
 function autoFillKey() {
-  if(!props.autoKey) return
+  if (!props.autoKey) return
   let _X_ROW_RECORD = {
     recordKeyIndex: 1,
     fillKey: []
   }
-  watch(()=>tableData.value,()=>{
-    for(let i=0;i<tableData.value.length;i++){
-      if(!tableData.value[i]._X_ROW_KEY){
+  watch(() => tableData.value, () => {
+    for (let i = 0; i < tableData.value.length; i++) {
+      if (!tableData.value[i]._X_ROW_KEY) {
         // 设置一个key
         tableData.value[i]._X_ROW_KEY = _X_ROW_RECORD.recordKeyIndex
         // 保存一个引用地址，要改的时候可以所有行一起改
         tableData.value[i]._X_ROW_RECORD = _X_ROW_RECORD
-        _X_ROW_RECORD.recordKeyIndex ++ 
+        _X_ROW_RECORD.recordKeyIndex++
       }
     }
-  },{
-    immediate:true
+  }, {
+    immediate: true
   })
-  applyClassName.value = (row: RowData,className: string) => {
-    if(row._X_ROW_RECORD.fillKey.includes(row._X_ROW_KEY)){
-      return className ? className + ' table-row-fill': 'table-row-fill'
-    }else{
+  applyClassName.value = (row: RowData, className: string) => {
+    if (row._X_ROW_RECORD.fillKey.includes(row._X_ROW_KEY)) {
+      return className ? className + ' table-row-fill' : 'table-row-fill'
+    } else {
       return className
     }
   }
@@ -256,6 +260,7 @@ defineExpose({
   loadDataCb,
   setInvalidRow,
   scrollToRow,
+  clearRowKeys
 })
 
 </script>
@@ -283,16 +288,21 @@ defineExpose({
 :deep(.cur-focus-row .n-data-table-td) {
   background-color: #cfe8fb !important;
 }
+
 :deep(.table-row-fill) {
   animation: fillAnimate 1s;
   position: relative;
   z-index: 1;
 }
 
-@keyframes fillAnimate
-{
-  from {box-shadow: 0 0 10px 0px #238EFE;}
-  to {box-shadow: unset;}
+@keyframes fillAnimate {
+  from {
+    box-shadow: 0 0 10px 0px #238EFE;
+  }
+
+  to {
+    box-shadow: unset;
+  }
 }
 
 :deep(.n-data-table-tr:not(.n-data-table-tr--summary):hover) {

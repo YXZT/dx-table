@@ -22,7 +22,7 @@ function useTableRowData(rowModel: any, blankLineNum = 3) {
     if (addRows.length) {
       addRows.forEach((row) => {
         const _X_ROW_RECORD = data[index]._X_ROW_RECORD
-        const _row = setRowKey(_X_ROW_RECORD,row)
+        const _row = setRowKey(_X_ROW_RECORD, row)
         data.push(_row)
       })
     }
@@ -31,7 +31,6 @@ function useTableRowData(rowModel: any, blankLineNum = 3) {
     }
   }
   function setCurrentRowData(data: any[], index: number, rowData: any) {
-    // todo rowData支持数组
     let arr = []
     if (Array.isArray(rowData)) {
       arr = rowData
@@ -51,11 +50,11 @@ function useTableRowData(rowModel: any, blankLineNum = 3) {
       }
       // rowData可能是从别的表格带过来的，所以它的_X_ROW_RECORD可能引用地址不一样
       if (row._X_ROW_RECORD && row._X_ROW_RECORD == _X_ROW_RECORD) {
-        const _row = {...row}
+        const _row = { ...row }
         fillArr.push(_row)
       } else {
         // todo 待观察是否深拷贝成功
-        const _row = setRowKey(_X_ROW_RECORD,row)
+        const _row = setRowKey(_X_ROW_RECORD, row)
         fillArr.push(_row)
       }
     }
@@ -82,16 +81,16 @@ function useTableRowData(rowModel: any, blankLineNum = 3) {
     }
     return addRows
   }
-  
+
   /**
    * 给该行赋予自动生成的key
    * @param _X_ROW_RECORD 行信息(会被改变)
    * @param row 要添加的行
    */
-  function setRowKey(_X_ROW_RECORD:any,row:any) {
-    const _row = {...row}
+  function setRowKey(_X_ROW_RECORD: any, row: any) {
+    const _row = { ...row }
     _row._X_ROW_KEY = _X_ROW_RECORD.recordKeyIndex
-    
+
     _row._X_ROW_RECORD = _X_ROW_RECORD
     _X_ROW_RECORD.recordKeyIndex++
     return _row
@@ -101,8 +100,8 @@ function useTableRowData(rowModel: any, blankLineNum = 3) {
    * @param data 表格数据
    * @returns 过滤之后的表格数据（注意是引用地址）
    */
-  function getTableFillData(data: any[]){
-    return data.filter(item=>!item._isBlank)
+  function getTableFillData(data: any[]) {
+    return data.filter(item => !item._isBlank)
   }
   /**
    * 获取第一个空白行
@@ -114,7 +113,26 @@ function useTableRowData(rowModel: any, blankLineNum = 3) {
       return ele._isBlank === true
     })
   }
-  return { generateBlankLine, fillRow, getTableFillData, searchInsert }
+  function delRow(data: any[], row: any) {
+    const index = data.findIndex((ele) => {
+      return ele._X_ROW_KEY == row._X_ROW_KEY
+    })
+    if (index >= 0) {
+      data.splice(index, 1)
+    }
+    const addRows = checkNeedCreateNewLine(data)
+    if (addRows.length) {
+      addRows.forEach((row) => {
+        const _X_ROW_RECORD = data[index]._X_ROW_RECORD
+        const _row = setRowKey(_X_ROW_RECORD, row)
+        data.push(_row)
+      })
+    }
+  }
+  function clearAll(data: any[]) {
+    data.splice(0, data.length-blankLineNum);
+  }
+  return { generateBlankLine, fillRow, getTableFillData, searchInsert, delRow, clearAll }
 }
 
 export default useTableRowData

@@ -1,4 +1,4 @@
-import type { ColumnsProps,paginationType, requestFnType } from "@/interface"
+import type { ColumnsProps, paginationType, requestFnType } from "@/interface"
 import type { DataTableProps, NDataTable } from "naive-ui";
 import { ref, type Ref } from "vue";
 interface tablePropType extends /* @vue-ignore */ Omit<DataTableProps, 'columns' | 'rowKey'> {
@@ -19,8 +19,11 @@ type requestType = {
   tableProps: Readonly<tablePropType>,
   dataTable: Readonly<Ref<InstanceType<typeof NDataTable> | null>>,
 }
-function useTableRequest({ loadFlag, localPagination, tableData, tableProps,dataTable }: requestType) {
-  const loadDataCb = ref(()=>{})
+function useTableRequest(requestOptions: requestType) {
+  const { loadFlag, localPagination, tableData, tableProps, dataTable } = requestOptions
+  // 两个钩子
+  const beforeLoadData = ref<(arg: requestType) => void>(() => { })
+  const loadDataCb = ref<(arg: requestType) => void>(() => { })
   const loadType = tableProps.request ? 'request' : (Array.isArray(tableProps.data) ? 'data' : '')
   function loadTbData(request: requestFnType, isAppend: boolean) {
 
@@ -42,16 +45,16 @@ function useTableRequest({ loadFlag, localPagination, tableData, tableProps,data
       }
       const records = res.data?.records
       if (Array.isArray(records) && records.length) {
-        
+
         if (isAppend) {
           tableData.value.push(...records)
         } else {
           tableData.value = records
-          dataTable?.value?.scrollTo(0,0)
+          dataTable?.value?.scrollTo(0, 0)
         }
       }
       loadFlag.value = false
-      loadDataCb.value()
+      loadDataCb.value(requestOptions)
     }).catch(() => {
       tableData.value = []
       localPagination.value = { total: 0, pageSize: 20, pageNum: 1 }
@@ -61,9 +64,10 @@ function useTableRequest({ loadFlag, localPagination, tableData, tableProps,data
   function loadDataDirect(data: NonNullable<DataTableProps['data']>) {
     tableData.value = data
     loadFlag.value = false
-    loadDataCb.value()
+    loadDataCb.value(requestOptions)
   }
-  function loadData(isAppend: boolean=false) {
+  function loadData(isAppend: boolean = false) {
+    beforeLoadData.value(requestOptions)
     // 是否开始加载
     if (tableProps.request) {
       loadTbData(tableProps.request, isAppend)
@@ -74,7 +78,8 @@ function useTableRequest({ loadFlag, localPagination, tableData, tableProps,data
   return {
     loadData,
     loadDataCb,
-    loadType:loadType
+    beforeLoadData,
+    loadType: loadType
   }
 }
 export default useTableRequest

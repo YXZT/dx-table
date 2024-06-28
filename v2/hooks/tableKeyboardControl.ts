@@ -67,7 +67,6 @@ function useKeyboardControl(options: optionsType) {
     if (tableLength === 0) return
     if (currentFocusRowIndex.value == null) return
     const needSetSelectRow = tableCheck.value === 'radio'
-    // todo 1 改造成按index选定 2 focus没有全选
     switch (command) {
       case 'up':
         if (currentFocusRowIndex.value === 0) return

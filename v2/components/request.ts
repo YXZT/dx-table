@@ -17,6 +17,15 @@ export type simpleDataType = {
   address: string,
   tags: Array<string>
 }
+
+type rowFnType = {
+  delRow: (row: any) => void,
+  clearAll: () => void,
+}
+const rowFn: rowFnType = {
+  delRow: () => { },
+  clearAll: () => { }
+}
 const simpleColumns = [
   {
     key: 'delete',
@@ -26,7 +35,7 @@ const simpleColumns = [
     title: h('div',
       {
         class: 's-flex-center2',
-        style:{
+        style: {
           margin: '-2px -12px -2px -4px'
         }
       },
@@ -36,7 +45,7 @@ const simpleColumns = [
           quaternary: true,
           size: 'tiny',
           onClick: () => {
-            console.log('clear all')
+            rowFn.clearAll()
           },
         },
         {
@@ -67,7 +76,7 @@ const simpleColumns = [
               quaternary: true,
               size: 'tiny',
               onClick: () => {
-                console.log(row)
+                rowFn.delRow(row)
               },
             },
             {
@@ -137,7 +146,7 @@ const simpleColumns = [
     key: 'age',
     align: 'right',
     sorter: true,
-    isShow:false,
+    isShow: false,
   },
   {
     title: 'Address',
@@ -310,5 +319,6 @@ export {
   simpleData,
   columns as mockColumns,
   mockRequest,
-  roleOptions
+  roleOptions,
+  rowFn
 }

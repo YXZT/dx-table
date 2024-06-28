@@ -78,14 +78,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { ref, watch, nextTick } from "vue";
 import DxTable from "../lib/DxTable.vue";
 import TableSearch from "../lib/TableSearch.vue";
 import SInputNumber from "../lib/SInputNumber.vue";
 import SInput from "../lib/SInput.vue";
 import SSelect from "../lib/SSelect.vue";
 import { NTabs, NTabPane, NCard, NButton, NSelect } from "naive-ui";
-import { simpleColumns, simpleData, mockRequest, mockColumns, roleOptions } from "./request";
+import { simpleColumns, simpleData, mockRequest, mockColumns, roleOptions, rowFn } from "./request";
 import type { searchFormType } from "@/interface";
 import useTableModal from '../hooks/tableModal'
 import useTableRowData from '../hooks/tableRowData'
@@ -95,7 +95,7 @@ const data = ref<any[]>([]);
 const columns = ref();
 const request = ref();
 
-const { generateBlankLine, fillRow } = useTableRowData({ tags: [], userId: null }, 3)
+const { generateBlankLine, fillRow, delRow, clearAll } = useTableRowData({ tags: [], userId: null }, 3)
 
 const checkedRowKeys = ref<Array<string | number>>([]);
 const checkedRows = ref<Array<any>>([]);
@@ -109,7 +109,7 @@ watch(
     } if (val === 2) {
       data.value = generateBlankLine()
       request.value = null;
-      columns.value = simpleColumns.slice(2);
+      columns.value = simpleColumns
     } else if (val === 3) {
       data.value = [];
       request.value = mockRequest;
@@ -322,13 +322,21 @@ function validTableData() {
 // 动态增加行功能
 function updateRow(row: any, index: number) {
   const { nextIndex } = fillRow(data.value, index, row)
-  table2.value.scrollToRow(nextIndex)
+  nextTick(() => {
+    table2.value.scrollToRow(nextIndex)
+  })
 }
 const updateValueId = (e: string, index: number) => {
   data.value[index].userId = e;
 };
-
-
+rowFn.delRow = (row) => {
+  delRow(data.value, row)
+  table2.value.clearRowKeys()
+}
+rowFn.clearAll = () => {
+  clearAll(data.value)
+  table2.value.clearRowKeys()
+}
 </script>
 
 <style scoped lang="scss">

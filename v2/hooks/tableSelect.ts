@@ -45,6 +45,26 @@ function useTableSelect({ tableData, tableProps, checkedRowKeys }: tableSelectTy
     checkedRowKeys.value = rowKeys
   }
 
+  /**
+   * 清除table中没有的rowKey
+   * @param clearAll { boolean } 是否清除所有
+   * @returns void
+   */
+  const clearRowKeys = (clearAll?:false) => {
+    if (clearAll) {
+      changeRowKeys([])
+      return
+    }
+    const newRowKeys: any[] = []
+    checkedRowKeys.value.filter((key) => {
+      const isInIndex = tableData.value.findIndex(row => row[rowKey] === key)
+      if (isInIndex > -1) {
+        newRowKeys.push(key)
+      }
+    })
+    changeRowKeys(newRowKeys)
+  }
+
   tableProps.checkedRowKeys && watch(() => checkedRowKeys.value, (val) => {
     if (val === undefined) return
     const data = [...tableData.value]
@@ -98,7 +118,8 @@ function useTableSelect({ tableData, tableProps, checkedRowKeys }: tableSelectTy
     updateCheckedRows,
     updateRowKeys,
     selectToggleRow,
-    tableCheck
+    tableCheck,
+    clearRowKeys
   };
 }
 export default useTableSelect
