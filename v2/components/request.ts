@@ -32,6 +32,7 @@ const simpleColumns = [
     titleString: '[行操作]',
     fixed: 'left',
     width: '50',
+    isExport: false,
     title: h('div',
       {
         class: 's-flex-center2',
@@ -118,6 +119,7 @@ const simpleColumns = [
     type: 'selection',
     key: 'selection',
     titleString: '[勾选框]',
+    isExport: false,
     // sorter: true,
     // multiple: false,
   },

@@ -11,7 +11,7 @@ interface excelType {
 }
 function useTableExport() {
   const modal = useModal()
-  function exportExcel(opt:excelType,dataSetting:columnsSetting) {
+  function exportExcel(opt: excelType, dataSetting: columnsSetting, changeCol: (rowConfig: any) => void) {
     modal.create({
       title: '导出Excel',
       preset: 'dialog',
@@ -19,18 +19,17 @@ function useTableExport() {
         width: '80%',
         'min-width': '800px',
       },
-      content: ()=>h(TableExport,{
-        dataSetting:dataSetting,
-        fileName:opt.fileName,
-        onSave:(e)=>{
-          // handleExportExcel(Object.assign({},opt,e))
-          const download_path = document.getElementById('download-path').value;
-          alert('Default download path: ' + download_path);
-        }
+      content: () => h(TableExport, {
+        dataSetting: dataSetting,
+        fileName: opt.fileName,
+        onSave: (e) => {
+          handleExportExcel(Object.assign({}, opt, e))
+        },
+        onChangeShow: changeCol
       }),
     })
   }
-  function handleExportExcel(opt:excelType) {
+  function handleExportExcel(opt: excelType) {
     const { data, tHeader, filterVal, fileName } = opt;
     if (!data) {
       throw new Error("data必须是返回promise的函数或者结果的数组");

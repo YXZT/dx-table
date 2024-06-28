@@ -217,7 +217,7 @@ function handleExport({ fileName }: { fileName: string }) {
     }),
     fileName: fileName
   }
-  return exportExcel(obj, localColums.value)
+  return exportExcel(obj, localColums.value, changeCol)
 }
 // 高亮并定位某一无效行
 function setInvalidRow(index: number) {

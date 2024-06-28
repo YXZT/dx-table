@@ -20,9 +20,10 @@ export type requestFnType<T=myRowType> = (params: {
 export type myRowType = {
   [key: string]: string
 }
-
+// todo 该列是否打印的配置
 export type ColumnProps = Omit<NonNullable<TableColumn>,'sorter'|'sortOrder'|'fixed'>  & {
   isShow?: boolean,
+  isExport?: boolean,
   key: string | number,
   fixed?: "left" | "right" | "none",
   order?: number,
@@ -35,6 +36,8 @@ export type ColumnsProps = Array<ColumnProps>
 export type columnSetting = Omit<NonNullable<TableColumn>,'sorter'|'sortOrder'|'fixed'> & {
   isShow: boolean,
   _isShow: boolean, // 默认是否显示
+  isExport: boolean,
+  _isExport: boolean, // 默认是否导出
   key: string | number,
   fixed: "left" | "right" | "none",
   order: number,

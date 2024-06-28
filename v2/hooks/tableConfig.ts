@@ -83,6 +83,7 @@ function useTableConfig({ tableProps, loadDataFn }: pageChangeType) {
       if (curColIndex > -1) {
         const conf = {
           isShow: record.isShow,
+          isExport: record.isExport,
           width: record.width,
           fixed: record.fixed,
           order: record.order,
@@ -104,6 +105,8 @@ function useTableConfig({ tableProps, loadDataFn }: pageChangeType) {
         ...col,
         isShow: col.isShow ?? true,
         _isShow: col.isShow ?? true,
+        isExport: col.isExport ?? true,
+        _isExport: col.isExport ?? true,
         fixed: col.fixed ?? 'none',
         resizable: col.resizable ?? true,
         order: col.order ?? index,
@@ -192,6 +195,8 @@ function useTableConfig({ tableProps, loadDataFn }: pageChangeType) {
         ...col,
         isShow: col.isShow ?? true,
         _isShow: col.isShow ?? true,
+        isExport: col.isExport ?? true,
+        _isExport: col.isExport ?? true,
         fixed: col.fixed ?? 'none',
         resizable: col.resizable ?? true,
         order: col.order ?? index,

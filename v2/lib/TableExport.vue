@@ -1,7 +1,7 @@
 <script setup lang='ts'>
 import { ref, toRefs, toValue } from 'vue';
 import { NForm, NFormItem, NInput, NCheckbox,NButton } from 'naive-ui';
-import type { columnsSetting } from '@/interface';
+import type { columnSetting, columnsSetting } from '@/interface';
 
 const props = defineProps<{
   dataSetting: columnsSetting,
@@ -9,6 +9,7 @@ const props = defineProps<{
 }>()
 const emit = defineEmits<{
   (e: 'save', data: any): void
+  (e: 'change-show', data: columnSetting): void
 }>()
 const saveName = ref(props.fileName)
 
@@ -20,7 +21,11 @@ function submitEvent(){
     fileName: saveName.value,
   })
 }
-
+function changeColExport(e:any,col: columnSetting){
+  col.isExport = e
+  emit('change-show', {...col})
+}
+// todo 模板化设置文件名，比如单号、公司名、日期等
 </script>
 <template>
   <div>
@@ -28,8 +33,8 @@ function submitEvent(){
       <n-form-item label="导出字段设置：">
         <div class="simple-table-sequence">
           <div v-for="(item) in localDataSetting" :key="item.titleString" class="simple-table-sequence-item">
-            <n-checkbox v-model:checked="item.isShow">{{
-              item.titleString }}</n-checkbox>
+            <n-checkbox :checked="item.isExport" :on-update:checked="(e: any)=>changeColExport(e, item)">
+              {{ item.titleString }}</n-checkbox>
           </div>
         </div>
       </n-form-item>
