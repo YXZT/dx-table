@@ -192,6 +192,7 @@ const simpleColumns = [
     title: '邮箱',
     key: 'email',
     width: 150,
+    isExport: false,
   },
 ]
 const simpleData = Mock.mock({

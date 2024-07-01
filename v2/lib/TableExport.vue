@@ -13,11 +13,15 @@ const emits = defineEmits<{
 }>()
 const saveName = ref(props.fileName)
 
-let localDataSetting = computed(()=>props.dataSetting.map(ele => ({ ...ele })))
+let localDataSetting = computed(() => props.dataSetting.map(ele => ({ ...ele })).filter(ele=>{
+  // 以后再改
+  return ele.titleString !== '[行操作]' && ele.titleString !== '[勾选框]'
+}))
 
 function submitEvent() {
   emits('save', {
-    dataSetting: localDataSetting,
+    tHeader: localDataSetting.value.filter(ele=>ele.isExport).map(ele=>ele.titleString),
+    filterVal: localDataSetting.value.filter(ele=>ele.isExport).map(ele=>ele.key),
     fileName: saveName.value,
   })
 }
@@ -48,8 +52,11 @@ function colNotShowAll() {
     emits('change-show', ele)
   })
 }
-// todo换颜色
 const baseColor = useThemeVars().value.primaryColor
+const checkboxThemeOverrides = {
+  textColor: baseColor,
+  labelFontWeight: 600,
+}
 // todo 模板化设置文件名，比如单号、公司名、日期等
 </script>
 <template>
@@ -70,7 +77,8 @@ const baseColor = useThemeVars().value.primaryColor
           </div>
           <div class="simple-table-sequence">
             <div v-for="(item) in localDataSetting" :key="item.titleString" class="simple-table-sequence-item">
-              <n-checkbox :checked="item.isExport" :on-update:checked="(e: any) => changeColExport(e, item)" :class="{ 'default-export': item._isExport }">
+              <n-checkbox :checked="item.isExport" :on-update:checked="(e: any) => changeColExport(e, item)"
+                :theme-overrides="item._isExport ? checkboxThemeOverrides : undefined">
                 {{ item.titleString }}</n-checkbox>
             </div>
           </div>
@@ -105,11 +113,6 @@ const baseColor = useThemeVars().value.primaryColor
 
   .simple-table-sequence-item:hover {
     box-shadow: 2px 2px 5px 0px rgba(0, 0, 0, 0.3);
-  }
-  .default-export{
-    :v-deep(.n-checkbox__label){
-      color: v-bind(baseColor) !important
-    }
   }
 }
 </style>

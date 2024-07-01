@@ -44,7 +44,7 @@ export type columnSetting = Omit<NonNullable<TableColumn>,'sorter'|'sortOrder'|'
   sorter: boolean | Function | 'default',
   sortOrder: 'descend' | 'ascend' | false
   titleAlign: 'left' | 'right' | 'center',
-  titleString?:'string',
+  titleString?:string,
   title?: any
 }
 export type columnsSetting = Array<columnSetting>
