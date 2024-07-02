@@ -20,7 +20,6 @@ export type requestFnType<T=myRowType> = (params: {
 export type myRowType = {
   [key: string]: string
 }
-// todo 该列是否打印的配置
 export type ColumnProps = Omit<NonNullable<TableColumn>,'sorter'|'sortOrder'|'fixed'>  & {
   isShow?: boolean,
   isExport?: boolean,
