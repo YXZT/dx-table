@@ -29,6 +29,7 @@ const props = withDefaults(defineProps<tableSearchProps>(), {
 const {
   init,
   tableSearchColumns,
+  ellipsisTableSearchColumns,
   removeSearchColumns,
   showSearchColumns
 } = useTableSearchConfig({ tableSearchProps: props })
@@ -86,6 +87,18 @@ const collapsed = ref(false);
         </template>
       </n-button>
     </template>
+    <template v-else>
+      <div v-for="item in ellipsisTableSearchColumns" :key="item.prop" class="item-box">
+        <n-form-item
+          :label="`${item.label}`"
+          size="small"
+          :show-feedback="false"
+          label-placement="left"
+        >
+          <SearchFormItem :column="item" :search-param="searchData" @value-change="refreshTable" />
+        </n-form-item>
+      </div>
+    </template>
     <div class="search-right">
       <n-button strong secondary type="info" size="small" class="search-button" v-if="moreSearch" @click="showMoreSearch" v-show="!collapsed">
         高级查询
@@ -123,7 +136,7 @@ const collapsed = ref(false);
   margin-left: 6px;
   border-radius: 4px;
   // border: 1px solid #eee;
-  box-shadow: 2px 2px 2px rgba(0,0,0,0.3),-2px -2px 2px rgba(255,255,255,0.7);
+  box-shadow: 2px 2px 2px rgba(0,0,0,0.1),-2px -2px 2px rgba(255,255,255,0.7);
 }
 
 .item-box:hover {

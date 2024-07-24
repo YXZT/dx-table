@@ -24,6 +24,10 @@ function useTableSearchConfig({ tableSearchProps }: tableSearchConfigType) {
     )
     return arr
   })
+  const ellipsisTableSearchColumns = computed(() => {
+    const arr = localColums.value.filter((col) => col.ellipsis)
+    return arr
+  })
   function initColums() {
     let columsResult: searchFormSetting[] = searchColumns.map((col, index) => {
       const newCol: searchFormSetting = {
@@ -94,6 +98,7 @@ function useTableSearchConfig({ tableSearchProps }: tableSearchConfigType) {
   return {
     init,
     tableSearchColumns,
+    ellipsisTableSearchColumns,
     removeSearchColumns,
     showSearchColumns
   }

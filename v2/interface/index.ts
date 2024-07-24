@@ -70,6 +70,7 @@ export type searchFormType = {
     width?: string,
   },
   isShow?: Boolean,
+  ellipsis?: boolean
   [key: string]: any,
 }
 

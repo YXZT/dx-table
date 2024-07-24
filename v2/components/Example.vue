@@ -140,6 +140,14 @@ watch(
 );
 const searchColumns: searchFormType[] = [
   {
+    prop: 'common',
+    label: '综合查询',
+    ellipsis: true,
+    search: {
+      el: 'input'
+    }
+  },
+  {
     prop: "username",
     label: "用户姓名",
     search: {
