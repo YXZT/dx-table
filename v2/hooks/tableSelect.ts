@@ -27,7 +27,7 @@ function useTableSelect({ tableData, tableProps, checkedRowKeys }: tableSelectTy
   /**
    * 这个表格要的是多选还是单选
    */
-  const tableCheck = ref<tableCheckType>('radio')
+  const tableCheck = ref<tableCheckType>('none')
   const rowKey = tableProps.rowKey || '_X_ROW_KEY'
 
   const updateRowKeys: DataTableProps['onUpdate:checkedRowKeys'] = (_rowKeys, _rows, meta) => {
@@ -82,8 +82,7 @@ function useTableSelect({ tableData, tableProps, checkedRowKeys }: tableSelectTy
         type = 'checkBox'
       }
     }else{
-      // 没有selection的时候依然当成单选
-      type = 'radio'
+      type = 'none'
     }
     tableCheck.value = type
   }, {
@@ -100,13 +99,13 @@ function useTableSelect({ tableData, tableProps, checkedRowKeys }: tableSelectTy
       // 如果是单选，那还是保持这样
       if(tableCheck.value==='radio'){
         return
-      }else{
+      }else if(tableCheck.value==='checkBox'){
         _checkedRowKeys.splice(isInIndex, 1)
       }
     } else {
       if (tableCheck.value === 'checkBox') {
         _checkedRowKeys.push(row[rowKey])
-      } else {
+      } else if (tableCheck.value === 'radio'){
         _checkedRowKeys = [row[rowKey]]
       }
     }

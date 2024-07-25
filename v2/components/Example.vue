@@ -125,11 +125,11 @@ watch(
       data.value = [];
       request.value = mockRequest;
       columns.value = [
-        {
-          type: "selection",
-          fixed: "left",
-          key: "selection",
-        },
+        // {
+        //   type: "selection",
+        //   fixed: "left",
+        //   key: "selection",
+        // },
         ...mockColumns,
       ];
     }
