@@ -36,7 +36,7 @@
       <n-tab-pane :name="2" tab="动态编辑">
         <DxTable :columns="columns" :data="data" virtual-scroll storeName="test_table2" flex-height
           :style="{ height: `400px` }" :scroll-x="1400" ref="table2" v-model:checked-row-keys="checkedRowKeys"
-          v-model:checkedRows="checkedRows" autoKey>
+          v-model:checkedRows="checkedRows" autoKey :isPagination="false">
           <template #userId="{ row, index }">
             <s-input :value="row.userId" :on-update-value="($event) => updateValueId($event, index)" :isEdit="isEdit"
               @change="updateRow(row, index)" />

@@ -20,7 +20,7 @@ function useTableSearchConfig({ tableSearchProps }: tableSearchConfigType) {
 
   const tableSearchColumns = computed(()=>{
     const arr = localColums.value.filter(
-      col => col.isShow,
+      col => col.isShow && !col.ellipsis,
     )
     return arr
   })
