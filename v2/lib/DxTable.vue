@@ -260,7 +260,10 @@ defineExpose({
   loadDataCb,
   setInvalidRow,
   scrollToRow,
-  clearRowKeys
+  clearRowKeys,
+  currentFocusRow,
+  currentFocusRowKey,
+  currentFocusRowIndex
 })
 
 </script>
