@@ -212,10 +212,15 @@ const columnsSortSetting = ref([
   }])
 const isActive = ref(false)
 const activate = () => {
-  isActive.value = true
-  !dataTable.value && nextTick(() => {
-    columnDrop()
-  })
+  if (!isActive.value) {
+    isActive.value = true
+    !dataTable.value &&
+      nextTick(() => {
+        columnDrop()
+      })
+  } else {
+    isActive.value = false
+  }
 }
 
 const tableEl = computed(() => {
